@@ -67,6 +67,36 @@ at Cruz Roja's official system.
 Cruz Roja already operates the authoritative registry. Fragmenting it across a
 community site actively harms the people it claims to help.
 
+**Consequence:** pointing outward *is* our answer, so the pointer has to be real.
+That is what `/enlaces` is for — see below.
+
+### A links directory, rather than more of our own data
+
+**Decision:** `/enlaces` is a curated directory of other people's sites, backed by a
+`links` table with the same `verified` gate as `resources`. Every row names its
+`operator` (not nullable) and its `source`, and the page prints each destination's
+bare domain.
+
+**Why:** the honest answer to several questions this site refuses to answer itself —
+missing persons above all — is somebody else's site. Without a place to put those
+pointers, "we don't do that" is where the reader's journey ends. A table rather than a
+hardcoded list because the useful links change mid-incident and a moderator must be
+able to add one without a deploy.
+
+**Why `operator` is required:** an outbound link asserts who runs the destination. If
+we can't name them, we haven't verified it enough to send anyone there. It also lets
+the UI mark a citizen-run registry as *not an official channel* instead of letting it
+sit unqualified next to a government one.
+
+**Mirrored into `FALLBACK_LINKS`** like the rest of the seed content. A checked URL is
+reference data, not operational data, so unlike `FALLBACK_RESOURCES` it is safe to
+ship — and if our database is down, the address of someone who can actually help is
+the last thing that should vanish with it.
+
+**Consequence:** the inline header nav now starts at `lg` rather than `md`. Six items
+plus the right-hand controls need ~980px; at 768 they left the wordmark 9px to
+truncate into. Tablets get the existing sheet, which holds all six in a column.
+
 ### No map yet
 
 **Decision:** `reports` and `resources` carry `lat`/`lng`, but nothing renders them.

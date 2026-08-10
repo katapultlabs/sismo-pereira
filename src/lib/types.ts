@@ -52,6 +52,17 @@ export type ResourceKind =
 
 export type ZoneKind = "comuna" | "corregimiento" | "municipio";
 
+/** Declaration order is display order, matching the Postgres enum. */
+export type LinkCategory =
+  | "missing_persons"
+  | "official"
+  | "seismic"
+  | "aid"
+  | "donations"
+  | "health"
+  | "transport"
+  | "media";
+
 export interface Zone {
   slug: string;
   name: string;
@@ -113,6 +124,25 @@ export interface Organization {
   services: ServiceType[];
   website: string | null;
   logo_url: string | null;
+  verified: boolean;
+}
+
+/**
+ * An outbound link to a site we do not operate.
+ *
+ * `operator` and `source` are not decoration: they are how a reader tells an
+ * official registry from a citizen-run one before clicking. Neither is
+ * optional in the UI — see `src/app/enlaces/page.tsx`.
+ */
+export interface SiteLink {
+  id: string;
+  category: LinkCategory;
+  title: string;
+  url: string;
+  description: string | null;
+  operator: string;
+  source: SourceKind;
+  sort_order: number;
   verified: boolean;
 }
 

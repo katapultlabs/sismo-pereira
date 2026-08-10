@@ -14,6 +14,7 @@ import type {
   PublicReport,
   Resource,
   ServiceStatus,
+  SiteLink,
   Update,
   Zone,
 } from "./types";
@@ -370,6 +371,105 @@ export const FALLBACK_ORGS: Organization[] = [
 export const FALLBACK_RESOURCES: Resource[] = [];
 
 export const FALLBACK_REPORTS: PublicReport[] = [];
+
+/**
+ * Mirrors the `links` rows in `supabase/seed.sql` — change one, change both.
+ *
+ * Unlike shelters, these are safe to ship: a checked URL is reference data, not
+ * operational data, and it does not go stale between an aftershock and a page
+ * load. That distinction matters most here — if our database is down, the one
+ * thing a person looking for a missing relative still needs is the address of
+ * somebody who can actually help them, so these have to survive it.
+ */
+export const FALLBACK_LINKS: SiteLink[] = [
+  {
+    id: "fallback-link-1",
+    category: "missing_persons",
+    title: "Restablecimiento del contacto familiar (Cruz Roja)",
+    url: "https://familylinks.icrc.org/",
+    description:
+      "El sistema con el que la Cruz Roja busca personas y reconecta a familiares " +
+      "separados por desastres. El servicio es gratuito.",
+    operator: "Comité Internacional de la Cruz Roja (CICR)",
+    source: "official",
+    sort_order: 10,
+    verified: true,
+  },
+  {
+    id: "fallback-link-2",
+    category: "missing_persons",
+    title: "Colombia Te Busca",
+    url: "https://colombiatebusca.com/",
+    description:
+      "Registro ciudadano para publicar y consultar reportes de personas " +
+      "desaparecidas en Colombia. Es una iniciativa voluntaria y sin ánimo de " +
+      "lucro: no es un canal oficial y no reemplaza a las autoridades.",
+    operator: "Iniciativa ciudadana (softwareparati.com)",
+    source: "community",
+    sort_order: 20,
+    verified: true,
+  },
+  {
+    id: "fallback-link-3",
+    category: "seismic",
+    title: "Sismos recientes en Colombia",
+    url: "https://www.sgc.gov.co/sismos",
+    description:
+      "Magnitud, profundidad y epicentro de los sismos y sus réplicas, publicados " +
+      "por la autoridad sismológica del país.",
+    operator: "Servicio Geológico Colombiano (SGC)",
+    source: "official",
+    sort_order: 10,
+    verified: true,
+  },
+  {
+    id: "fallback-link-4",
+    category: "official",
+    title: "Unidad Nacional para la Gestión del Riesgo de Desastres",
+    url: "https://portal.gestiondelriesgo.gov.co/",
+    description:
+      "Entidad que coordina la respuesta nacional a desastres. Publica boletines " +
+      "de emergencia y el registro de damnificados.",
+    operator: "UNGRD",
+    source: "official",
+    sort_order: 10,
+    verified: true,
+  },
+  {
+    id: "fallback-link-5",
+    category: "official",
+    title: "Alcaldía de Pereira",
+    url: "https://www.pereira.gov.co/",
+    description: "Canal oficial del gobierno municipal de Pereira.",
+    operator: "Alcaldía de Pereira",
+    source: "official",
+    sort_order: 20,
+    verified: true,
+  },
+  {
+    id: "fallback-link-6",
+    category: "official",
+    title: "Gobernación de Risaralda",
+    url: "https://www.risaralda.gov.co/",
+    description: "Canal oficial del gobierno departamental de Risaralda.",
+    operator: "Gobernación de Risaralda",
+    source: "official",
+    sort_order: 30,
+    verified: true,
+  },
+  {
+    id: "fallback-link-7",
+    category: "aid",
+    title: "Cruz Roja Colombiana",
+    url: "https://www.cruzrojacolombiana.org/",
+    description:
+      "Ayuda humanitaria, banco de sangre y canales de donación y voluntariado.",
+    operator: "Sociedad Nacional de la Cruz Roja Colombiana",
+    source: "official",
+    sort_order: 10,
+    verified: true,
+  },
+];
 
 /**
  * National emergency lines. These are stable, published, country-wide numbers.

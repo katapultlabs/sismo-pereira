@@ -173,6 +173,36 @@ If a field is empty, render nothing, or render the honest empty state.
 
 ---
 
+## Rule 9 — An outbound link is a claim
+
+`/enlaces` sends people to sites we do not control, which makes each row a
+statement: *this site exists, it does what we say, and X operates it.* So a link
+carries the same apparatus as anything else we publish.
+
+`links.operator` is **not nullable**. If we cannot say who runs a destination, we
+have not checked it well enough to send anyone there. `links.source` separates an
+official channel from a citizen-run one, and the UI renders a non-official
+source as an explicit **"No es un canal oficial"** badge rather than leaving the
+reader to infer it.
+
+**Verify the destination by hand before adding a row.** Open it, confirm the
+operator, confirm it does what the description says. A forwarded URL is not a
+source, and `verified` defaults to `false`.
+
+### Why the domain is printed on the card
+
+Every row shows its bare hostname in mono, next to the operator. Lookalike
+domains and donation scams follow disasters reliably, and a reader who can
+compare `colombiatebusca.com` against what loads in the address bar can catch
+one we haven't. It also survives a screenshot, which is how most of these links
+actually travel.
+
+The page says out loud that verifying an operator is not the same as vouching
+for a page's contents. We checked who runs it on the day we added it. That is
+the whole claim, and the notice at the top of the page says so.
+
+---
+
 ## Judgment calls
 
 Real situations that don't resolve cleanly from the rules above.
@@ -194,7 +224,13 @@ detail that only a witness would have.
 
 We do not run a missing-persons registry — see
 [DECISIONS.md](./DECISIONS.md#no-missing-persons-registry). Point the reporter at Cruz
-Roja's official system. Do not publish the name.
+Roja's official system, which is the first entry on
+[`/enlaces`](../src/app/enlaces/page.tsx). Do not publish the name.
+
+That page also lists a **citizen-run** registry, badged as not an official
+channel. Both belong there: the official system is authoritative and the
+community one is where people are actually posting. Ordering the official
+channel first, and labelling the other, is what keeps offering both honest.
 
 ### Something we published turns out to be wrong
 

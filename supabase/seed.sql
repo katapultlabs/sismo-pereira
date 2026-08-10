@@ -216,3 +216,86 @@ values
     'published', false, '2026-08-10T13:25:00Z'
   )
 on conflict (slug) do nothing;
+
+-- ---------------------------------------------------------------------------
+-- Links — other sites worth sending people to.
+--
+-- These are `verified = true` because each destination was checked by hand
+-- against the operator named here. That check is the whole gate: an outbound
+-- link is a claim, and a lookalike domain during a disaster is a known attack.
+-- Do not add a row here from a forwarded screenshot.
+--
+-- Missing persons leads. We deliberately do not run a registry
+-- (docs/DECISIONS.md#no-missing-persons-registry), so pointing outward *is*
+-- our answer to the person asking — which makes these two rows the highest
+-- stakes on the page. The Cruz Roja / ICRC channel is ordered first because it
+-- is the authoritative one; the citizen-run registry follows, labelled
+-- 'community' so the UI can never present it as official.
+-- ---------------------------------------------------------------------------
+insert into links (category, title, url, description, operator, source, sort_order, verified, org_id) values
+  (
+    'missing_persons',
+    'Restablecimiento del contacto familiar (Cruz Roja)',
+    'https://familylinks.icrc.org/',
+    'El sistema con el que la Cruz Roja busca personas y reconecta a familiares '
+    || 'separados por desastres. El servicio es gratuito.',
+    'Comité Internacional de la Cruz Roja (CICR)',
+    'official', 10, true, null
+  ),
+  (
+    'missing_persons',
+    'Colombia Te Busca',
+    'https://colombiatebusca.com/',
+    'Registro ciudadano para publicar y consultar reportes de personas '
+    || 'desaparecidas en Colombia. Es una iniciativa voluntaria y sin ánimo de '
+    || 'lucro: no es un canal oficial y no reemplaza a las autoridades.',
+    'Iniciativa ciudadana (softwareparati.com)',
+    'community', 20, true, null
+  ),
+  (
+    'seismic',
+    'Sismos recientes en Colombia',
+    'https://www.sgc.gov.co/sismos',
+    'Magnitud, profundidad y epicentro de los sismos y sus réplicas, publicados '
+    || 'por la autoridad sismológica del país.',
+    'Servicio Geológico Colombiano (SGC)',
+    'official', 10, true,
+    (select id from organizations where slug = 'sgc')
+  ),
+  (
+    'official',
+    'Unidad Nacional para la Gestión del Riesgo de Desastres',
+    'https://portal.gestiondelriesgo.gov.co/',
+    'Entidad que coordina la respuesta nacional a desastres. Publica boletines '
+    || 'de emergencia y el registro de damnificados.',
+    'UNGRD',
+    'official', 10, true,
+    (select id from organizations where slug = 'ungrd')
+  ),
+  (
+    'official',
+    'Alcaldía de Pereira',
+    'https://www.pereira.gov.co/',
+    'Canal oficial del gobierno municipal de Pereira.',
+    'Alcaldía de Pereira',
+    'official', 20, true,
+    (select id from organizations where slug = 'alcaldia-pereira')
+  ),
+  (
+    'official',
+    'Gobernación de Risaralda',
+    'https://www.risaralda.gov.co/',
+    'Canal oficial del gobierno departamental de Risaralda.',
+    'Gobernación de Risaralda',
+    'official', 30, true,
+    (select id from organizations where slug = 'gobernacion-risaralda')
+  ),
+  (
+    'aid',
+    'Cruz Roja Colombiana',
+    'https://www.cruzrojacolombiana.org/',
+    'Ayuda humanitaria, banco de sangre y canales de donación y voluntariado.',
+    'Sociedad Nacional de la Cruz Roja Colombiana',
+    'official', 10, true, null
+  )
+on conflict (url) do nothing;

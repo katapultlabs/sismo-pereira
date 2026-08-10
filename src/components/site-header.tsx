@@ -27,6 +27,7 @@ export function SiteHeader({ lang }: { lang: Lang }) {
     { href: "/servicios", label: t.nav.services },
     { href: "/reportes", label: t.nav.reports },
     { href: "/recursos", label: t.nav.resources },
+    { href: "/enlaces", label: t.nav.links },
     { href: "/organizaciones", label: t.nav.partners },
   ];
 
@@ -51,12 +52,18 @@ export function SiteHeader({ lang }: { lang: Lang }) {
               Pereira
             </span>
           </span>
-          <span className="label-signage hidden text-muted-foreground/70 lg:inline">
+          <span className="label-signage hidden text-muted-foreground/70 xl:inline">
             {t.nav.tagline}
           </span>
         </Link>
 
-        <nav className="ml-6 hidden items-center gap-5 md:flex">
+        {/*
+         * The inline nav starts at `lg`, not `md`. Six items plus the right-hand
+         * cluster need ~980px; at 768 they left the wordmark 9px to truncate
+         * into, which is to say they erased it. Tablets get the sheet instead,
+         * which holds the same six comfortably in a column.
+         */}
+        <nav className="ml-6 hidden items-center gap-5 lg:flex">
           {items.map((item) => {
             const active = pathname === item.href;
             return (
@@ -94,7 +101,7 @@ export function SiteHeader({ lang }: { lang: Lang }) {
 
           <Button
             size="sm"
-            className="label-signage hidden rounded-sm md:inline-flex"
+            className="label-signage hidden rounded-sm lg:inline-flex"
             render={<Link href="/reportar" />}
           >
             {t.nav.submit}
@@ -106,7 +113,7 @@ export function SiteHeader({ lang }: { lang: Lang }) {
                 <Button
                   variant="outline"
                   size="icon-sm"
-                  className="rounded-sm md:hidden"
+                  className="rounded-sm lg:hidden"
                 >
                   <Menu className="size-4" aria-hidden />
                   <span className="sr-only">{t.nav.menu}</span>

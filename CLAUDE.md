@@ -143,6 +143,10 @@ level, or resource kind means touching, at minimum: the migration, the type unio
 label maps in `i18n.ts` for both languages, and the `SERVICES`/`STATUSES` const arrays
 duplicated in `src/lib/actions.ts` and the API routes.
 
+A `link_category` is the same drill plus `LINK_CATEGORIES` in `i18n.ts`, which the
+links page iterates so a live query and the offline fallback order identically —
+adding one to the enum without adding it there silently hides that category.
+
 ## UI conventions
 
 - shadcn/ui on **Base UI** (`@base-ui/react`), not Radix. Composition uses
@@ -176,8 +180,12 @@ duplicated in `src/lib/actions.ts` and the API routes.
   themes when adding a surface.
 - Status is always encoded three ways — colour, icon, and text — so it survives colour
   blindness, greyscale, and a cracked screen. Preserve that when adding indicators.
-- Route segments are Spanish (`/servicios`, `/reportes`, `/recursos`, `/reportar`,
-  `/organizaciones`, `/actualizaciones/[slug]`); code identifiers are English.
+- Route segments are Spanish (`/servicios`, `/reportes`, `/recursos`, `/enlaces`,
+  `/reportar`, `/organizaciones`, `/actualizaciones/[slug]`); code identifiers are
+  English.
+- The inline header nav starts at `lg`, not `md` — six items plus the 123 button and
+  the language/theme controls do not fit at 768. Adding a seventh means reworking the
+  bar, not tightening the gap.
 
 ## Things that will bite
 

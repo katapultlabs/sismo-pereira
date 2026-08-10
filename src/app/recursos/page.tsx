@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
-import { Phone } from "lucide-react";
+import Link from "next/link";
+import { ArrowRight, Phone } from "lucide-react";
 
 import { DegradedNotice } from "@/components/degraded-notice";
 import { MedicalClosures } from "@/components/medical-closures";
@@ -34,6 +35,18 @@ export default async function ResourcesPage() {
         as="h1"
         title={t.resources.heading}
         subtitle={t.resources.subheading}
+        /* The verified-resources list is empty far more often than not, so the
+           way out to other people's directories belongs at the top of this
+           page rather than only in the footer. */
+        action={
+          <Link
+            href="/enlaces"
+            className="label-signage inline-flex items-center gap-1.5 text-muted-foreground underline-offset-4 hover:text-foreground hover:underline"
+          >
+            {t.resources.linksCta}
+            <ArrowRight className="size-3.5" aria-hidden />
+          </Link>
+        }
       />
 
       {/*

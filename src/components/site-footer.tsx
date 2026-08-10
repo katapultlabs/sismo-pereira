@@ -76,6 +76,14 @@ export function SiteFooter({ lang }: { lang: Lang }) {
                 </Link>
               </li>
               <li>
+                <Link
+                  href="/enlaces"
+                  className="underline-offset-4 hover:text-foreground hover:underline"
+                >
+                  {t.links.heading}
+                </Link>
+              </li>
+              <li>
                 <a
                   href={REPO_URL}
                   target="_blank"

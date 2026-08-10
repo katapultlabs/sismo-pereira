@@ -1,4 +1,11 @@
-import type { ResourceKind, ServiceType, SeverityLevel, SourceKind, StatusLevel } from "./types";
+import type {
+  LinkCategory,
+  ResourceKind,
+  ServiceType,
+  SeverityLevel,
+  SourceKind,
+  StatusLevel,
+} from "./types";
 
 export const LANGS = ["es", "en"] as const;
 export type Lang = (typeof LANGS)[number];
@@ -26,6 +33,7 @@ const es = {
     services: "Servicios",
     reports: "Reportes",
     resources: "Recursos",
+    links: "Enlaces",
     partners: "Organizaciones",
     submit: "Reportar",
     skipToContent: "Saltar al contenido",
@@ -159,6 +167,30 @@ const es = {
       sourceLabel: "Fuente",
       reportedLabel: "Corte",
     },
+    linksCta: "Ver enlaces útiles",
+  },
+  links: {
+    heading: "Enlaces útiles",
+    subheading:
+      "Otros sitios donde puedes buscar información o pedir ayuda. No los " +
+      "operamos nosotros.",
+    empty: "Todavía no hay enlaces publicados.",
+    /*
+     * Verifying an operator is not the same as vouching for a page's contents,
+     * and the difference has to be said out loud: we checked who runs each
+     * destination on the day we added it, and nothing more than that.
+     */
+    externalNotice:
+      "Estos sitios pertenecen a otras organizaciones. Confirmamos quién los " +
+      "opera antes de publicarlos, pero no controlamos lo que aparece en ellos. " +
+      "Compara el dominio con el que mostramos aquí antes de entregar datos " +
+      "personales — durante una emergencia circulan copias falsas.",
+    missingPersonsNote:
+      "Este sitio no es un registro de personas desaparecidas y no publicamos " +
+      "nombres. Si estás buscando a alguien, usa estos canales y llama al 123.",
+    operator: "Opera",
+    notOfficial: "No es un canal oficial",
+    newTab: "se abre en una pestaña nueva",
   },
   partners: {
     heading: "Para organizaciones",
@@ -227,6 +259,7 @@ const en: typeof es = {
     services: "Services",
     reports: "Reports",
     resources: "Resources",
+    links: "Links",
     partners: "Organizations",
     submit: "Report",
     skipToContent: "Skip to content",
@@ -341,6 +374,25 @@ const en: typeof es = {
       sourceLabel: "Source",
       reportedLabel: "As of",
     },
+    linksCta: "See useful links",
+  },
+  links: {
+    heading: "Useful links",
+    subheading:
+      "Other sites where you can look for information or ask for help. We do " +
+      "not operate them.",
+    empty: "No links published yet.",
+    externalNotice:
+      "These sites belong to other organizations. We confirm who operates each " +
+      "one before publishing it, but we do not control what appears on them. " +
+      "Check the domain against the one shown here before entering personal " +
+      "details — fake copies circulate during an emergency.",
+    missingPersonsNote:
+      "This site is not a missing-persons registry and we do not publish names. " +
+      "If you are looking for someone, use these channels and call 123.",
+    operator: "Operated by",
+    notOfficial: "Not an official channel",
+    newTab: "opens in a new tab",
   },
   partners: {
     heading: "For organizations",
@@ -499,6 +551,45 @@ export const RESOURCE_LABELS: Record<Lang, Record<ResourceKind, string>> = {
     pet_shelter: "Pet shelter",
     info_point: "Information point",
     donation_point: "Donation point",
+  },
+};
+
+/**
+ * Canonical display order, matching the `link_category` enum's declaration
+ * order in the migration. The page iterates this rather than trusting the order
+ * rows arrive in, so a live query and the offline fallback render identically.
+ */
+export const LINK_CATEGORIES = [
+  "missing_persons",
+  "official",
+  "seismic",
+  "aid",
+  "donations",
+  "health",
+  "transport",
+  "media",
+] as const satisfies readonly LinkCategory[];
+
+export const LINK_CATEGORY_LABELS: Record<Lang, Record<LinkCategory, string>> = {
+  es: {
+    missing_persons: "Personas desaparecidas",
+    official: "Información oficial",
+    seismic: "Información sísmica",
+    aid: "Ayuda humanitaria",
+    donations: "Donaciones",
+    health: "Salud",
+    transport: "Transporte",
+    media: "Medios",
+  },
+  en: {
+    missing_persons: "Missing persons",
+    official: "Official information",
+    seismic: "Seismic information",
+    aid: "Humanitarian aid",
+    donations: "Donations",
+    health: "Health",
+    transport: "Transport",
+    media: "Media",
   },
 };
 

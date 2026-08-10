@@ -2,6 +2,7 @@ import "server-only";
 
 import { getServerSupabase } from "./supabase/server";
 import {
+  FALLBACK_LINKS,
   FALLBACK_ORGS,
   FALLBACK_REPORTS,
   FALLBACK_RESOURCES,
@@ -14,6 +15,7 @@ import type {
   PublicReport,
   Resource,
   ServiceStatus,
+  SiteLink,
   Update,
   Zone,
 } from "./types";
@@ -122,6 +124,19 @@ export async function getOrganizations() {
       .order("type", { ascending: true })
       .order("name", { ascending: true });
     return res as { data: Organization[] | null; error: { message: string } | null };
+  });
+}
+
+export async function getLinks() {
+  return query<SiteLink[]>("getLinks", FALLBACK_LINKS, async (sb) => {
+    const res = await sb
+      .from("links")
+      .select("id, category, title, url, description, operator, source, sort_order, verified")
+      .eq("verified", true)
+      .order("category", { ascending: true })
+      .order("sort_order", { ascending: true })
+      .order("title", { ascending: true });
+    return res as { data: SiteLink[] | null; error: { message: string } | null };
   });
 }
 
