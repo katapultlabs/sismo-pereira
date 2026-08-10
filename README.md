@@ -51,6 +51,29 @@ under time pressure they're the first things to get quietly dropped.
   data layer falls back to seed content and shows a visible "showing fallback
   information" banner rather than a 500.
 
+The full version, with the judgment calls worked through, is in
+**[docs/EDITORIAL.md](./docs/EDITORIAL.md)** — read it before changing anything the
+site displays.
+
+---
+
+## Documentation
+
+| Document | For |
+|---|---|
+| [docs/EDITORIAL.md](./docs/EDITORIAL.md) | What we publish and refuse to publish. The most important document here. |
+| [docs/RUNBOOK.md](./docs/RUNBOOK.md) | Operating during an incident: moderation, publishing, partner onboarding. |
+| [docs/PARTNER-API.md](./docs/PARTNER-API.md) | The API contract. Self-contained — safe to send to a partner. |
+| [docs/SUPABASE.md](./docs/SUPABASE.md) | Schema, the RLS trust model, and the provisioning still pending. |
+| [docs/INFRASTRUCTURE.md](./docs/INFRASTRUCTURE.md) | Vercel, DNS, the domain, and failure modes already hit. |
+| [docs/DECISIONS.md](./docs/DECISIONS.md) | Why things are this way, and what we chose not to build. |
+
+Coding agents should start at [CLAUDE.md](./CLAUDE.md).
+
+> **Current state:** the site is live but **read-only in practice** — Supabase is not
+> provisioned, so submission, moderation, and partner ingestion are inert. See
+> [docs/SUPABASE.md](./docs/SUPABASE.md#provisioning).
+
 ---
 
 ## Stack
@@ -106,89 +129,38 @@ Raw `reports` rows are never readable by the public — the site reads the
 
 ## Partner API
 
-Base URL: `https://<your-domain>/api/v1`
+Utilities, telcos, and agencies publish through a REST API with an API key.
+Everything they publish is attributed to their organization, and an org may only
+post for services it is registered for.
 
-### Authentication
-
+```bash
+curl -X POST https://sismopereira.org/api/v1/status \
+  -H "Authorization: Bearer $SISMO_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"service":"electricity","zone_slug":"cuba","status":"restoring"}'
 ```
-Authorization: Bearer sp_xxxxxxxxxxxxxxxxxxxx
-```
 
-Keys are stored only as SHA-256 digests. Issue one with:
+`GET /api/v1/status` and `GET /api/v1/updates` are open, CORS-enabled, and cached
+30s — please mirror rather than scrape.
+
+**Full contract: [docs/PARTNER-API.md](./docs/PARTNER-API.md)** — self-contained and
+safe to send to a partner organization.
+
+Issue a key with:
 
 ```bash
 node --env-file=.env.local scripts/issue-api-key.mjs energia-pereira
 ```
 
-The plaintext key is printed **once**. Issuing a key marks the organization
-verified.
-
-### `POST /api/v1/status`
-
-Publish service status. Single entry or a batch of up to 200.
-
-```bash
-curl -X POST https://<domain>/api/v1/status \
-  -H "Authorization: Bearer $SISMO_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "service": "electricity",
-    "zone_slug": "cuba",
-    "status": "restoring",
-    "headline": "Cuadrillas trabajando en el circuito",
-    "affected_users": 4200,
-    "eta_restored": "2026-08-10T22:00:00-05:00"
-  }'
-```
-
-Batch form: `{ "entries": [ {...}, {...} ] }`
-
-| Field | Type | Notes |
-|---|---|---|
-| `service` | enum | `electricity` `water` `gas` `internet` `mobile` `transport` `health` `fuel` `education` `banking` |
-| `zone_slug` | string | Defaults to `pereira` (whole municipality). See `zones`. |
-| `status` | enum | `operational` `degraded` `outage` `restoring` `unknown` |
-| `headline` | string? | Short line shown on the card |
-| `detail` | string? | Longer explanation |
-| `affected_users` | int? | |
-| `eta_restored` | ISO 8601? | |
-| `source_url` | URL? | |
-
-An organization may only post for services it's registered for — an electricity
-utility cannot publish water status.
-
-### `POST /api/v1/updates`
-
-Publish a newsfeed item, attributed to your organization.
-
-```json
-{
-  "title": "Servicio restablecido en Villa Santana",
-  "summary": "Se normalizó el suministro a las 4:10 p. m.",
-  "severity": "info",
-  "services": ["electricity"],
-  "zone_slugs": ["villa-santana"],
-  "publish": true
-}
-```
-
-### Public reads
-
-`GET /api/v1/status` and `GET /api/v1/updates?limit=50` are open, CORS-enabled,
-and cached for 30s. No key required — please mirror rather than scrape.
-
 ---
 
 ## Moderation
 
-`/admin` — magic-link sign-in, no passwords. A moderator sees the pending
-report queue with contact details, and publishes, rejects, or marks duplicates.
+`/admin` — magic-link sign-in, no passwords. A moderator sees the pending report
+queue with contact details, and publishes, rejects, or marks duplicates.
 
-Grant the role in SQL after the person has signed in once:
-
-```sql
-update profiles set role = 'moderator' where id = '<auth-user-id>';
-```
+Day-to-day operation, including how to verify a report and how to onboard a partner,
+is in **[docs/RUNBOOK.md](./docs/RUNBOOK.md)**.
 
 ---
 
