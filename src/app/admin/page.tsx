@@ -3,7 +3,6 @@ import { Inbox, ShieldAlert } from "lucide-react";
 
 import { ModerationRow } from "@/components/moderation-row";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { getServerSupabase } from "@/lib/supabase/server";
 import { getLang } from "@/lib/lang";
@@ -93,13 +92,18 @@ export default async function AdminPage() {
 
   return (
     <Shell user={user.email}>
-      <div className="flex items-center gap-3">
-        <h2 className="text-xl font-semibold tracking-tight">Cola de revisión</h2>
-        <Badge variant="secondary">{pending.length}</Badge>
+      <div className="flex items-center gap-3 border-b border-foreground/25 pb-2">
+        <h2 className="label-signage text-muted-foreground">Cola de revisión</h2>
+        <span
+          data-readout
+          className="label-signage ml-auto rounded-sm bg-secondary px-1.5 py-1 text-secondary-foreground"
+        >
+          {pending.length}
+        </span>
       </div>
 
       {pending.length === 0 ? (
-        <p className="flex flex-col items-center gap-2 rounded-lg border border-dashed p-12 text-center text-sm text-muted-foreground">
+        <p className="flex flex-col items-center gap-2 border border-dashed border-border p-12 text-center text-sm text-muted-foreground">
           <Inbox className="size-6" aria-hidden />
           No hay reportes pendientes.
         </p>
@@ -123,16 +127,23 @@ function Shell({
 }) {
   return (
     <div className="mx-auto max-w-4xl space-y-6 px-4 py-8 sm:py-12">
-      <header className="flex flex-wrap items-center justify-between gap-3">
+      <header className="flex flex-wrap items-center justify-between gap-3 border-t border-foreground/25 pt-3">
         <div>
-          <h1 className="text-3xl font-semibold tracking-tight">Moderación</h1>
+          <h1 className="display-condensed text-3xl font-extrabold uppercase">
+            Moderación
+          </h1>
           {user ? (
-            <p className="text-sm text-muted-foreground">{user}</p>
+            <p className="font-mono text-xs text-muted-foreground">{user}</p>
           ) : null}
         </div>
         {user ? (
           <form action={signOut}>
-            <Button type="submit" variant="outline" size="sm">
+            <Button
+              type="submit"
+              variant="outline"
+              size="sm"
+              className="label-signage rounded-sm"
+            >
               Cerrar sesión
             </Button>
           </form>

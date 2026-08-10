@@ -36,7 +36,12 @@ function SubmitButton({ lang }: { lang: Lang }) {
   const { pending } = useFormStatus();
 
   return (
-    <Button type="submit" size="lg" disabled={pending} className="w-full sm:w-auto">
+    <Button
+      type="submit"
+      size="lg"
+      disabled={pending}
+      className="label-signage h-11 w-full rounded-sm px-6 sm:w-auto"
+    >
       {pending ? t.submitting : t.submit}
     </Button>
   );
@@ -48,14 +53,15 @@ export function ReportForm({ lang, zones }: { lang: Lang; zones: Zone[] }) {
 
   if (state.ok) {
     return (
-      <Alert className="border-ok/40 bg-ok-muted text-ok-foreground">
+      <Alert className="rounded-sm border-ok/40 bg-ok-muted p-4 text-ok-foreground">
         <CheckCircle2 className="size-4" aria-hidden />
-        <AlertTitle>{t.form.successTitle}</AlertTitle>
-        <AlertDescription className="space-y-3 text-ok-foreground/80">
+        <AlertTitle className="label-signage">{t.form.successTitle}</AlertTitle>
+        <AlertDescription className="mt-1.5 space-y-3 text-ok-foreground/90">
           <p>{t.form.successBody}</p>
           <Button
             variant="outline"
             size="sm"
+            className="label-signage rounded-sm"
             onClick={() => window.location.reload()}
           >
             {t.form.submitAnother}
@@ -70,15 +76,17 @@ export function ReportForm({ lang, zones }: { lang: Lang; zones: Zone[] }) {
   return (
     <form action={formAction} className="space-y-6">
       {state.error === "server" ? (
-        <Alert className="border-down/40 bg-down-muted text-down-foreground">
+        <Alert className="rounded-sm border-down/40 bg-down-muted text-down-foreground">
           <TriangleAlert className="size-4" aria-hidden />
-          <AlertDescription>{t.form.errorGeneric}</AlertDescription>
+          <AlertDescription className="text-down-foreground">
+            {t.form.errorGeneric}
+          </AlertDescription>
         </Alert>
       ) : null}
 
       <div className="grid gap-5 sm:grid-cols-2">
-        <div className="space-y-2">
-          <Label htmlFor="category">
+        <div className="space-y-1.5">
+          <Label className="label-signage text-muted-foreground" htmlFor="category">
             {t.form.category} <span className="text-down">*</span>
           </Label>
           {/*
@@ -92,7 +100,7 @@ export function ReportForm({ lang, zones }: { lang: Lang; zones: Zone[] }) {
             required
             defaultValue=""
             aria-invalid={Boolean(fieldError("category"))}
-            className="h-9 w-full rounded-lg border border-input bg-background px-3 text-sm shadow-xs outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 aria-invalid:border-destructive"
+            className="h-10 w-full rounded-sm border border-input bg-background px-3 text-sm outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 aria-invalid:border-destructive"
           >
             <option value="" disabled>
               {t.form.categoryPlaceholder}
@@ -108,13 +116,13 @@ export function ReportForm({ lang, zones }: { lang: Lang; zones: Zone[] }) {
           ) : null}
         </div>
 
-        <div className="space-y-2">
-          <Label htmlFor="zone_slug">{t.form.zone}</Label>
+        <div className="space-y-1.5">
+          <Label className="label-signage text-muted-foreground" htmlFor="zone_slug">{t.form.zone}</Label>
           <select
             id="zone_slug"
             name="zone_slug"
             defaultValue=""
-            className="h-9 w-full rounded-lg border border-input bg-background px-3 text-sm shadow-xs outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
+            className="h-10 w-full rounded-sm border border-input bg-background px-3 text-sm outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
           >
             <option value="">{t.form.zonePlaceholder}</option>
             {zones.map((zone) => (
@@ -125,13 +133,13 @@ export function ReportForm({ lang, zones }: { lang: Lang; zones: Zone[] }) {
           </select>
         </div>
 
-        <div className="space-y-2">
-          <Label htmlFor="service">{t.form.service}</Label>
+        <div className="space-y-1.5">
+          <Label className="label-signage text-muted-foreground" htmlFor="service">{t.form.service}</Label>
           <select
             id="service"
             name="service"
             defaultValue=""
-            className="h-9 w-full rounded-lg border border-input bg-background px-3 text-sm shadow-xs outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
+            className="h-10 w-full rounded-sm border border-input bg-background px-3 text-sm outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
           >
             <option value="">—</option>
             {SERVICES.map((s) => (
@@ -142,8 +150,8 @@ export function ReportForm({ lang, zones }: { lang: Lang; zones: Zone[] }) {
           </select>
         </div>
 
-        <div className="space-y-2">
-          <Label htmlFor="address_hint">{t.form.addressHint}</Label>
+        <div className="space-y-1.5">
+          <Label className="label-signage text-muted-foreground" htmlFor="address_hint">{t.form.addressHint}</Label>
           <Input
             id="address_hint"
             name="address_hint"
@@ -153,8 +161,8 @@ export function ReportForm({ lang, zones }: { lang: Lang; zones: Zone[] }) {
         </div>
       </div>
 
-      <div className="space-y-2">
-        <Label htmlFor="description">
+      <div className="space-y-1.5">
+        <Label className="label-signage text-muted-foreground" htmlFor="description">
           {t.form.description} <span className="text-down">*</span>
         </Label>
         <Textarea
@@ -172,18 +180,23 @@ export function ReportForm({ lang, zones }: { lang: Lang; zones: Zone[] }) {
         ) : null}
       </div>
 
-      <fieldset className="space-y-4 rounded-lg border bg-muted/30 p-4">
-        <legend className="px-1 text-sm font-medium">
+      {/* Contact details are collected for verification and never published.
+          The block is visually set apart so that promise is legible as a
+          boundary, not just as a sentence someone might skim past. */}
+      <fieldset className="space-y-4 border border-border bg-muted/30 p-4">
+        <legend className="label-signage px-1.5 text-muted-foreground">
           {t.form.contactHeading}
         </legend>
-        <p className="text-xs text-muted-foreground">{t.form.contactNote}</p>
+        <p className="text-xs leading-relaxed text-muted-foreground">
+          {t.form.contactNote}
+        </p>
         <div className="grid gap-4 sm:grid-cols-2">
-          <div className="space-y-2">
-            <Label htmlFor="contact_name">{t.form.contactName}</Label>
+          <div className="space-y-1.5">
+            <Label className="label-signage text-muted-foreground" htmlFor="contact_name">{t.form.contactName}</Label>
             <Input id="contact_name" name="contact_name" maxLength={120} />
           </div>
-          <div className="space-y-2">
-            <Label htmlFor="contact_phone">{t.form.contactPhone}</Label>
+          <div className="space-y-1.5">
+            <Label className="label-signage text-muted-foreground" htmlFor="contact_phone">{t.form.contactPhone}</Label>
             <Input
               id="contact_phone"
               name="contact_phone"

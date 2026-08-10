@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
-import { Phone } from "lucide-react";
+import { Phone, ShieldCheck } from "lucide-react";
 
 import { ReportForm } from "@/components/report-form";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { SectionHeading } from "@/components/section-heading";
 import { getZones } from "@/lib/data";
 import { getDictionary } from "@/lib/i18n";
 import { getLang } from "@/lib/lang";
@@ -18,28 +18,35 @@ export default async function ReportPage() {
   const { data: zones } = await getZones();
 
   return (
-    <div className="mx-auto max-w-3xl px-4 py-8 sm:py-12">
-      <header className="space-y-2">
-        <h1 className="text-3xl font-semibold tracking-tight sm:text-4xl">
-          {t.form.heading}
-        </h1>
-        <p className="text-muted-foreground">{t.form.subheading}</p>
-      </header>
+    <div className="mx-auto max-w-3xl px-4 py-10 pb-16 sm:py-14">
+      <SectionHeading
+        as="h1"
+        title={t.form.heading}
+        subtitle={t.form.subheading}
+      />
 
-      {/* This has to be impossible to miss. The form is not an emergency line. */}
-      <Alert className="mt-6 border-down/40 bg-down-muted text-down-foreground">
-        <Phone className="size-4" aria-hidden />
-        <AlertTitle>
-          <a href="tel:123" className="font-mono underline underline-offset-4">
-            123
-          </a>
-        </AlertTitle>
-        <AlertDescription className="text-down-foreground/80">
+      {/*
+       * This has to be impossible to miss. The form is not an emergency line,
+       * and someone filling it in while a wall is down is the exact failure
+       * this block exists to prevent — so the number is a tap target set at
+       * headline size, not a link inside a sentence.
+       */}
+      <aside className="mt-6 flex flex-col gap-3 border-2 border-down bg-down-muted p-4 text-down-foreground sm:flex-row sm:items-center">
+        <a
+          href="tel:123"
+          aria-label={`${t.hero.emergencyCta}: 123`}
+          className="flex shrink-0 items-center gap-2 bg-down px-4 py-2.5 font-mono text-2xl leading-none font-semibold tracking-tight text-down-contrast transition-opacity hover:opacity-90"
+        >
+          <Phone className="size-5" aria-hidden />
+          123
+        </a>
+        <p className="text-sm leading-relaxed font-medium">
           {t.form.emergencyWarning}
-        </AlertDescription>
-      </Alert>
+        </p>
+      </aside>
 
-      <p className="mt-6 text-sm text-muted-foreground">
+      <p className="mt-6 flex items-start gap-2 text-sm text-muted-foreground">
+        <ShieldCheck className="mt-0.5 size-4 shrink-0" aria-hidden />
         {t.reports.moderationNote}
       </p>
 

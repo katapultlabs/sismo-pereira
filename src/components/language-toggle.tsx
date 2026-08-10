@@ -1,7 +1,6 @@
 "use client";
 
 import { useTransition } from "react";
-import { Languages } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { LANGS, type Lang } from "@/lib/i18n";
@@ -33,14 +32,10 @@ export function LanguageToggle({ current }: { current: Lang }) {
       role="group"
       aria-label={current === "es" ? "Idioma" : "Language"}
       className={cn(
-        "flex items-center rounded-lg border bg-background p-0.5",
+        "flex items-center rounded-sm border border-border",
         pending && "opacity-60",
       )}
     >
-      <Languages
-        className="ml-1.5 size-3.5 shrink-0 text-muted-foreground"
-        aria-hidden
-      />
       {LANGS.map((lang) => (
         <Button
           key={lang}
@@ -50,9 +45,10 @@ export function LanguageToggle({ current }: { current: Lang }) {
           title={LABELS[lang].full}
           onClick={() => choose(lang)}
           className={cn(
-            "px-2 font-mono text-xs",
+            // Stamped, not pill-shaped — it reads as part of the masthead plate.
+            "rounded-none px-1.5 font-mono text-[0.6875rem] font-medium tracking-wider first:rounded-l-[2px] last:rounded-r-[2px]",
             lang === current
-              ? "bg-secondary text-secondary-foreground"
+              ? "bg-foreground text-background hover:bg-foreground"
               : "text-muted-foreground hover:text-foreground",
           )}
         >

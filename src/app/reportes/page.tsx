@@ -3,9 +3,8 @@ import Link from "next/link";
 import { ShieldCheck } from "lucide-react";
 
 import { DegradedNotice } from "@/components/degraded-notice";
-import { Badge } from "@/components/ui/badge";
+import { SectionHeading } from "@/components/section-heading";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
 import { getPublicReports } from "@/lib/data";
 import {
   CATEGORY_LABELS,
@@ -22,27 +21,33 @@ export async function generateMetadata(): Promise<Metadata> {
   return { title: getDictionary(lang).reports.heading };
 }
 
+const CHIP = "label-signage inline-flex items-center rounded-sm border px-1.5 py-1";
+
 export default async function ReportsPage() {
   const lang = await getLang();
   const t = getDictionary(lang);
   const { data: reports, degraded } = await getPublicReports();
 
   return (
-    <div className="mx-auto max-w-4xl px-4 py-8 sm:py-12">
-      <header className="flex flex-wrap items-start justify-between gap-4">
-        <div className="space-y-2">
-          <h1 className="text-3xl font-semibold tracking-tight sm:text-4xl">
-            {t.reports.heading}
-          </h1>
-          <p className="text-muted-foreground">{t.reports.subheading}</p>
-        </div>
-        <Button render={<Link href="/reportar" />}>
-          {t.reports.submitCta}
-        </Button>
-      </header>
+    <div className="mx-auto max-w-4xl px-4 py-10 pb-16 sm:py-14">
+      <SectionHeading
+        as="h1"
+        title={t.reports.heading}
+        subtitle={t.reports.subheading}
+        action={
+          <Button
+            className="label-signage h-9 rounded-sm px-4"
+            render={<Link href="/reportar" />}
+          >
+            {t.reports.submitCta}
+          </Button>
+        }
+      />
 
-      <p className="mt-4 inline-flex items-center gap-2 rounded-md bg-muted px-3 py-2 text-sm text-muted-foreground">
-        <ShieldCheck className="size-4 shrink-0" aria-hidden />
+      {/* Moderation is the whole promise of this page — state it before the
+          first record, not in a footnote. */}
+      <p className="mt-5 flex items-start gap-2 border-l-2 border-fixing bg-fixing-muted px-3 py-2.5 text-sm text-fixing-foreground">
+        <ShieldCheck className="mt-0.5 size-4 shrink-0" aria-hidden />
         {t.reports.moderationNote}
       </p>
 
@@ -53,34 +58,46 @@ export default async function ReportsPage() {
       ) : null}
 
       {reports.length === 0 ? (
-        <p className="mt-8 rounded-lg border border-dashed p-10 text-center text-sm text-muted-foreground">
+        <p className="mt-8 border border-dashed border-border p-10 text-center text-sm text-muted-foreground">
           {t.reports.empty}
         </p>
       ) : (
-        <div className="mt-8 space-y-3">
+        <ul className="mt-8 border-t border-border">
           {reports.map((report) => (
-            <Card key={report.id} className="gap-3 p-5">
-              <div className="flex flex-wrap items-center gap-2">
-                <Badge variant="secondary">
+            <li
+              key={report.id}
+              className="border-b border-border py-4 transition-colors hover:bg-card"
+            >
+              <div className="flex flex-wrap items-center gap-1.5">
+                <span className={`${CHIP} border-transparent bg-secondary text-secondary-foreground`}>
                   {CATEGORY_LABELS[lang][report.category as ReportCategory] ??
                     report.category}
-                </Badge>
+                </span>
                 {report.service ? (
-                  <Badge variant="outline">
+                  <span className={`${CHIP} border-border text-muted-foreground`}>
                     {SERVICE_LABELS[lang][report.service]}
-                  </Badge>
+                  </span>
                 ) : null}
                 {report.zone_name ? (
-                  <Badge variant="outline">{report.zone_name}</Badge>
+                  <span className={`${CHIP} border-border text-muted-foreground`}>
+                    {report.zone_name}
+                  </span>
                 ) : null}
               </div>
 
-              <p className="text-sm leading-relaxed whitespace-pre-line">
+              <p className="mt-2.5 text-sm leading-relaxed whitespace-pre-line">
                 {report.description}
               </p>
 
-              <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground">
-                {report.address_hint ? <span>{report.address_hint}</span> : null}
+              <div className="mt-2.5 flex flex-wrap items-center gap-x-2.5 gap-y-1 font-mono text-[0.6875rem] text-muted-foreground">
+                {report.address_hint ? (
+                  <>
+                    <span>{report.address_hint}</span>
+                    <span className="text-border" aria-hidden>
+                      ·
+                    </span>
+                  </>
+                ) : null}
                 <time
                   dateTime={report.created_at}
                   title={formatDateTime(report.created_at, lang)}
@@ -88,9 +105,9 @@ export default async function ReportsPage() {
                   {formatRelative(report.created_at, lang)}
                 </time>
               </div>
-            </Card>
+            </li>
           ))}
-        </div>
+        </ul>
       )}
     </div>
   );

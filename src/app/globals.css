@@ -4,12 +4,31 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/*
+ * ─────────────────────────────────────────────────────────────────────────────
+ * Sismo Pereira — "Boletín Sísmico"
+ *
+ * The visual language is a civil-defence bulletin board, not a product
+ * dashboard: paper substrate, hairline rules, stamped labels, mono readouts.
+ *
+ * The governing rule is CHROMA IS SIGNAL. The chrome is deliberately
+ * achromatic — warm bone paper by day, cold instrument ink by night — so that
+ * the only saturated colour anywhere on the page is a service-status hue.
+ * A reader scanning for red finds an outage, never a decorative accent.
+ * Do not introduce a saturated brand colour; it would compete with the four
+ * status hues for the same attention and make the board harder to read.
+ * ─────────────────────────────────────────────────────────────────────────────
+ */
+
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: "Geist", "Geist Fallback", ui-sans-serif, system-ui, sans-serif;
-  --font-mono: "Geist Mono", "Geist Mono Fallback", ui-monospace, monospace;
-  --font-heading: "Geist", "Geist Fallback", ui-sans-serif, system-ui, sans-serif;
+
+  /* Set by next/font in src/app/layout.tsx. */
+  --font-sans: var(--font-body), ui-sans-serif, system-ui, sans-serif;
+  --font-heading: var(--font-display), var(--font-body), ui-sans-serif, sans-serif;
+  --font-mono: var(--font-readout), ui-monospace, monospace;
+
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -55,40 +74,46 @@
   --color-fixing-contrast: var(--fixing-contrast);
   --color-fixing-foreground: var(--fixing-foreground);
   --color-fixing-muted: var(--fixing-muted);
-  --radius-sm: calc(var(--radius) * 0.6);
-  --radius-md: calc(var(--radius) * 0.8);
-  --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) * 1.4);
-  --radius-2xl: calc(var(--radius) * 1.8);
-  --radius-3xl: calc(var(--radius) * 2.2);
-  --radius-4xl: calc(var(--radius) * 2.6);
+
+  /* Stamped, not pill-shaped. The tight radius is load-bearing for the
+   * bulletin aesthetic — raising it reads as a generic card UI again. */
+  --radius-sm: calc(var(--radius) * 0.5);
+  --radius-md: var(--radius);
+  --radius-lg: calc(var(--radius) * 1.6);
+  --radius-xl: calc(var(--radius) * 2.2);
+  --radius-2xl: calc(var(--radius) * 3);
+  --radius-3xl: calc(var(--radius) * 4);
+  --radius-4xl: calc(var(--radius) * 6);
 }
 
+/* ── Light: "papel" ──────────────────────────────────────────────────────── */
 :root {
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
-  --chart-1: oklch(0.87 0 0);
-  --chart-2: oklch(0.556 0 0);
-  --chart-3: oklch(0.439 0 0);
-  --chart-4: oklch(0.371 0 0);
-  --chart-5: oklch(0.269 0 0);
-  --radius: 0.625rem;
+  --background: oklch(0.967 0.007 83); /* warm bone stock */
+  --foreground: oklch(0.185 0.014 65); /* warm ink */
+  --card: oklch(0.995 0.003 83); /* a sheet laid on the stock */
+  --card-foreground: oklch(0.185 0.014 65);
+  --popover: oklch(0.995 0.003 83);
+  --popover-foreground: oklch(0.185 0.014 65);
+  --primary: oklch(0.21 0.016 65);
+  --primary-foreground: oklch(0.975 0.006 83);
+  --secondary: oklch(0.925 0.009 83);
+  --secondary-foreground: oklch(0.24 0.015 65);
+  --muted: oklch(0.933 0.008 83);
+  --muted-foreground: oklch(0.455 0.014 65);
+  --accent: oklch(0.906 0.011 83);
+  --accent-foreground: oklch(0.22 0.015 65);
+  --destructive: oklch(0.515 0.213 27);
+  /* Rules are meant to be seen — this is a printed form, not a soft card UI. */
+  --border: oklch(0.858 0.011 80);
+  --input: oklch(0.83 0.012 80);
+  --ring: oklch(0.44 0.032 65);
+  --chart-1: oklch(0.87 0.008 83);
+  --chart-2: oklch(0.556 0.012 70);
+  --chart-3: oklch(0.439 0.013 68);
+  --chart-4: oklch(0.371 0.014 66);
+  --chart-5: oklch(0.269 0.015 65);
+  --radius: 0.1875rem;
+
   /*
    * Semantic service-status palette. Hue-separated so status never depends on
    * colour alone.
@@ -98,91 +123,208 @@
    *   --x-contrast  text ON the solid fill
    *   --x-muted     tinted surface (badges, alerts)
    *   --x-foreground text ON the muted surface
+   *
+   * Every --x-foreground/--x-muted and --x-contrast/--x pair is verified at
+   * >= 4.5:1 by `pnpm check:contrast` (scripts/check-contrast.mjs). Re-run it
+   * after touching any value here — this palette has regressed before.
    */
-  --ok: oklch(0.58 0.15 149);
-  --ok-contrast: oklch(0.99 0 0);
-  --ok-muted: oklch(0.95 0.04 149);
-  --ok-foreground: oklch(0.36 0.1 149);
-  --warn: oklch(0.72 0.16 70);
-  --warn-contrast: oklch(0.2 0.03 70);
-  --warn-muted: oklch(0.96 0.05 70);
-  --warn-foreground: oklch(0.4 0.11 70);
-  --down: oklch(0.55 0.22 27);
-  --down-contrast: oklch(0.99 0 0);
-  --down-muted: oklch(0.95 0.04 27);
-  --down-foreground: oklch(0.4 0.16 27);
-  --fixing: oklch(0.55 0.16 250);
-  --fixing-contrast: oklch(0.99 0 0);
-  --fixing-muted: oklch(0.95 0.04 250);
-  --fixing-foreground: oklch(0.4 0.13 250);
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
+  /* L is capped at 0.52 here: green is the lightest of the four hues at equal
+   * L, and anything above this drops white `--ok-contrast` below 4.5:1. */
+  --ok: oklch(0.52 0.145 149);
+  --ok-contrast: oklch(0.99 0.005 149);
+  --ok-muted: oklch(0.936 0.045 149);
+  --ok-foreground: oklch(0.335 0.1 149);
+  --warn: oklch(0.72 0.155 70);
+  --warn-contrast: oklch(0.2 0.035 70);
+  --warn-muted: oklch(0.945 0.055 78);
+  --warn-foreground: oklch(0.375 0.105 60);
+  --down: oklch(0.515 0.215 27);
+  --down-contrast: oklch(0.99 0.005 27);
+  --down-muted: oklch(0.94 0.042 27);
+  --down-foreground: oklch(0.37 0.16 27);
+  --fixing: oklch(0.52 0.16 250);
+  --fixing-contrast: oklch(0.99 0.004 250);
+  --fixing-muted: oklch(0.934 0.04 250);
+  --fixing-foreground: oklch(0.37 0.13 250);
+
+  --sidebar: oklch(0.945 0.008 83);
+  --sidebar-foreground: oklch(0.185 0.014 65);
+  --sidebar-primary: oklch(0.21 0.016 65);
+  --sidebar-primary-foreground: oklch(0.975 0.006 83);
+  --sidebar-accent: oklch(0.906 0.011 83);
+  --sidebar-accent-foreground: oklch(0.22 0.015 65);
+  --sidebar-border: oklch(0.858 0.011 80);
+  --sidebar-ring: oklch(0.44 0.032 65);
+
+  /* Seismograph chart-paper ruling behind the hero. */
+  --rule-ink: oklch(0.185 0.014 65 / 5%);
+  --rule-tick: oklch(0.185 0.014 65 / 9%);
 }
 
+/* ── Dark: "noche" ───────────────────────────────────────────────────────────
+ * Not a tinted copy of the light theme. Day is warm paper; night is a cold
+ * instrument face. People read this during a blackout, on battery, in the
+ * dark — the background is genuinely dark rather than mid-grey.
+ * ────────────────────────────────────────────────────────────────────────── */
 .dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.922 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.556 0 0);
-  --ok: oklch(0.7 0.16 149);
+  --background: oklch(0.152 0.01 255);
+  --foreground: oklch(0.955 0.004 85);
+  --card: oklch(0.196 0.011 255);
+  --card-foreground: oklch(0.955 0.004 85);
+  --popover: oklch(0.196 0.011 255);
+  --popover-foreground: oklch(0.955 0.004 85);
+  --primary: oklch(0.93 0.006 85);
+  --primary-foreground: oklch(0.18 0.012 255);
+  --secondary: oklch(0.265 0.013 255);
+  --secondary-foreground: oklch(0.955 0.004 85);
+  --muted: oklch(0.255 0.012 255);
+  --muted-foreground: oklch(0.735 0.012 255);
+  --accent: oklch(0.3 0.014 255);
+  --accent-foreground: oklch(0.96 0.004 85);
+  --destructive: oklch(0.68 0.2 25);
+  --border: oklch(0.98 0.005 255 / 14%);
+  --input: oklch(0.98 0.005 255 / 20%);
+  --ring: oklch(0.65 0.03 255);
+  --chart-1: oklch(0.87 0.006 255);
+  --chart-2: oklch(0.7 0.01 255);
+  --chart-3: oklch(0.55 0.012 255);
+  --chart-4: oklch(0.42 0.012 255);
+  --chart-5: oklch(0.3 0.012 255);
+
+  --ok: oklch(0.72 0.16 149);
   --ok-contrast: oklch(0.16 0.02 149);
-  --ok-muted: oklch(0.28 0.05 149);
-  --ok-foreground: oklch(0.9 0.09 149);
-  --warn: oklch(0.79 0.16 70);
+  --ok-muted: oklch(0.3 0.055 149);
+  --ok-foreground: oklch(0.885 0.09 149);
+  --warn: oklch(0.8 0.155 70);
   --warn-contrast: oklch(0.18 0.03 70);
-  --warn-muted: oklch(0.3 0.06 70);
-  --warn-foreground: oklch(0.92 0.1 70);
-  --down: oklch(0.68 0.2 27);
-  --down-contrast: oklch(0.16 0.02 27);
-  --down-muted: oklch(0.3 0.07 27);
-  --down-foreground: oklch(0.91 0.07 27);
-  --fixing: oklch(0.68 0.15 250);
-  --fixing-contrast: oklch(0.16 0.02 250);
-  --fixing-muted: oklch(0.29 0.06 250);
-  --fixing-foreground: oklch(0.9 0.07 250);
-  --chart-1: oklch(0.87 0 0);
-  --chart-2: oklch(0.556 0 0);
-  --chart-3: oklch(0.439 0 0);
-  --chart-4: oklch(0.371 0 0);
-  --chart-5: oklch(0.269 0 0);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.556 0 0);
+  --warn-muted: oklch(0.315 0.06 70);
+  --warn-foreground: oklch(0.905 0.1 78);
+  --down: oklch(0.665 0.205 27);
+  --down-contrast: oklch(0.15 0.02 27);
+  --down-muted: oklch(0.315 0.075 27);
+  --down-foreground: oklch(0.885 0.075 27);
+  --fixing: oklch(0.685 0.15 250);
+  --fixing-contrast: oklch(0.15 0.02 250);
+  --fixing-muted: oklch(0.305 0.065 250);
+  --fixing-foreground: oklch(0.885 0.07 250);
+
+  --sidebar: oklch(0.178 0.011 255);
+  --sidebar-foreground: oklch(0.955 0.004 85);
+  --sidebar-primary: oklch(0.93 0.006 85);
+  --sidebar-primary-foreground: oklch(0.18 0.012 255);
+  --sidebar-accent: oklch(0.3 0.014 255);
+  --sidebar-accent-foreground: oklch(0.96 0.004 85);
+  --sidebar-border: oklch(0.98 0.005 255 / 14%);
+  --sidebar-ring: oklch(0.65 0.03 255);
+
+  --rule-ink: oklch(0.955 0.004 85 / 6%);
+  --rule-tick: oklch(0.955 0.004 85 / 10%);
 }
 
 @layer base {
   * {
     @apply border-border outline-ring/50;
   }
-  body {
-    @apply bg-background text-foreground;
-  }
   html {
     @apply font-sans;
+    /* Spanish body copy at small sizes on cheap screens — favour legibility. */
+    text-size-adjust: 100%;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-feature-settings: "kern" 1;
+  }
+  /* Every heading is signage: condensed, tight, and set in the display face. */
+  h1,
+  h2,
+  h3 {
+    @apply font-heading;
+    font-stretch: 88%;
+  }
+  /* Numerals in a bulletin are data. Line them up. */
+  time,
+  [data-readout] {
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+/* ── Design-language utilities ───────────────────────────────────────────── */
+
+/* Small-caps signage label. Used for section eyebrows and field labels. */
+@utility label-signage {
+  @apply font-mono text-[0.6875rem] leading-none font-medium tracking-[0.14em] uppercase;
+}
+
+/* Condensed display setting for headlines. `font-stretch` (not
+ * `font-variation-settings`) so it composes with font-weight on the wdth axis. */
+@utility display-condensed {
+  @apply font-heading;
+  font-stretch: 84%;
+  letter-spacing: -0.015em;
+}
+
+/* Seismograph chart paper. Pure CSS gradients — no image request, which
+ * matters more than the texture does on a 2G connection.
+ *
+ * Deliberately anisotropic: dense horizontal ruling with sparse vertical time
+ * marks, the way a chart recorder's drum is printed. An even grid in both
+ * directions just reads as graph paper. */
+@utility chart-paper {
+  background-image:
+    repeating-linear-gradient(
+      to right,
+      var(--rule-tick) 0 1px,
+      transparent 1px 2.5rem
+    ),
+    repeating-linear-gradient(
+      to bottom,
+      var(--rule-ink) 0 1px,
+      transparent 1px 0.5rem
+    );
+}
+
+/* ── Motion ──────────────────────────────────────────────────────────────────
+ * One orchestrated reveal on load, nothing else. Anything more would be noise
+ * on a page people open in an emergency.
+ * ────────────────────────────────────────────────────────────────────────── */
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(0.375rem);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@utility animate-rise {
+  animation: rise 0.45s cubic-bezier(0.2, 0.7, 0.3, 1) both;
+}
+
+/* Draws the masthead seismograph trace left-to-right, once. */
+@keyframes trace {
+  from {
+    stroke-dashoffset: var(--trace-length);
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@utility animate-trace {
+  stroke-dasharray: var(--trace-length);
+  animation: trace 1.6s cubic-bezier(0.4, 0, 0.2, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }
