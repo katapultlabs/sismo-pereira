@@ -80,9 +80,14 @@ supabase start      # requires OrbStack/Docker running
 supabase db reset   # migrations + seed
 ```
 
-`supabase/` contains only `migrations/` and `seed.sql` — there is no committed
-`config.toml`. If `supabase start` complains, run `supabase init` first and do not
-commit the generated secrets.
+`supabase/config.toml` is committed, so `supabase start` works without `supabase
+init`. Every secret in it is an `env(...)` reference rather than a literal; keep it
+that way. The generated `supabase/.gitignore` excludes `.env.keys` and friends —
+don't remove it.
+
+If the database container fails to start with *"port is already allocated"*, another
+Supabase project is running: `supabase stop --project-id <ref>`, or change
+`[db] port` in `config.toml`.
 
 The app runs fine with **no** local Supabase at all; you only need it to work on
 writes.

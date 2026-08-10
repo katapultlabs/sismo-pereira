@@ -43,8 +43,8 @@ There is no test suite. Verification is `pnpm build` plus exercising the route i
 browser — see the language bugs in [docs/DECISIONS.md](./docs/DECISIONS.md#reversed-or-superseded),
 both of which passed types and build and were only visible on click.
 
-`supabase/` holds only `migrations/` and `seed.sql`; there is no committed
-`config.toml`, so `supabase init` may be needed first.
+`supabase/config.toml` is committed (secrets are `env(...)` references — keep them
+that way), so `supabase start` needs no `supabase init`.
 
 **The site runs with no `.env.local` at all** — every read falls back to seed content.
 Supabase is currently **not provisioned in production** either; report submission,
