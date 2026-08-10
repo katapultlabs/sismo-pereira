@@ -121,7 +121,7 @@ export function ModerationRow({
           value="verified"
           size="sm"
           disabled={pending}
-          className="gap-1.5 bg-ok text-ok-foreground hover:bg-ok/90"
+          className="gap-1.5 bg-ok text-ok-contrast hover:bg-ok/90"
         >
           <Check className="size-3.5" aria-hidden />
           Publicar

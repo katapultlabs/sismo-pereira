@@ -76,7 +76,7 @@ export function SiteHeader({ lang }: { lang: Lang }) {
           {/* The emergency line stays one tap away on every page, at every width. */}
           <Button
             size="sm"
-            className="gap-1.5 bg-down font-semibold text-down-foreground hover:bg-down/90"
+            className="gap-1.5 bg-down font-semibold text-down-contrast hover:bg-down/90"
             render={<a href="tel:123" aria-label={`${t.hero.emergencyCta}: 123`} />}
           >
             <Phone className="size-3.5" aria-hidden />

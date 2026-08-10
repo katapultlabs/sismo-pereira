@@ -40,15 +40,19 @@
   --color-card-foreground: var(--card-foreground);
   --color-card: var(--card);
   --color-ok: var(--ok);
+  --color-ok-contrast: var(--ok-contrast);
   --color-ok-foreground: var(--ok-foreground);
   --color-ok-muted: var(--ok-muted);
   --color-warn: var(--warn);
+  --color-warn-contrast: var(--warn-contrast);
   --color-warn-foreground: var(--warn-foreground);
   --color-warn-muted: var(--warn-muted);
   --color-down: var(--down);
+  --color-down-contrast: var(--down-contrast);
   --color-down-foreground: var(--down-foreground);
   --color-down-muted: var(--down-muted);
   --color-fixing: var(--fixing);
+  --color-fixing-contrast: var(--fixing-contrast);
   --color-fixing-foreground: var(--fixing-foreground);
   --color-fixing-muted: var(--fixing-muted);
   --radius-sm: calc(var(--radius) * 0.6);
@@ -85,19 +89,32 @@
   --chart-4: oklch(0.371 0 0);
   --chart-5: oklch(0.269 0 0);
   --radius: 0.625rem;
-  /* Semantic service-status palette. Hue-separated so status reads without color alone. */
-  --ok: oklch(0.62 0.15 149);
-  --ok-foreground: oklch(0.99 0 0);
+  /*
+   * Semantic service-status palette. Hue-separated so status never depends on
+   * colour alone.
+   *
+   * Token roles — getting these mixed up causes real contrast failures:
+   *   --x           solid fill (buttons, accent rails)
+   *   --x-contrast  text ON the solid fill
+   *   --x-muted     tinted surface (badges, alerts)
+   *   --x-foreground text ON the muted surface
+   */
+  --ok: oklch(0.58 0.15 149);
+  --ok-contrast: oklch(0.99 0 0);
   --ok-muted: oklch(0.95 0.04 149);
+  --ok-foreground: oklch(0.36 0.1 149);
   --warn: oklch(0.72 0.16 70);
-  --warn-foreground: oklch(0.2 0.03 70);
+  --warn-contrast: oklch(0.2 0.03 70);
   --warn-muted: oklch(0.96 0.05 70);
-  --down: oklch(0.58 0.22 27);
-  --down-foreground: oklch(0.99 0 0);
+  --warn-foreground: oklch(0.4 0.11 70);
+  --down: oklch(0.55 0.22 27);
+  --down-contrast: oklch(0.99 0 0);
   --down-muted: oklch(0.95 0.04 27);
-  --fixing: oklch(0.6 0.15 250);
-  --fixing-foreground: oklch(0.99 0 0);
+  --down-foreground: oklch(0.4 0.16 27);
+  --fixing: oklch(0.55 0.16 250);
+  --fixing-contrast: oklch(0.99 0 0);
   --fixing-muted: oklch(0.95 0.04 250);
+  --fixing-foreground: oklch(0.4 0.13 250);
   --sidebar: oklch(0.985 0 0);
   --sidebar-foreground: oklch(0.145 0 0);
   --sidebar-primary: oklch(0.205 0 0);
@@ -128,17 +145,21 @@
   --input: oklch(1 0 0 / 15%);
   --ring: oklch(0.556 0 0);
   --ok: oklch(0.7 0.16 149);
-  --ok-foreground: oklch(0.16 0.02 149);
+  --ok-contrast: oklch(0.16 0.02 149);
   --ok-muted: oklch(0.28 0.05 149);
+  --ok-foreground: oklch(0.9 0.09 149);
   --warn: oklch(0.79 0.16 70);
-  --warn-foreground: oklch(0.18 0.03 70);
+  --warn-contrast: oklch(0.18 0.03 70);
   --warn-muted: oklch(0.3 0.06 70);
+  --warn-foreground: oklch(0.92 0.1 70);
   --down: oklch(0.68 0.2 27);
-  --down-foreground: oklch(0.16 0.02 27);
+  --down-contrast: oklch(0.16 0.02 27);
   --down-muted: oklch(0.3 0.07 27);
+  --down-foreground: oklch(0.91 0.07 27);
   --fixing: oklch(0.68 0.15 250);
-  --fixing-foreground: oklch(0.16 0.02 250);
+  --fixing-contrast: oklch(0.16 0.02 250);
   --fixing-muted: oklch(0.29 0.06 250);
+  --fixing-foreground: oklch(0.9 0.07 250);
   --chart-1: oklch(0.87 0 0);
   --chart-2: oklch(0.556 0 0);
   --chart-3: oklch(0.439 0 0);
