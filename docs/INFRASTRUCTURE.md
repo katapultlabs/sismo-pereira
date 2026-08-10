@@ -58,7 +58,39 @@ records; the dashboard is the more current of the two.
 
 ---
 
-## Deploying
+## Branches and deploying
+
+**`main` is production.** Pushing to it deploys, through the Vercel GitHub
+integration. There is no PR gate, no CI, and no review queue — see
+[DECISIONS.md](./DECISIONS.md#no-prs-no-ci-gate-main-deploys).
+
+The whole path:
+
+```bash
+git switch -c fix-water-zone     # branch off main
+# …work…
+pnpm build                       # the only gate. It has to pass.
+git switch main && git merge fix-water-zone && git push
+```
+
+That is it. You review your own work, you merge your own branch, you deploy.
+
+**Branches are optional but cheap.** Push one and Vercel builds a preview URL for it
+automatically — the fastest way to look at a change on a phone, or to send it to
+someone in Pereira before it goes live. Delete the branch after merging.
+
+**Worktrees** (`git worktree add`) are for running two changes side by side without
+stashing — most useful when a coding agent is working on one thing while you edit
+another. `.claude/worktrees/` is gitignored, so agent worktrees never show up in a
+diff. Nothing else about the process changes; the branch still merges to `main` the
+same way.
+
+Never force-push `main`, and never commit `.env.local`.
+
+### Deploying by hand
+
+Only needed when you are deploying something that is not on `main` — a hotfix while
+GitHub is down, or promoting a preview.
 
 ```bash
 pnpm dlx vercel@latest deploy --prod --yes --scope katapult-8b361435
@@ -71,7 +103,12 @@ setup` has been run. The stale CLI hangs on some non-interactive flows — notab
 `vercel env add <NAME> preview --value … --yes`, which loops on a "which Git branch?"
 prompt forever instead of defaulting to all preview branches.
 
-Pushing to `main` also triggers a deployment through the GitHub integration.
+### Rolling back
+
+Faster than fixing forward, and usually right during an incident: promote the previous
+good deployment from the Vercel dashboard (**Deployments → ⋯ → Promote to
+Production**), then fix `main` at your own pace. `git revert` and push also works, but
+it waits on a build.
 
 ---
 

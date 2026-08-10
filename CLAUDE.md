@@ -43,6 +43,19 @@ There is no test suite. Verification is `pnpm build` plus exercising the route i
 browser — see the language bugs in [docs/DECISIONS.md](./docs/DECISIONS.md#reversed-or-superseded),
 both of which passed types and build and were only visible on click.
 
+## Shipping
+
+`main` is production; pushing it deploys. **Do not open pull requests** — this project
+has no PR flow, no CI, and no review gate
+([why](./docs/DECISIONS.md#no-prs-no-ci-gate-main-deploys)). Work on a branch, get
+`pnpm build` passing, merge to `main`, push. Use a git worktree when working alongside
+someone else's change; `.claude/worktrees/` is gitignored.
+
+Because nothing reviews a change before it is live, `pnpm build` and
+[docs/EDITORIAL.md](./docs/EDITORIAL.md) carry the weight a reviewer otherwise would.
+Never force-push `main`. Deploy commands and rollback are in
+[docs/INFRASTRUCTURE.md](./docs/INFRASTRUCTURE.md#branches-and-deploying).
+
 `supabase/config.toml` is committed (secrets are `env(...)` references — keep them
 that way), so `supabase start` needs no `supabase init`.
 

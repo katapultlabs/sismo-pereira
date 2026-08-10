@@ -12,7 +12,7 @@ run it. These documents go deeper, and each is written for a specific reader.
 | [RUNBOOK.md](./RUNBOOK.md) | **Operating the site during an incident.** Moderating the queue, publishing an update, onboarding a partner, and what to do when something breaks. |
 | [PARTNER-API.md](./PARTNER-API.md) | **A utility, telco, or agency integrating with us.** Self-contained: safe to send to someone outside the project. |
 | [SUPABASE.md](./SUPABASE.md) | **Working on the database, auth, or permissions.** Schema, the RLS trust model, and the provisioning steps that are still pending. |
-| [INFRASTRUCTURE.md](./INFRASTRUCTURE.md) | **Touching hosting, DNS, or the domain.** Includes the failure modes we already hit, so you don't rediscover them. |
+| [INFRASTRUCTURE.md](./INFRASTRUCTURE.md) | **Shipping a change, or touching hosting, DNS, or the domain.** Branches, deploys, and rollback — plus the failure modes we already hit, so you don't rediscover them. |
 | [DECISIONS.md](./DECISIONS.md) | **Wondering why something is the way it is** — including the things we deliberately chose *not* to build. |
 
 For coding agents, [`../CLAUDE.md`](../CLAUDE.md) is the entry point; it carries the

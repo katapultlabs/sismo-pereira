@@ -179,6 +179,39 @@ compelled to hand over.
 
 ---
 
+## Process
+
+### No PRs, no CI gate; `main` deploys
+
+**Decision:** branch off `main`, run `pnpm build`, merge your own branch, push. Pushing
+`main` deploys. No pull requests, no required reviewers, no branch protection, no CI
+workflow. Everyone here reviews their own work and ships it.
+
+**Why:** the contributors are a handful of people, mostly working locally and often in
+the same room. A PR you approve yourself is not review — it is a form to fill in, and
+during an incident it is a form standing between a wrong water status and its
+correction. The safety properties that actually hold on this project are not
+procedural: `pnpm build` catches the type and lint failures, reads degrade instead of
+500ing, and RLS enforces authorization in Postgres regardless of who merged what.
+
+**Cost, stated plainly:** nothing stops a bad commit reaching production. The mitigation
+is rollback speed rather than prevention — promoting the previous deployment is one
+click. And the failure we actually fear is publishing something false, which a reviewer
+skimming a diff would not reliably catch either; [EDITORIAL.md](./EDITORIAL.md) is the
+control for that, not a gate.
+
+**Revisit when any of these becomes true:**
+
+- Supabase is provisioned and migrations run against real data. A bad migration is not
+  rollback-able the way a deploy is, and it is the first thing here that will deserve a
+  second pair of eyes.
+- Contributors outside the core group start sending changes.
+- We break production twice in a way `pnpm build` would not have caught.
+
+Until then, added process is not caution — it is overhead charged to an emergency site.
+
+---
+
 ## Reversed or superseded
 
 ### `/es` and `/en` route prefixes → removed

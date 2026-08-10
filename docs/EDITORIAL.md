@@ -1,7 +1,11 @@
 # Editorial rules
 
-**Audience:** moderators, anyone writing content, anyone reviewing a pull request
-that touches what the site displays.
+**Audience:** moderators, anyone writing content, anyone shipping a change that
+touches what the site displays.
+
+Nobody else will review that change before it goes live — see
+[DECISIONS.md](./DECISIONS.md#no-prs-no-ci-gate-main-deploys). These rules are the
+review.
 
 This is the most important document in the repository. Everything else is
 replaceable; this is the thing that makes the site worth trusting.

@@ -191,3 +191,22 @@ supabase/
 This was built fast, in a real emergency. Corrections to the data model, the
 zone list, or the Spanish copy are especially welcome — the people best placed
 to catch errors are the ones in Pereira.
+
+**How work reaches production — the whole process:**
+
+```bash
+git switch -c fix-water-zone     # branch off main
+# …work…
+pnpm build                       # the only gate. It has to pass.
+git switch main && git merge fix-water-zone && git push
+```
+
+`main` is production: pushing it deploys. **No pull requests, no CI, no review
+queue** — you review your own work, merge your own branch, and ship. Push a branch
+first if you want a Vercel preview URL to check on a phone or share before it goes
+live. Don't force-push `main`.
+
+Read [docs/EDITORIAL.md](./docs/EDITORIAL.md) before changing anything the site
+displays — with no review gate, those rules are the control. The reasoning behind
+keeping the process this thin, and what would make us add to it, is in
+[docs/DECISIONS.md](./docs/DECISIONS.md#no-prs-no-ci-gate-main-deploys).
