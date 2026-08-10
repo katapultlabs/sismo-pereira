@@ -1,8 +1,6 @@
 import Link from "next/link";
 import { ExternalLink, Pin } from "lucide-react";
 
-import { Badge } from "@/components/ui/badge";
-import { Card } from "@/components/ui/card";
 import {
   SERVICE_LABELS,
   SEVERITY_LABELS,
@@ -27,37 +25,51 @@ const SEVERITY_RAIL: Record<SeverityLevel, string> = {
   critical: "bg-down",
 };
 
+/** Stamped chip, shared by every label on the card. */
+const CHIP = "label-signage inline-flex items-center gap-1 rounded-sm border px-1.5 py-1";
+
 export function UpdateCard({ update, lang }: { update: Update; lang: Lang }) {
   const t = getDictionary(lang);
   const href = update.slug ? `/actualizaciones/${update.slug}` : null;
 
   return (
-    <Card className="relative gap-0 overflow-hidden p-0">
+    <article className="relative overflow-hidden border border-border bg-card">
       <div
-        className={cn("absolute inset-y-0 left-0 w-1", SEVERITY_RAIL[update.severity])}
+        className={cn(
+          "absolute inset-y-0 left-0 w-1",
+          SEVERITY_RAIL[update.severity],
+        )}
         aria-hidden
       />
-      <article className="flex flex-col gap-2.5 p-5 pl-6">
-        <div className="flex flex-wrap items-center gap-2">
-          <Badge variant="outline" className={SEVERITY_STYLES[update.severity]}>
+
+      <div className="flex flex-col gap-2.5 p-4 pl-5">
+        <div className="flex flex-wrap items-center gap-1.5">
+          <span className={cn(CHIP, SEVERITY_STYLES[update.severity])}>
             {SEVERITY_LABELS[lang][update.severity]}
-          </Badge>
+          </span>
           {update.pinned ? (
-            <Badge variant="outline" className="gap-1">
+            <span className={cn(CHIP, "border-border text-muted-foreground")}>
               <Pin className="size-3" aria-hidden />
               {t.updates.pinned}
-            </Badge>
+            </span>
           ) : null}
           {update.services.map((service) => (
-            <Badge key={service} variant="secondary">
+            <span
+              key={service}
+              className={cn(CHIP, "border-transparent bg-secondary text-secondary-foreground")}
+            >
               {SERVICE_LABELS[lang][service]}
-            </Badge>
+            </span>
           ))}
         </div>
 
-        <h3 className="text-lg leading-snug font-semibold tracking-tight text-balance">
+        <h3 className="display-condensed text-xl leading-tight font-bold text-balance">
           {href ? (
-            <Link href={href} className="hover:underline underline-offset-4">
+            <Link
+              href={href}
+              /* Whole-card target: these get tapped one-handed, in a hurry. */
+              className="after:absolute after:inset-0 hover:underline underline-offset-4"
+            >
               {update.title}
             </Link>
           ) : (
@@ -71,7 +83,7 @@ export function UpdateCard({ update, lang }: { update: Update; lang: Lang }) {
           </p>
         ) : null}
 
-        <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground">
+        <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1 font-mono text-[0.6875rem] text-muted-foreground">
           {update.published_at ? (
             <time
               dateTime={update.published_at}
@@ -85,21 +97,24 @@ export function UpdateCard({ update, lang }: { update: Update; lang: Lang }) {
           </span>
           <span>{SOURCE_LABELS[lang][update.source]}</span>
           {update.source_name ? (
-            <span className="font-medium text-foreground">{update.source_name}</span>
+            <span className="font-semibold text-foreground">
+              {update.source_name}
+            </span>
           ) : null}
           {update.source_url ? (
             <a
               href={update.source_url}
               target="_blank"
               rel="noreferrer noopener"
-              className="inline-flex items-center gap-1 underline underline-offset-2 hover:text-foreground"
+              /* Lifted above the title's ::after overlay so it stays clickable. */
+              className="relative z-10 inline-flex items-center gap-1 underline underline-offset-2 hover:text-foreground"
             >
               {t.updates.viewSource}
               <ExternalLink className="size-3" aria-hidden />
             </a>
           ) : null}
         </div>
-      </article>
-    </Card>
+      </div>
+    </article>
   );
 }

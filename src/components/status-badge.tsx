@@ -50,13 +50,16 @@ export function StatusBadge({
   return (
     <span
       className={cn(
-        "inline-flex items-center gap-1.5 rounded-full border font-medium",
-        size === "lg" ? "px-3 py-1 text-sm" : "px-2.5 py-0.5 text-xs",
+        // Stamped rather than pill-shaped: this is a label applied to a record,
+        // not a tag. Uppercase mono keeps every status the same visual weight,
+        // so "sin confirmar" reads as an answer rather than a missing one.
+        "label-signage inline-flex items-center gap-1.5 rounded-sm border",
+        size === "lg" ? "px-2.5 py-1.5 text-xs" : "px-2 py-1",
         statusClass,
         className,
       )}
     >
-      <Icon className={size === "lg" ? "size-4" : "size-3.5"} aria-hidden />
+      <Icon className={size === "lg" ? "size-3.5" : "size-3"} aria-hidden />
       {STATUS_LABELS[lang][status]}
     </span>
   );

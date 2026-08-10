@@ -29,6 +29,8 @@ const es = {
     partners: "Organizaciones",
     submit: "Reportar",
     skipToContent: "Saltar al contenido",
+    menu: "Menú",
+    tagline: "Boletín de situación",
   },
   hero: {
     eyebrow: "Sismo del 10 de agosto de 2026",
@@ -38,9 +40,17 @@ const es = {
       "emergencia. Cada dato indica su fuente y su hora.",
     emergencyCta: "Líneas de emergencia",
     reportCta: "Reportar una situación",
-    quakeSummary:
-      "Magnitud 7.4 · 7:34 a. m. · epicentro en Chocó, ~55 km al occidente de " +
-      "Pereira · profundidad ~107 km",
+    /*
+     * The same four facts that used to be one run-on sentence, split into
+     * labelled fields so the hero can set them as an instrument readout.
+     * Values are unchanged — this is a typographic change, not new data.
+     */
+    quakeFacts: [
+      { label: "Magnitud", value: "7.4" },
+      { label: "Hora local", value: "7:34 a. m." },
+      { label: "Epicentro", value: "Chocó, ~55 km al occidente de Pereira" },
+      { label: "Profundidad", value: "~107 km" },
+    ],
   },
   status: {
     heading: "Estado de servicios",
@@ -162,6 +172,11 @@ const es = {
       "No pudimos conectarnos a la base de datos en vivo, así que estás viendo " +
       "el último contenido publicado con el sitio. Puede estar desactualizado.",
   },
+  theme: {
+    label: "Tema",
+    toDark: "Cambiar a modo noche",
+    toLight: "Cambiar a modo día",
+  },
   time: {
     justNow: "hace un momento",
     minutesAgo: (n: number) => `hace ${n} min`,
@@ -186,6 +201,8 @@ const en: typeof es = {
     partners: "Organizations",
     submit: "Report",
     skipToContent: "Skip to content",
+    menu: "Menu",
+    tagline: "Situation bulletin",
   },
   hero: {
     eyebrow: "August 10, 2026 earthquake",
@@ -195,9 +212,12 @@ const en: typeof es = {
       "Every item shows its source and timestamp.",
     emergencyCta: "Emergency lines",
     reportCta: "Report a situation",
-    quakeSummary:
-      "Magnitude 7.4 · 7:34 a.m. · epicenter in Chocó, ~55 km west of Pereira · " +
-      "depth ~107 km",
+    quakeFacts: [
+      { label: "Magnitude", value: "7.4" },
+      { label: "Local time", value: "7:34 a.m." },
+      { label: "Epicenter", value: "Chocó, ~55 km west of Pereira" },
+      { label: "Depth", value: "~107 km" },
+    ],
   },
   status: {
     heading: "Utility status",
@@ -316,6 +336,11 @@ const en: typeof es = {
     body:
       "We could not reach the live database, so you are seeing the last content " +
       "shipped with the site. It may be out of date.",
+  },
+  theme: {
+    label: "Theme",
+    toDark: "Switch to night mode",
+    toLight: "Switch to day mode",
   },
   time: {
     justNow: "just now",

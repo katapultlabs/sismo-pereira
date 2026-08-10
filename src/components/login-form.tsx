@@ -64,8 +64,10 @@ export function LoginForm() {
         </Alert>
       ) : null}
 
-      <div className="space-y-2">
-        <Label htmlFor="email">Correo institucional</Label>
+      <div className="space-y-1.5">
+        <Label className="label-signage text-muted-foreground" htmlFor="email">
+          Correo institucional
+        </Label>
         <Input
           id="email"
           name="email"
@@ -76,7 +78,11 @@ export function LoginForm() {
         />
       </div>
 
-      <Button type="submit" className="w-full" disabled={state === "sending"}>
+      <Button
+        type="submit"
+        className="label-signage h-10 w-full rounded-sm"
+        disabled={state === "sending"}
+      >
         {state === "sending" ? "Enviando…" : "Enviar enlace de acceso"}
       </Button>
     </form>

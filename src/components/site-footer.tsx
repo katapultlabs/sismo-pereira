@@ -1,9 +1,9 @@
 // lucide-react v1 removed brand icons, so this uses a generic code glyph.
 import { Code } from "lucide-react";
+import Link from "next/link";
 
 import { EMERGENCY_LINES } from "@/lib/fallback-data";
 import { getDictionary, type Lang } from "@/lib/i18n";
-import Link from "next/link";
 
 const REPO_URL = "https://github.com/katapultlabs/sismo-pereira";
 
@@ -11,36 +11,54 @@ export function SiteFooter({ lang }: { lang: Lang }) {
   const t = getDictionary(lang);
 
   return (
-    <footer className="mt-auto border-t bg-muted/30">
+    <footer className="mt-auto border-t-2 border-foreground/25 bg-muted/30">
       <div className="mx-auto max-w-6xl px-4 py-10">
         <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-          <div className="space-y-2">
-            <p className="font-semibold tracking-tight">Sismo Pereira</p>
-            <p className="text-sm leading-relaxed text-muted-foreground">
+          <div>
+            <p className="display-condensed flex items-baseline gap-2 text-base uppercase">
+              <span className="size-2 translate-y-px bg-down" aria-hidden />
+              <span className="font-extrabold">Sismo</span>
+              <span className="font-normal text-muted-foreground">Pereira</span>
+            </p>
+            <p className="label-signage mt-2 text-muted-foreground/70">
+              {t.nav.tagline}
+            </p>
+            <p className="mt-3 max-w-sm text-sm leading-relaxed text-muted-foreground">
               {t.footer.disclaimer}
             </p>
           </div>
 
-          <div className="space-y-2">
-            <p className="text-sm font-medium">{t.resources.linesHeading}</p>
-            <ul className="space-y-1 text-sm">
+          <div>
+            <p className="label-signage border-b border-border pb-2 text-muted-foreground">
+              {t.resources.linesHeading}
+            </p>
+            <ul className="mt-2">
               {EMERGENCY_LINES.map((line) => (
-                <li key={line.number} className="flex items-baseline gap-2">
+                <li key={line.number}>
                   <a
                     href={`tel:${line.number}`}
-                    className="font-mono font-semibold text-foreground underline-offset-4 hover:underline"
+                    className="flex items-baseline gap-3 border-b border-border/60 py-1.5 hover:bg-down-muted"
                   >
-                    {line.number}
+                    <span
+                      data-readout
+                      className="w-9 shrink-0 font-mono text-sm font-semibold"
+                    >
+                      {line.number}
+                    </span>
+                    <span className="text-sm text-muted-foreground">
+                      {line.label}
+                    </span>
                   </a>
-                  <span className="text-muted-foreground">{line.label}</span>
                 </li>
               ))}
             </ul>
           </div>
 
-          <div className="space-y-2">
-            <p className="text-sm font-medium">{t.nav.partners}</p>
-            <ul className="space-y-1 text-sm text-muted-foreground">
+          <div>
+            <p className="label-signage border-b border-border pb-2 text-muted-foreground">
+              {t.nav.partners}
+            </p>
+            <ul className="mt-2 space-y-1.5 text-sm text-muted-foreground">
               <li>
                 <Link
                   href="/organizaciones"

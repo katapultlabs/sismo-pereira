@@ -12,10 +12,10 @@ export function DegradedNotice({ lang }: { lang: Lang }) {
   const t = getDictionary(lang).degraded;
 
   return (
-    <Alert className="border-warn/40 bg-warn-muted text-warn-foreground">
+    <Alert className="rounded-sm border-warn/40 bg-warn-muted text-warn-foreground">
       <DatabaseZap className="size-4" aria-hidden />
-      <AlertTitle>{t.title}</AlertTitle>
-      <AlertDescription className="text-warn-foreground/80">
+      <AlertTitle className="label-signage">{t.title}</AlertTitle>
+      <AlertDescription className="mt-1 text-warn-foreground/90">
         {t.body}
       </AlertDescription>
     </Alert>

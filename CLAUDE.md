@@ -32,6 +32,7 @@ pnpm dev                      # next dev (Turbopack)
 pnpm build                    # always run this to verify
 pnpm lint                     # eslint — React Compiler rules are on, and they bite
 pnpm exec tsc --noEmit        # typecheck alone; faster than a build
+pnpm check:contrast           # WCAG AA gate on every colour pairing in globals.css
 
 supabase start                # local Postgres + Auth; needs OrbStack running
 supabase db reset             # apply migrations/ then seed.sql
@@ -148,10 +149,31 @@ duplicated in `src/lib/actions.ts` and the API routes.
   `render={<Link … />}`, **not** `asChild` — most shadcn examples online show `asChild`
   and will not work here. Tailwind v4, CSS-first config in `src/app/globals.css`; there
   is no `tailwind.config`.
+- **Chroma is signal.** The chrome is deliberately achromatic — warm bone "paper" by
+  day, cold instrument "ink" by night — so the only saturated colour anywhere is a
+  service status. Do not add a saturated brand colour: it would compete with the four
+  status hues for the same attention. The one exception is the small square epicentre
+  mark in the masthead and footer, which is a shape rather than a state.
 - Status colours are semantic tokens: `ok` / `warn` / `down` / `fixing`. Each has
   `-muted` (tinted surface), `-foreground` (text **on** that tint), and `-contrast`
   (text **on** the solid fill). Mixing those two roles up is what caused the
   illegible-badge bug in commit `9e9d22c`. Never use `green-500`/`red-500` for status.
+  Every pairing is now gated at 4.5:1 by `pnpm check:contrast` — **run it after
+  touching any token in `globals.css`.** It caught a fresh regression the day it was
+  written, so it is a script rather than an eye.
+- Type carries the expression, so there are three faces with distinct jobs:
+  `font-heading` (Archivo, condensed via the `wdth` axis — use the `display-condensed`
+  utility), `font-sans` (Source Sans 3, all body copy), and `font-mono` (IBM Plex Mono
+  — timestamps, magnitudes, phone numbers, anything read as an instrument value).
+  `label-signage` is the uppercase mono micro-label used for every section eyebrow and
+  form label. Prefer these utilities over ad-hoc type stacks.
+- `SectionHeading` is the bulletin's section rule. Reuse it rather than hand-rolling a
+  heading — repeating it is what makes the pages read as one document.
+- `--radius` is `0.1875rem`, and the tight radius is load-bearing: rounding it up makes
+  the site read as a generic card UI again.
+- Dark mode is real and mounted (`ThemeProvider`, `defaultTheme="system"`). It is not
+  decorative — people read this at night, during a blackout, on battery. Check both
+  themes when adding a surface.
 - Status is always encoded three ways — colour, icon, and text — so it survives colour
   blindness, greyscale, and a cracked screen. Preserve that when adding indicators.
 - Route segments are Spanish (`/servicios`, `/reportes`, `/recursos`, `/reportar`,
