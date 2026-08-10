@@ -7,8 +7,14 @@ import { Card } from "@/components/ui/card";
 import { getOrganizations } from "@/lib/data";
 import { SERVICE_LABELS, getDictionary, isLang } from "@/lib/i18n";
 
-const CONTACT_EMAIL =
-  process.env.NEXT_PUBLIC_CONTACT_EMAIL ?? "hola@sismopereira.org";
+/**
+ * Deliberately has no default. Printing a plausible-looking address that
+ * nobody reads would be exactly the kind of unverified contact information
+ * this site refuses to publish elsewhere. Until it's set, we point partners
+ * at the public repo, which definitely exists.
+ */
+const CONTACT_EMAIL = process.env.NEXT_PUBLIC_CONTACT_EMAIL ?? null;
+const REPO_ISSUES_URL = "https://github.com/katapultlabs/sismo-pereira/issues";
 
 export async function generateMetadata({
   params,
@@ -83,12 +89,23 @@ export default async function PartnersPage({
         <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
           {t.partners.contactBody}
         </p>
-        <a
-          href={`mailto:${CONTACT_EMAIL}`}
-          className="mt-3 inline-block font-mono text-sm font-medium underline underline-offset-4"
-        >
-          {CONTACT_EMAIL}
-        </a>
+        {CONTACT_EMAIL ? (
+          <a
+            href={`mailto:${CONTACT_EMAIL}`}
+            className="mt-3 inline-block font-mono text-sm font-medium underline underline-offset-4"
+          >
+            {CONTACT_EMAIL}
+          </a>
+        ) : (
+          <a
+            href={REPO_ISSUES_URL}
+            target="_blank"
+            rel="noreferrer noopener"
+            className="mt-3 inline-block text-sm font-medium underline underline-offset-4"
+          >
+            github.com/katapultlabs/sismo-pereira
+          </a>
+        )}
       </section>
 
       <section className="mt-10 space-y-4">
