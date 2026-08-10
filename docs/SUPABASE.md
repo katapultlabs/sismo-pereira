@@ -102,7 +102,7 @@ suggestion; a policy is enforcement.
 
 | Actor | May do |
 |---|---|
-| **Anonymous** | Read published updates, verified reports, service status, verified resources. **Insert** a report with `status = 'pending'`. |
+| **Anonymous** | Read published updates, verified reports, service status, verified resources, and the organization directory (all orgs, each carrying its `verified` flag). **Insert** a report with `status = 'pending'`. |
 | **Publisher** (org member) | The above, plus insert/update `service_status` and `updates` **for their own `org_id` only**. |
 | **Moderator / Admin** | Everything, including reading raw `reports` rows with contact details, and approving or rejecting them. |
 
@@ -113,7 +113,7 @@ The public never reads base tables directly:
 | View | Hides |
 |---|---|
 | `public_reports` | Every PII column on `reports` — `contact_name`, `contact_phone`, `contact_email`, `submitter_hash`, moderator notes. Only `verified` rows. |
-| `public_organizations` | `api_key_hash` and `api_key_last4`. Only `verified` orgs. |
+| `public_organizations` | `api_key_hash`, `api_key_last4`, `contact_email`, `contact_phone`. Lists **all** registered orgs, not only `verified` ones — the `verified` column rides along and the page badges it. |
 | `current_service_status` | Nothing sensitive — it collapses the status history to the latest row per `(service, zone)`. |
 
 `revoke all on organizations from anon` is explicit in the migration. If you add a

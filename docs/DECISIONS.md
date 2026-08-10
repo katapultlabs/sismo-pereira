@@ -231,6 +231,28 @@ Two bugs surfaced during the change, both worth remembering:
 Neither was caught by types or by `pnpm build`. Both were caught by clicking the
 toggle.
 
+### `public_organizations` filtered to verified orgs → now lists all of them
+
+The view was defined `where verified`, so the organization directory could only ever
+show orgs someone had already confirmed. But no org *starts* verified, and verifying
+one is a human step that happens later — so the moment the site read from Postgres
+instead of `fallback-data.ts`, `/organizaciones` rendered a bare heading with nothing
+under it.
+
+Caught on 2026-08-10 while provisioning the database, by diffing the live view against
+`FALLBACK_ORGS` — which has always listed all sixteen with `verified: false`. The
+fallback and the database are supposed to agree; the filter was the half that was
+wrong, because the page already renders a "pending verification" badge and the
+directory is a statement of identity, not endorsement.
+
+`contact_email` and `contact_phone` came out of the view in the same migration. No
+code read them — `Organization` in `src/lib/types.ts` has no such fields — so widening
+the view without dropping them would have published contact details for organizations
+nobody had verified.
+
+The general lesson: a seed that renders correctly through the fallback path can still
+render wrong through the database path. Check both.
+
 ### Placeholder contact email → removed
 
 The partners page briefly fell back to `hola@sismopereira.org`, an address nobody
