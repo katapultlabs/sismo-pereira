@@ -9,14 +9,10 @@ export function isLang(value: string): value is Lang {
 }
 
 /**
- * Prefix a path with the locale. Both languages are prefixed (`/es`, `/en`) so
- * there is a single route tree instead of a duplicated one; `/` redirects to
- * the default language.
+ * Routes are language-neutral — there is no `/es` or `/en` prefix. The active
+ * language comes from the `lang` cookie or the browser locale (see
+ * `src/proxy.ts`), so paths are written literally: `/servicios`, `/reportar`.
  */
-export function localePath(lang: Lang, path: string): string {
-  const clean = path === "/" || path === "" ? "" : path.startsWith("/") ? path : `/${path}`;
-  return `/${lang}${clean}`;
-}
 
 const es = {
   meta: {

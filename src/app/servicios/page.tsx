@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { notFound } from "next/navigation";
 import { Info } from "lucide-react";
 
 import { DegradedNotice } from "@/components/degraded-notice";
@@ -13,24 +12,17 @@ import {
   formatDateTime,
   formatRelative,
   getDictionary,
-  isLang,
 } from "@/lib/i18n";
+import { getLang } from "@/lib/lang";
 import type { ServiceStatus, ServiceType } from "@/lib/types";
 
-export async function generateMetadata({
-  params,
-}: PageProps<"/[lang]/servicios">): Promise<Metadata> {
-  const { lang } = await params;
-  if (!isLang(lang)) return {};
+export async function generateMetadata(): Promise<Metadata> {
+  const lang = await getLang();
   return { title: getDictionary(lang).status.heading };
 }
 
-export default async function ServicesPage({
-  params,
-}: PageProps<"/[lang]/servicios">) {
-  const { lang } = await params;
-  if (!isLang(lang)) notFound();
-
+export default async function ServicesPage() {
+  const lang = await getLang();
   const t = getDictionary(lang);
   const { data: statuses, degraded } = await getServiceStatus();
 

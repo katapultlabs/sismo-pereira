@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Activity, Menu, Phone } from "lucide-react";
 
+import { LanguageToggle } from "@/components/language-toggle";
 import { Button } from "@/components/ui/button";
 import {
   Sheet,
@@ -12,31 +13,26 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { getDictionary, localePath, type Lang } from "@/lib/i18n";
+import { getDictionary, type Lang } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 
 export function SiteHeader({ lang }: { lang: Lang }) {
   const t = getDictionary(lang);
   const pathname = usePathname();
-  const otherLang: Lang = lang === "es" ? "en" : "es";
 
   const items = [
-    { href: localePath(lang, "/"), label: t.nav.home },
-    { href: localePath(lang, "/servicios"), label: t.nav.services },
-    { href: localePath(lang, "/reportes"), label: t.nav.reports },
-    { href: localePath(lang, "/recursos"), label: t.nav.resources },
-    { href: localePath(lang, "/organizaciones"), label: t.nav.partners },
+    { href: "/", label: t.nav.home },
+    { href: "/servicios", label: t.nav.services },
+    { href: "/reportes", label: t.nav.reports },
+    { href: "/recursos", label: t.nav.resources },
+    { href: "/organizaciones", label: t.nav.partners },
   ];
-
-  // Swap only the leading locale segment so the toggle keeps you on the page
-  // you were already reading.
-  const swappedPath = pathname.replace(/^\/(es|en)/, `/${otherLang}`);
 
   return (
     <header className="sticky top-0 z-50 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80">
       <div className="mx-auto flex h-14 max-w-6xl items-center gap-3 px-4">
         <Link
-          href={localePath(lang, "/")}
+          href="/"
           className="flex shrink-0 items-center gap-2 font-semibold tracking-tight"
         >
           <Activity className="size-5 text-down" aria-hidden />
@@ -65,13 +61,7 @@ export function SiteHeader({ lang }: { lang: Lang }) {
         </nav>
 
         <div className="ml-auto flex items-center gap-2">
-          <Link
-            href={swappedPath}
-            hrefLang={otherLang}
-            className="rounded-md px-2 py-1 font-mono text-xs text-muted-foreground uppercase transition-colors hover:bg-secondary hover:text-foreground"
-          >
-            {otherLang}
-          </Link>
+          <LanguageToggle current={lang} />
 
           {/* The emergency line stays one tap away on every page, at every width. */}
           <Button
@@ -86,7 +76,7 @@ export function SiteHeader({ lang }: { lang: Lang }) {
           <Button
             size="sm"
             className="hidden md:inline-flex"
-            render={<Link href={localePath(lang, "/reportar")} />}
+            render={<Link href="/reportar" />}
           >
             {t.nav.submit}
           </Button>
@@ -119,10 +109,7 @@ export function SiteHeader({ lang }: { lang: Lang }) {
                     {item.label}
                   </Link>
                 ))}
-                <Button
-                  className="mt-3"
-                  render={<Link href={localePath(lang, "/reportar")} />}
-                >
+                <Button className="mt-3" render={<Link href="/reportar" />}>
                   {t.nav.submit}
                 </Button>
               </nav>

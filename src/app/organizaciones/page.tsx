@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
-import { notFound } from "next/navigation";
 import { BadgeCheck, Clock, KeyRound, Mail } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { getOrganizations } from "@/lib/data";
-import { SERVICE_LABELS, getDictionary, isLang } from "@/lib/i18n";
+import { SERVICE_LABELS, getDictionary } from "@/lib/i18n";
+import { getLang } from "@/lib/lang";
 
 /**
  * Deliberately has no default. Printing a plausible-looking address that
@@ -16,20 +16,13 @@ import { SERVICE_LABELS, getDictionary, isLang } from "@/lib/i18n";
 const CONTACT_EMAIL = process.env.NEXT_PUBLIC_CONTACT_EMAIL ?? null;
 const REPO_ISSUES_URL = "https://github.com/katapultlabs/sismo-pereira/issues";
 
-export async function generateMetadata({
-  params,
-}: PageProps<"/[lang]/organizaciones">): Promise<Metadata> {
-  const { lang } = await params;
-  if (!isLang(lang)) return {};
+export async function generateMetadata(): Promise<Metadata> {
+  const lang = await getLang();
   return { title: getDictionary(lang).partners.heading };
 }
 
-export default async function PartnersPage({
-  params,
-}: PageProps<"/[lang]/organizaciones">) {
-  const { lang } = await params;
-  if (!isLang(lang)) notFound();
-
+export default async function PartnersPage() {
+  const lang = await getLang();
   const t = getDictionary(lang);
   const { data: orgs } = await getOrganizations();
 

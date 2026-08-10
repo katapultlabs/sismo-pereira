@@ -8,11 +8,10 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { getBrowserSupabase } from "@/lib/supabase/client";
-import { localePath, type Lang } from "@/lib/i18n";
 
 type State = "idle" | "sending" | "sent" | "error";
 
-export function LoginForm({ lang }: { lang: Lang }) {
+export function LoginForm() {
   const [state, setState] = useState<State>("idle");
   const [message, setMessage] = useState<string | null>(null);
 
@@ -32,9 +31,7 @@ export function LoginForm({ lang }: { lang: Lang }) {
     const { error } = await supabase.auth.signInWithOtp({
       email,
       options: {
-        emailRedirectTo: `${window.location.origin}/api/auth/callback?next=${encodeURIComponent(
-          localePath(lang, "/admin"),
-        )}`,
+        emailRedirectTo: `${window.location.origin}/api/auth/callback?next=${encodeURIComponent("/admin")}`,
       },
     });
 

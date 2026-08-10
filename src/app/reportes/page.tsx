@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { notFound } from "next/navigation";
 import { ShieldCheck } from "lucide-react";
 
 import { DegradedNotice } from "@/components/degraded-notice";
@@ -14,25 +13,17 @@ import {
   formatDateTime,
   formatRelative,
   getDictionary,
-  isLang,
-  localePath,
   type ReportCategory,
 } from "@/lib/i18n";
+import { getLang } from "@/lib/lang";
 
-export async function generateMetadata({
-  params,
-}: PageProps<"/[lang]/reportes">): Promise<Metadata> {
-  const { lang } = await params;
-  if (!isLang(lang)) return {};
+export async function generateMetadata(): Promise<Metadata> {
+  const lang = await getLang();
   return { title: getDictionary(lang).reports.heading };
 }
 
-export default async function ReportsPage({
-  params,
-}: PageProps<"/[lang]/reportes">) {
-  const { lang } = await params;
-  if (!isLang(lang)) notFound();
-
+export default async function ReportsPage() {
+  const lang = await getLang();
   const t = getDictionary(lang);
   const { data: reports, degraded } = await getPublicReports();
 
@@ -45,7 +36,7 @@ export default async function ReportsPage({
           </h1>
           <p className="text-muted-foreground">{t.reports.subheading}</p>
         </div>
-        <Button render={<Link href={localePath(lang, "/reportar")} />}>
+        <Button render={<Link href="/reportar" />}>
           {t.reports.submitCta}
         </Button>
       </header>

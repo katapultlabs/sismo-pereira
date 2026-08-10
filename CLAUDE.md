@@ -81,21 +81,35 @@ enum label maps (`SERVICE_LABELS`, `STATUS_LABELS`, `RESOURCE_LABELS`,
 `CATEGORY_LABELS`) plus `Intl`-based formatters. Adding a UI string means adding it to
 both dictionaries; TypeScript catches a missing `en` key.
 
-`src/proxy.ts` (Next.js 16 renamed `middleware` → `proxy`; it always runs on Node)
-resolves the active language and publishes it as an `x-lang` request header. The
-**root** layout reads that header to set `<html lang>` — a nested layout cannot reach
-the root element, and getting it wrong makes screen readers pronounce Spanish with an
-English voice.
+**There are no `/es` or `/en` URL prefixes.** One URL per page; the language is
+resolved per request. `src/lib/lang.ts` exports `getLang()`, the single accessor —
+every page and layout calls it, and no component takes a language from route params.
 
-> **In flight as of this writing:** the `/es` and `/en` URL prefixes are being removed
-> in favour of one URL per page with the language resolved per-request (cookie →
-> `Accept-Language` → Spanish). `src/app/[lang]/` has been flattened into `src/app/`,
-> `src/lib/lang.ts` (`getLang()`) is the new accessor, and `localePath()` is gone from
-> `i18n.ts`. The tree does **not** typecheck yet: several pages and components still
-> import `localePath` and still declare `PageProps<"/[lang]/…">`, `proxy.ts` still
-> redirects `/` to `/es`, `revalidatePath` calls still use `/[lang]/…`, and the README
-> still documents the prefixed URLs. Run `npx tsc --noEmit` before assuming a failure
-> is yours.
+Resolution order is **cookie → `Accept-Language` → Spanish**:
+
+- `src/proxy.ts` (Next.js 16 renamed `middleware` → `proxy`; it always runs on Node)
+  parses `Accept-Language` — honouring q-values — and publishes only that as the
+  `x-lang` request header. Unknown languages and ties fall to Spanish deliberately:
+  crawlers request `en-US`, and this site must not get indexed in English for a
+  Spanish audience.
+- `getLang()` reads the `lang` cookie **first**, then falls back to `x-lang`. The
+  cookie must be read there and not only in the proxy: `setLanguage()` in
+  `src/lib/lang-actions.ts` writes the cookie inside a server action, and `x-lang` was
+  already fixed by the proxy before that action ran. Reading the header alone leaves
+  the toggle one click behind — this was a real bug, don't reintroduce it.
+
+The **root** layout reads `getLang()` to set `<html lang>` — a nested layout cannot
+reach the root element, and getting it wrong makes screen readers pronounce Spanish
+with an English voice.
+
+`LanguageToggle` calls the `setLanguage` server action rather than assigning
+`document.cookie`; the React Compiler's `react-hooks/immutability` rule rejects
+mutating externals from a component, and the action also revalidates the layout in
+the same round trip.
+
+`proxy.ts` 308-redirects the retired `/es/*` and `/en/*` URLs to their unprefixed
+equivalents and sets the cookie to the language the old link asked for, so previously
+shared links keep working *and* keep their language.
 
 ### Types
 

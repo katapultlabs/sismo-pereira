@@ -2,7 +2,7 @@
 import { Code } from "lucide-react";
 
 import { EMERGENCY_LINES } from "@/lib/fallback-data";
-import { getDictionary, localePath, type Lang } from "@/lib/i18n";
+import { getDictionary, type Lang } from "@/lib/i18n";
 import Link from "next/link";
 
 const REPO_URL = "https://github.com/katapultlabs/sismo-pereira";
@@ -43,7 +43,7 @@ export function SiteFooter({ lang }: { lang: Lang }) {
             <ul className="space-y-1 text-sm text-muted-foreground">
               <li>
                 <Link
-                  href={localePath(lang, "/organizaciones")}
+                  href="/organizaciones"
                   className="underline-offset-4 hover:text-foreground hover:underline"
                 >
                   {t.partners.contactHeading}
@@ -51,7 +51,7 @@ export function SiteFooter({ lang }: { lang: Lang }) {
               </li>
               <li>
                 <Link
-                  href={localePath(lang, "/reportar")}
+                  href="/reportar"
                   className="underline-offset-4 hover:text-foreground hover:underline"
                 >
                   {t.reports.submitCta}

@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { notFound } from "next/navigation";
 import { Phone } from "lucide-react";
 
 import { DegradedNotice } from "@/components/degraded-notice";
@@ -8,27 +7,17 @@ import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { getResources } from "@/lib/data";
 import { EMERGENCY_LINES } from "@/lib/fallback-data";
-import {
-  RESOURCE_LABELS,
-  getDictionary,
-  isLang,
-} from "@/lib/i18n";
+import { RESOURCE_LABELS, getDictionary } from "@/lib/i18n";
+import { getLang } from "@/lib/lang";
 import type { Resource, ResourceKind } from "@/lib/types";
 
-export async function generateMetadata({
-  params,
-}: PageProps<"/[lang]/recursos">): Promise<Metadata> {
-  const { lang } = await params;
-  if (!isLang(lang)) return {};
+export async function generateMetadata(): Promise<Metadata> {
+  const lang = await getLang();
   return { title: getDictionary(lang).resources.heading };
 }
 
-export default async function ResourcesPage({
-  params,
-}: PageProps<"/[lang]/recursos">) {
-  const { lang } = await params;
-  if (!isLang(lang)) notFound();
-
+export default async function ResourcesPage() {
+  const lang = await getLang();
   const t = getDictionary(lang);
   const { data: resources, degraded } = await getResources();
 

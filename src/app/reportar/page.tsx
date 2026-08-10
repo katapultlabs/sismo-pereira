@@ -1,26 +1,19 @@
 import type { Metadata } from "next";
-import { notFound } from "next/navigation";
 import { Phone } from "lucide-react";
 
 import { ReportForm } from "@/components/report-form";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { getZones } from "@/lib/data";
-import { getDictionary, isLang } from "@/lib/i18n";
+import { getDictionary } from "@/lib/i18n";
+import { getLang } from "@/lib/lang";
 
-export async function generateMetadata({
-  params,
-}: PageProps<"/[lang]/reportar">): Promise<Metadata> {
-  const { lang } = await params;
-  if (!isLang(lang)) return {};
+export async function generateMetadata(): Promise<Metadata> {
+  const lang = await getLang();
   return { title: getDictionary(lang).form.heading };
 }
 
-export default async function ReportPage({
-  params,
-}: PageProps<"/[lang]/reportar">) {
-  const { lang } = await params;
-  if (!isLang(lang)) notFound();
-
+export default async function ReportPage() {
+  const lang = await getLang();
   const t = getDictionary(lang);
   const { data: zones } = await getZones();
 

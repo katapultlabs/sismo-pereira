@@ -10,7 +10,6 @@ import {
   formatDateTime,
   formatRelative,
   getDictionary,
-  localePath,
   type Lang,
 } from "@/lib/i18n";
 import type { SeverityLevel, Update } from "@/lib/types";
@@ -30,9 +29,7 @@ const SEVERITY_RAIL: Record<SeverityLevel, string> = {
 
 export function UpdateCard({ update, lang }: { update: Update; lang: Lang }) {
   const t = getDictionary(lang);
-  const href = update.slug
-    ? localePath(lang, `/actualizaciones/${update.slug}`)
-    : null;
+  const href = update.slug ? `/actualizaciones/${update.slug}` : null;
 
   return (
     <Card className="relative gap-0 overflow-hidden p-0">

@@ -60,8 +60,8 @@ export async function moderateReport(
     return { ok: false, message: "Not permitted." };
   }
 
-  revalidatePath("/[lang]/admin", "page");
-  revalidatePath("/[lang]/reportes", "page");
+  revalidatePath("/admin", "page");
+  revalidatePath("/reportes", "page");
   return { ok: true };
 }
 

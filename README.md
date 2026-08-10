@@ -74,8 +74,9 @@ cp .env.example .env.local   # optional — the site runs without Supabase
 pnpm dev
 ```
 
-Visit http://localhost:3000 — `/` redirects to `/es`, and `/en` is the English
-tree.
+Visit http://localhost:3000. There is one URL per page — no `/es` or `/en`
+prefix. The language follows the visitor's browser locale (Spanish for anything
+ambiguous) and a toggle in the header overrides it, remembered in a cookie.
 
 ### Database
 
@@ -180,7 +181,7 @@ and cached for 30s. No key required — please mirror rather than scrape.
 
 ## Moderation
 
-`/es/admin` — magic-link sign-in, no passwords. A moderator sees the pending
+`/admin` — magic-link sign-in, no passwords. A moderator sees the pending
 report queue with contact details, and publishes, rejects, or marks duplicates.
 
 Grant the role in SQL after the person has signed in once:
@@ -196,14 +197,16 @@ update profiles set role = 'moderator' where id = '<auth-user-id>';
 ```
 src/
   app/
-    [lang]/            # single route tree; /es and /en
+    (pages)            # one URL per page; language resolved per request
     api/v1/            # partner ingestion + public JSON
   components/          # site chrome, cards, forms
   lib/
     data.ts            # all reads; falls back to seed on failure
     i18n.ts            # dictionaries + enum labels + formatting
+    lang.ts            # getLang(): cookie -> Accept-Language -> es
+    lang-actions.ts    # setLanguage() server action for the toggle
     api-auth.ts        # partner API-key auth
-  proxy.ts             # locale redirect + x-lang header
+  proxy.ts             # Accept-Language -> x-lang; /es,/en legacy redirects
 supabase/
   migrations/          # schema + RLS
   seed.sql

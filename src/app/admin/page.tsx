@@ -1,4 +1,3 @@
-import { notFound } from "next/navigation";
 import Link from "next/link";
 import { Inbox, ShieldAlert } from "lucide-react";
 
@@ -7,7 +6,7 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { getServerSupabase } from "@/lib/supabase/server";
-import { isLang, localePath } from "@/lib/i18n";
+import { getLang } from "@/lib/lang";
 import { signOut } from "@/lib/moderation";
 
 export const metadata = { title: "Moderación", robots: { index: false } };
@@ -24,10 +23,8 @@ interface PendingReport {
   created_at: string;
 }
 
-export default async function AdminPage({ params }: PageProps<"/[lang]/admin">) {
-  const { lang } = await params;
-  if (!isLang(lang)) notFound();
-
+export default async function AdminPage() {
+  const lang = await getLang();
   const supabase = await getServerSupabase();
 
   if (!supabase) {
@@ -58,10 +55,7 @@ export default async function AdminPage({ params }: PageProps<"/[lang]/admin">) 
           <AlertTitle>Inicia sesión</AlertTitle>
           <AlertDescription className="space-y-3">
             <p>Esta página es solo para moderadores.</p>
-            <Button
-              size="sm"
-              render={<Link href={localePath(lang, "/admin/login")} />}
-            >
+            <Button size="sm" render={<Link href="/admin/login" />}>
               Ir al inicio de sesión
             </Button>
           </AlertDescription>

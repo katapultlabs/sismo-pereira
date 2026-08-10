@@ -11,15 +11,13 @@ import {
   SOURCE_LABELS,
   formatDateTime,
   getDictionary,
-  isLang,
-  localePath,
 } from "@/lib/i18n";
+import { getLang } from "@/lib/lang";
 
 export async function generateMetadata({
   params,
-}: PageProps<"/[lang]/actualizaciones/[slug]">): Promise<Metadata> {
-  const { lang, slug } = await params;
-  if (!isLang(lang)) return {};
+}: PageProps<"/actualizaciones/[slug]">): Promise<Metadata> {
+  const { slug } = await params;
   const { data: update } = await getUpdateBySlug(slug);
   if (!update) return {};
   return {
@@ -30,10 +28,9 @@ export async function generateMetadata({
 
 export default async function UpdatePage({
   params,
-}: PageProps<"/[lang]/actualizaciones/[slug]">) {
-  const { lang, slug } = await params;
-  if (!isLang(lang)) notFound();
-
+}: PageProps<"/actualizaciones/[slug]">) {
+  const { slug } = await params;
+  const lang = await getLang();
   const t = getDictionary(lang);
   const { data: update } = await getUpdateBySlug(slug);
   if (!update) notFound();
@@ -41,7 +38,7 @@ export default async function UpdatePage({
   return (
     <article className="mx-auto max-w-2xl px-4 py-8 sm:py-12">
       <Link
-        href={localePath(lang, "/")}
+        href="/"
         className="inline-flex items-center gap-1.5 text-sm text-muted-foreground underline-offset-4 hover:text-foreground hover:underline"
       >
         <ArrowLeft className="size-3.5" aria-hidden />
