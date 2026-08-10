@@ -130,6 +130,35 @@ const es = {
       "a un lugar que no existe es peor que no dar información.",
     capacity: "Capacidad",
     hours: "Horario",
+    /*
+     * A negative list, kept separate from the resource grid on purpose. These
+     * are places NOT to go; putting them in the same grid as shelters and aid
+     * points would read as a hospital directory at a glance.
+     */
+    medical: {
+      heading: "No acudas a estos centros médicos",
+      lede:
+        "Estos centros no están recibiendo pacientes. Ir hasta allí cuesta " +
+        "tiempo que puede ser crítico y congestiona vías que los organismos de " +
+        "socorro necesitan libres.",
+      /*
+       * Verb and noun phrasings, not adjectives: one label is shared by "la
+       * Clínica Los Nevados" and "el Hospital Universitario San Jorge", and an
+       * adjective would have to agree with both. "Colapsada … San Jorge" shipped
+       * for exactly one render before this comment existed.
+       */
+      reasons: {
+        saturated: "Colapsó por demanda de servicios",
+        evacuated: "Desalojo por daños en la infraestructura",
+      },
+      advice:
+        "Si necesitas atención médica urgente, llama al 123 antes de desplazarte.",
+      noAlternative:
+        "En este corte no se anunciaron centros médicos alternativos. No " +
+        "publicamos un destino alterno mientras no lo confirme una fuente oficial.",
+      sourceLabel: "Fuente",
+      reportedLabel: "Corte",
+    },
   },
   partners: {
     heading: "Para organizaciones",
@@ -295,6 +324,23 @@ const en: typeof es = {
       "exist is worse than giving no information.",
     capacity: "Capacity",
     hours: "Hours",
+    medical: {
+      heading: "Do not go to these medical centres",
+      lede:
+        "These centres are not receiving patients. Travelling there costs time " +
+        "that may be critical and congests roads that rescue crews need clear.",
+      reasons: {
+        saturated: "Overwhelmed by demand for services",
+        evacuated: "Evacuated due to structural damage",
+      },
+      advice:
+        "If you need urgent medical care, call 123 before travelling.",
+      noAlternative:
+        "No alternative medical centres were announced in this report. We do not " +
+        "publish an alternative destination until an official source confirms one.",
+      sourceLabel: "Source",
+      reportedLabel: "As of",
+    },
   },
   partners: {
     heading: "For organizations",

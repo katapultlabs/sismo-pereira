@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Phone } from "lucide-react";
 
 import { DegradedNotice } from "@/components/degraded-notice";
+import { MedicalClosures } from "@/components/medical-closures";
 import { SectionHeading } from "@/components/section-heading";
 import { StatusBadge } from "@/components/status-badge";
 import { getResources } from "@/lib/data";
@@ -73,6 +74,14 @@ export default async function ResourcesPage() {
           ))}
         </div>
       </section>
+
+      {/*
+       * Second only to the emergency lines. Calling 123 is still the correct
+       * first action, but "which hospital do I drive to" is the next question
+       * anyone reaching this page in a medical emergency will have, and right
+       * now the answer is "not these four".
+       */}
+      <MedicalClosures lang={lang} />
 
       {degraded ? (
         <div className="mt-8">

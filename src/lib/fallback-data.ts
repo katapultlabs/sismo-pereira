@@ -60,35 +60,141 @@ const UNKNOWN_DETAIL =
   "Aún no hemos recibido un reporte verificado del operador para este servicio. " +
   "Si representas a la empresa responsable, puedes publicar aquí.";
 
-export const FALLBACK_STATUS: ServiceStatus[] = (
-  [
-    ["electricity", "Empresa de Energía de Pereira", "EEP", "energia-pereira"],
-    ["water", "Aguas y Aguas de Pereira", "Aguas y Aguas", "aguas-y-aguas"],
-    ["gas", "Efigas", "Efigas", "efigas"],
-    ["internet", null, null, null],
-    ["mobile", null, null, null],
-    ["transport", "Megabús", "Megabús", "megabus"],
-    ["health", null, null, null],
-  ] as const
-).map(([service, orgName, orgShort, orgSlug], i) => ({
-  id: `fallback-status-${service}`,
-  service,
-  zone_slug: "pereira",
-  zone_name: "Pereira (todo el municipio)",
-  status: "unknown" as const,
-  headline: UNKNOWN_HEADLINE,
-  detail: UNKNOWN_DETAIL,
-  affected_users: null,
-  eta_restored: null,
-  source: "official" as const,
-  source_url: null,
-  reported_at: new Date(Date.UTC(2026, 7, 10, 12, 40 + i)).toISOString(),
-  org_name: orgName,
-  org_short_name: orgShort,
-  org_slug: orgSlug,
-}));
+/**
+ * The mayor's Puesto de Mando Unificado (PMU) broadcast of 2026-08-10, 11:47
+ * a. m. Bogotá time. This is the source for everything below that is *not*
+ * `unknown`: an official, on-the-record municipal statement, not a media
+ * pickup or a forwarded screenshot.
+ */
+export const PMU_REPORT = {
+  orgName: "Alcaldía de Pereira",
+  orgShortName: "Alcaldía",
+  orgSlug: "alcaldia-pereira",
+  sourceName: "Alcaldía de Pereira — Puesto de Mando Unificado (PMU)",
+  /* 11:47 a. m. America/Bogota (UTC-5) === 16:47 UTC. */
+  reportedAt: "2026-08-10T16:47:00Z",
+} as const;
+
+/**
+ * Medical centres that are NOT receiving patients.
+ *
+ * This is the one thing on the site somebody may be reading with an injured
+ * person in the car, so it is deliberately a *negative* list — "do not go
+ * here" — and never a directory. We publish no address and no phone for these:
+ * the only actionable fact is that the door is closed, and printing an address
+ * next to that invites exactly the drive we are trying to prevent.
+ *
+ * `reason` is a key, not prose, so `i18n.ts` can render it in both languages
+ * without paraphrasing the mayor's own wording.
+ */
+export const MEDICAL_CENTRES_CLOSED = [
+  { name: "Clínica Los Nevados", reason: "saturated" },
+  { name: "Hospital Universitario San Jorge", reason: "saturated" },
+  { name: "Clínica Comfamiliar", reason: "saturated" },
+  { name: "Clínica Noé", reason: "evacuated" },
+] as const;
+
+export const FALLBACK_STATUS: ServiceStatus[] = [
+  ...(
+    [
+      ["electricity", "Empresa de Energía de Pereira", "EEP", "energia-pereira"],
+      ["water", "Aguas y Aguas de Pereira", "Aguas y Aguas", "aguas-y-aguas"],
+      ["gas", "Efigas", "Efigas", "efigas"],
+      ["internet", null, null, null],
+      ["mobile", null, null, null],
+      ["transport", "Megabús", "Megabús", "megabus"],
+    ] as const
+  ).map(([service, orgName, orgShort, orgSlug], i) => ({
+    id: `fallback-status-${service}`,
+    service,
+    zone_slug: "pereira",
+    zone_name: "Pereira (todo el municipio)",
+    status: "unknown" as const,
+    headline: UNKNOWN_HEADLINE,
+    detail: UNKNOWN_DETAIL,
+    affected_users: null,
+    eta_restored: null,
+    source: "official" as const,
+    source_url: null,
+    reported_at: new Date(Date.UTC(2026, 7, 10, 12, 40 + i)).toISOString(),
+    org_name: orgName,
+    org_short_name: orgShort,
+    org_slug: orgSlug,
+  })),
+  /*
+   * Health is the one service we are NOT `unknown` about. EDITORIAL's judgment
+   * call — "a utility tweets an outage but hasn't posted to our API: publish an
+   * update, don't flip the card" — reserves this channel for the operator's own
+   * reporting. The PMU broadcast *is* that: the municipal authority naming its
+   * own health system's state on the record. Leaving this card on "no asumas
+   * que están funcionando ni que están caídos" while the mayor is on tape
+   * saying "no dirigirse a la Clínica Los Nevados" would be the failure Rule 1
+   * exists to prevent, pointed the wrong way.
+   */
+  {
+    id: "fallback-status-health",
+    service: "health",
+    zone_slug: "pereira",
+    zone_name: "Pereira (todo el municipio)",
+    status: "outage",
+    headline: "Urgencias saturadas: cuatro centros médicos no reciben pacientes",
+    detail:
+      "Según el reporte del alcalde desde el PMU, la Clínica Los Nevados, el " +
+      "Hospital Universitario San Jorge y la Clínica Comfamiliar colapsaron por " +
+      "demanda de servicios y no están atendiendo. La Clínica Noé fue desalojada " +
+      "por daños en su infraestructura. No te dirijas a estos centros. Si " +
+      "necesitas atención médica urgente, llama al 123.",
+    affected_users: null,
+    eta_restored: null,
+    source: "official",
+    source_url: null,
+    reported_at: PMU_REPORT.reportedAt,
+    org_name: PMU_REPORT.orgName,
+    org_short_name: PMU_REPORT.orgShortName,
+    org_slug: PMU_REPORT.orgSlug,
+  },
+];
 
 export const FALLBACK_UPDATES: Update[] = [
+  {
+    id: "fallback-update-4",
+    slug: "centros-medicos-no-reciben-pacientes",
+    title: "Cuatro centros médicos de Pereira no están recibiendo pacientes",
+    summary:
+      "Los Nevados, San Jorge y Comfamiliar colapsaron por demanda de servicios. " +
+      "La Clínica Noé fue desalojada por daños estructurales.",
+    body:
+      "En su reporte desde el Puesto de Mando Unificado (PMU), el alcalde de " +
+      "Pereira informó que los siguientes centros médicos **no están atendiendo**:\n\n" +
+      /*
+       * Bodies render through `renderEmphasis`, which supports **bold** only —
+       * a Markdown "- " list would print its own dashes. `whitespace-pre-line`
+       * keeps the single newlines, so real bullet characters do the job.
+       */
+      "• **Clínica Los Nevados** — colapsada por demanda de servicios. " +
+      "El alcalde pidió expresamente no dirigirse allí.\n" +
+      "• **Hospital Universitario San Jorge** — colapsado por demanda de " +
+      "servicios; no está atendiendo a los heridos que han llegado.\n" +
+      "• **Clínica Comfamiliar** — colapsada por demanda de servicios.\n" +
+      "• **Clínica Noé** — desalojada porque su infraestructura resultó averiada " +
+      "y presentaba condiciones de riesgo.\n\n" +
+      "**Si necesitas atención médica urgente, llama al 123** antes de desplazarte. " +
+      "Las vías deben permanecer libres para los organismos de socorro.\n\n" +
+      "El alcalde no anunció centros médicos alternativos ni puntos de atención " +
+      "habilitados en este corte. **No publicamos un destino alterno porque " +
+      "todavía no tenemos uno confirmado por una fuente oficial**, y enviar a " +
+      "alguien herido a un lugar equivocado es peor que no dar información.\n\n" +
+      "Este es un corte puntual de las 11:47 a. m. y puede quedar desactualizado " +
+      "con nuevos reportes oficiales.",
+    severity: "critical",
+    services: ["health"],
+    zone_slugs: ["pereira"],
+    source: "official",
+    source_name: PMU_REPORT.sourceName,
+    source_url: null,
+    pinned: true,
+    published_at: PMU_REPORT.reportedAt,
+  },
   {
     id: "fallback-update-1",
     slug: "sismo-magnitud-7-4-10-agosto-2026",

@@ -106,8 +106,31 @@ select
   || 'Si representas a la empresa responsable, puedes publicar aquí.',
   'official'
 from unnest(array[
-  'electricity', 'water', 'gas', 'internet', 'mobile', 'transport', 'health'
+  'electricity', 'water', 'gas', 'internet', 'mobile', 'transport'
 ]::service_type[]) as s(service);
+
+-- ---------------------------------------------------------------------------
+-- Health is the one service that is NOT unknown. The mayor named the state of
+-- the city's emergency rooms on the record from the PMU at 11:47 a. m., so
+-- leaving this card on "sin confirmación oficial" would understate what we
+-- know about the most life-critical service on the board.
+-- Mirrors the `health` entry in src/lib/fallback-data.ts — keep both in sync.
+-- ---------------------------------------------------------------------------
+insert into service_status
+  (service, zone_slug, status, headline, detail, source, org_id, reported_at)
+select
+  'health', 'pereira', 'outage',
+  'Urgencias saturadas: cuatro centros médicos no reciben pacientes',
+  'Según el reporte del alcalde desde el PMU, la Clínica Los Nevados, el '
+  || 'Hospital Universitario San Jorge y la Clínica Comfamiliar colapsaron por '
+  || 'demanda de servicios y no están atendiendo. La Clínica Noé fue desalojada '
+  || 'por daños en su infraestructura. No te dirijas a estos centros. Si '
+  || 'necesitas atención médica urgente, llama al 123.',
+  'official',
+  o.id,
+  '2026-08-10T16:47:00Z'
+from organizations o
+where o.slug = 'alcaldia-pereira';
 
 -- ---------------------------------------------------------------------------
 -- Opening updates — sourced from public reporting on 2026-08-10.
@@ -117,6 +140,35 @@ insert into updates
   (slug, title, summary, body, severity, services, zone_slugs,
    source, source_name, source_url, status, pinned, published_at)
 values
+  (
+    'centros-medicos-no-reciben-pacientes',
+    'Cuatro centros médicos de Pereira no están recibiendo pacientes',
+    'Los Nevados, San Jorge y Comfamiliar colapsaron por demanda de servicios. La '
+    || 'Clínica Noé fue desalojada por daños estructurales.',
+    E'En su reporte desde el Puesto de Mando Unificado (PMU), el alcalde de Pereira '
+    || E'informó que los siguientes centros médicos **no están atendiendo**:\n\n'
+    -- Bullet characters, not Markdown "- ": update bodies render through
+    -- `renderEmphasis`, which supports **bold** only.
+    || E'• **Clínica Los Nevados** — colapsada por demanda de servicios. El alcalde '
+    || E'pidió expresamente no dirigirse allí.\n'
+    || E'• **Hospital Universitario San Jorge** — colapsado por demanda de servicios; '
+    || E'no está atendiendo a los heridos que han llegado.\n'
+    || E'• **Clínica Comfamiliar** — colapsada por demanda de servicios.\n'
+    || E'• **Clínica Noé** — desalojada porque su infraestructura resultó averiada y '
+    || E'presentaba condiciones de riesgo.\n\n'
+    || E'**Si necesitas atención médica urgente, llama al 123** antes de desplazarte. '
+    || E'Las vías deben permanecer libres para los organismos de socorro.\n\n'
+    || E'El alcalde no anunció centros médicos alternativos ni puntos de atención '
+    || E'habilitados en este corte. **No publicamos un destino alterno porque todavía '
+    || E'no tenemos uno confirmado por una fuente oficial**, y enviar a alguien herido '
+    || E'a un lugar equivocado es peor que no dar información.\n\n'
+    || E'Este es un corte puntual de las 11:47 a. m. y puede quedar desactualizado con '
+    || E'nuevos reportes oficiales.',
+    'critical', '{health}', '{pereira}',
+    'official', 'Alcaldía de Pereira — Puesto de Mando Unificado (PMU)',
+    null,
+    'published', true, '2026-08-10T16:47:00Z'
+  ),
   (
     'sismo-magnitud-7-4-10-agosto-2026',
     'Sismo de magnitud 7.4 con epicentro en Chocó sacude el Eje Cafetero',
