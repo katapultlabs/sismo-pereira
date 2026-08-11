@@ -361,6 +361,22 @@ const es = {
     pendingVerification: "Pendiente de verificar",
     verified: "Verificada",
   },
+  /*
+   * The WhatsApp line. Rendered only when NEXT_PUBLIC_WHATSAPP_NUMBER is set —
+   * we do not print a number we are not actually answering.
+   */
+  whatsapp: {
+    heading: "También puedes escribirnos por WhatsApp",
+    body:
+      "Un moderador lo revisa igual que un reporte del formulario. Responde " +
+      "ESTADO para consultar los servicios, o ALERTAS para recibir avisos " +
+      "verificados.",
+    cta: "Escribir por WhatsApp",
+    privacy:
+      "Tu número lo ve únicamente un moderador, para verificar contigo. No se " +
+      "publica nunca.",
+    prefill: "Hola, quiero reportar algo:",
+  },
   footer: {
     disclaimer:
       "Este es un sitio de información comunitaria. No reemplaza los canales " +
@@ -690,6 +706,17 @@ const en: typeof es = {
     orgsHeading: "Registered organizations",
     pendingVerification: "Pending verification",
     verified: "Verified",
+  },
+  whatsapp: {
+    heading: "You can also message us on WhatsApp",
+    body:
+      "A moderator reviews it exactly like a form submission. Reply STATUS to " +
+      "check utilities, or SUBSCRIBE to receive verified alerts.",
+    cta: "Message us on WhatsApp",
+    privacy:
+      "Only a moderator sees your number, so they can verify with you. It is " +
+      "never published.",
+    prefill: "Hello, I want to report something:",
   },
   footer: {
     disclaimer:

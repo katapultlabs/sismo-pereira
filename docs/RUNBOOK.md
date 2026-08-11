@@ -69,6 +69,46 @@ staff and only permits writing rows for their own organization.
 
 ---
 
+## Answering WhatsApp
+
+**URL:** `/admin/whatsapp`. Setup and architecture are in
+[WHATSAPP.md](./WHATSAPP.md); this is the operating half.
+
+Most inbound messages need nothing from you: recognised keywords are answered
+automatically from published data, and anything else is filed into the report
+queue above with the sender's number attached. You open a thread when you want to
+**verify** something — which is the one job WhatsApp does better than the web form,
+because the reporter is still there.
+
+### Working a thread
+
+- **Ask where and when.** Those two answers are what move a report from *pending*
+  to *publicar*, and they are the two things people habitually leave out.
+- **The number is for verifying, not for publishing.** Same rule as the report
+  queue ([Rule 4](./EDITORIAL.md#rule-4--contact-details-are-never-published)) —
+  never paste it into an update.
+- **"Ventana cerrada" is WhatsApp, not us.** More than 24 hours have passed since
+  their last message, and Meta will not deliver free text. They have to write
+  again. Do not work around it by broadcasting to one person.
+- **Blocking** stops every reply, automated and manual, and keeps the transcript.
+  Use it for abuse, not for disagreement.
+
+### Broadcasting
+
+`/admin/whatsapp/difusion`, and the bar is high. A broadcast reaches people who
+are not in a conversation with you, on a phone number **shared with
+ProCarmelita** — annoy people here and you degrade the number that project uses
+for login codes.
+
+So: only for something already published, only to people who sent `ALERTAS`, and
+only when it changes what someone should do in the next few hours. A status
+change that is merely interesting belongs on the site, where people come to look.
+
+Large lists send in chunks; the page tells you how many remain and you press
+continue. Nobody is messaged twice.
+
+---
+
 ## Publishing an update
 
 Two paths.

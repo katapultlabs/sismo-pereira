@@ -3,6 +3,7 @@ import { Phone, ShieldCheck } from "lucide-react";
 
 import { ReportForm } from "@/components/report-form";
 import { SectionHeading } from "@/components/section-heading";
+import { WhatsAppCta } from "@/components/whatsapp-cta";
 import { getZones } from "@/lib/data";
 import { getDictionary } from "@/lib/i18n";
 import { getLang } from "@/lib/lang";
@@ -44,6 +45,9 @@ export default async function ReportPage() {
           {t.form.emergencyWarning}
         </p>
       </aside>
+
+      {/* Renders nothing until the line is actually staffed and configured. */}
+      <WhatsAppCta lang={lang} />
 
       <p className="mt-6 flex items-start gap-2 text-sm text-muted-foreground">
         <ShieldCheck className="mt-0.5 size-4 shrink-0" aria-hidden />

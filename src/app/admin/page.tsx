@@ -1,12 +1,12 @@
 import Link from "next/link";
 import { Inbox, ShieldAlert } from "lucide-react";
 
+import { ADMIN_TABS, AdminShell } from "@/components/admin-shell";
 import { ModerationRow } from "@/components/moderation-row";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { getServerSupabase } from "@/lib/supabase/server";
 import { getLang } from "@/lib/lang";
-import { signOut } from "@/lib/moderation";
 
 export const metadata = { title: "Moderación", robots: { index: false } };
 
@@ -28,7 +28,7 @@ export default async function AdminPage() {
 
   if (!supabase) {
     return (
-      <Shell>
+      <AdminShell title="Moderación" tabs={ADMIN_TABS} active="/admin">
         <Alert>
           <ShieldAlert className="size-4" aria-hidden />
           <AlertTitle>Supabase no está configurado</AlertTitle>
@@ -38,7 +38,7 @@ export default async function AdminPage() {
             habilitar la moderación.
           </AlertDescription>
         </Alert>
-      </Shell>
+      </AdminShell>
     );
   }
 
@@ -48,7 +48,7 @@ export default async function AdminPage() {
 
   if (!user) {
     return (
-      <Shell>
+      <AdminShell title="Moderación" tabs={ADMIN_TABS} active="/admin">
         <Alert>
           <ShieldAlert className="size-4" aria-hidden />
           <AlertTitle>Inicia sesión</AlertTitle>
@@ -59,7 +59,7 @@ export default async function AdminPage() {
             </Button>
           </AlertDescription>
         </Alert>
-      </Shell>
+      </AdminShell>
     );
   }
 
@@ -75,7 +75,7 @@ export default async function AdminPage() {
 
   if (error) {
     return (
-      <Shell user={user.email}>
+      <AdminShell title="Moderación" user={user.email} tabs={ADMIN_TABS} active="/admin">
         <Alert className="border-down/40 bg-down-muted text-down-foreground">
           <ShieldAlert className="size-4" aria-hidden />
           <AlertTitle>No tienes permisos de moderación</AlertTitle>
@@ -84,14 +84,14 @@ export default async function AdminPage() {
             <code>admin</code>.
           </AlertDescription>
         </Alert>
-      </Shell>
+      </AdminShell>
     );
   }
 
   const pending = (reports ?? []) as PendingReport[];
 
   return (
-    <Shell user={user.email}>
+    <AdminShell title="Moderación" user={user.email} tabs={ADMIN_TABS} active="/admin">
       <div className="flex items-center gap-3 border-b border-foreground/25 pb-2">
         <h2 className="label-signage text-muted-foreground">Cola de revisión</h2>
         <span
@@ -114,42 +114,6 @@ export default async function AdminPage() {
           ))}
         </div>
       )}
-    </Shell>
-  );
-}
-
-function Shell({
-  children,
-  user,
-}: {
-  children: React.ReactNode;
-  user?: string | null;
-}) {
-  return (
-    <div className="mx-auto max-w-4xl space-y-6 px-4 py-8 sm:py-12">
-      <header className="flex flex-wrap items-center justify-between gap-3 border-t border-foreground/25 pt-3">
-        <div>
-          <h1 className="display-condensed text-3xl font-extrabold uppercase">
-            Moderación
-          </h1>
-          {user ? (
-            <p className="font-mono text-xs text-muted-foreground">{user}</p>
-          ) : null}
-        </div>
-        {user ? (
-          <form action={signOut}>
-            <Button
-              type="submit"
-              variant="outline"
-              size="sm"
-              className="label-signage rounded-sm"
-            >
-              Cerrar sesión
-            </Button>
-          </form>
-        ) : null}
-      </header>
-      {children}
-    </div>
+    </AdminShell>
   );
 }

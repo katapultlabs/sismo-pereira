@@ -22,6 +22,7 @@ complete by inventing data.
 | [docs/RUNBOOK.md](./docs/RUNBOOK.md) | Operating it: moderation, publishing, partners |
 | [docs/SUPABASE.md](./docs/SUPABASE.md) | Schema, RLS trust model, provisioning |
 | [docs/PARTNER-API.md](./docs/PARTNER-API.md) | The external API contract |
+| [docs/WHATSAPP.md](./docs/WHATSAPP.md) | The WhatsApp line: inbound routing, the 24 h window, broadcasts |
 | [docs/INFRASTRUCTURE.md](./docs/INFRASTRUCTURE.md) | Vercel, DNS, deploy gotchas |
 | [docs/DECISIONS.md](./docs/DECISIONS.md) | Why things are this way, and what we chose not to build |
 
@@ -107,6 +108,28 @@ Authorization lives in `supabase/migrations/*.sql`, not TypeScript. The public r
 **views** (`public_reports`, `public_organizations`, `current_service_status`), not
 base tables — `public_reports` is what drops the PII columns. If you change who may
 see what, change the policy; don't filter in a component.
+
+### The WhatsApp line
+
+`src/lib/whatsapp/*` plus `/api/webhooks/whatsapp` and `/admin/whatsapp`. Full
+detail in [docs/WHATSAPP.md](./docs/WHATSAPP.md); the load-bearing parts:
+
+- **Inbound free text becomes a `reports` row with `status = 'pending'`.**
+  WhatsApp is a second front door onto the moderation queue, never a bypass
+  around it. `category` is always `other` — a moderator categorises it.
+- **The keyword router matches the whole message, exactly.** `agua` gets the
+  water bulletin; `no hay agua en la 30` gets filed for a human. Never make
+  that matching fuzzy or substring-based, and never put a model on the reply
+  path — the reasoning is in
+  [docs/WHATSAPP.md](./docs/WHATSAPP.md#why-there-is-no-chatbot).
+- **Replies are rendered from `src/lib/data.ts`**, the same helpers the pages
+  use, so a WhatsApp answer and the site cannot disagree.
+- The webhook uses `getServiceSupabase()` for the same reason `api/v1/*` does:
+  the caller is Meta, with no session. `src/lib/whatsapp/store.ts` must never
+  be reachable from the browser.
+- `whatsapp_threads` is declared `security_invoker` **on purpose** — it carries
+  phone numbers and must inherit RLS instead of bypassing it the way
+  `public_reports` deliberately does.
 
 ### Partner ingestion
 
@@ -221,6 +244,13 @@ adding one to the enum without adding it there silently hides that category.
   as fresh, which is the stale-green failure [EDITORIAL](./docs/EDITORIAL.md#rule-1--unknown-is-a-first-class-status)
   exists to prevent. Correct the placeholder's artifact timestamp instead, and check
   `current_service_status` — not the `insert` status code — to confirm a publish.
+- **The WhatsApp number is ProCarmelita's, and a Meta app has exactly one
+  webhook URL.** Repointing it at this project breaks ProCarmelita's login
+  OTPs. The webhook already filters on `metadata.phone_number_id`, so a second
+  number on the same Business Account is the safe shape — see
+  [docs/WHATSAPP.md](./docs/WHATSAPP.md#credentials-this-is-procarmelitas-phone-number).
+  Message limits and sender reputation are shared either way, which is why
+  broadcasting is opt-in, template-only, and rate-limited.
 - **`supabase-js` infers row types from the `select()` string literal.** Splitting one
   across lines with `+` widens it to `string` and breaks inference. Keep select strings
   on one line.

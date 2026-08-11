@@ -11,6 +11,7 @@ run it. These documents go deeper, and each is written for a specific reader.
 | [EDITORIAL.md](./EDITORIAL.md) | **Moderating, writing, or reviewing content.** The rules about what we publish and what we refuse to publish, with the judgment calls worked through. The most important document here. |
 | [RUNBOOK.md](./RUNBOOK.md) | **Operating the site during an incident.** Moderating the queue, publishing an update, onboarding a partner, and what to do when something breaks. |
 | [PARTNER-API.md](./PARTNER-API.md) | **A utility, telco, or agency integrating with us.** Self-contained: safe to send to someone outside the project. |
+| [WHATSAPP.md](./WHATSAPP.md) | **Wiring up or operating the WhatsApp line.** How inbound messages become moderation-queue reports, the 24-hour window, broadcasting — and the consequences of sharing a phone number with ProCarmelita. |
 | [SUPABASE.md](./SUPABASE.md) | **Working on the database, auth, or permissions.** Schema, the RLS trust model, and the provisioning steps that are still pending. |
 | [INFRASTRUCTURE.md](./INFRASTRUCTURE.md) | **Shipping a change, or touching hosting, DNS, or the domain.** Branches, deploys, and rollback — plus the failure modes we already hit, so you don't rediscover them. |
 | [DECISIONS.md](./DECISIONS.md) | **Wondering why something is the way it is** — including the things we deliberately chose *not* to build. |
