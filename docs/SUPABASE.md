@@ -191,3 +191,15 @@ dashboard can subscribe. `getBrowserSupabase()` is the anon client for this.
 - **Anonymous can `INSERT` on `reports` but never `SELECT`.** If you find yourself
   adding a `SELECT` policy for `anon` there, stop — that is the PII leak this schema
   is shaped to prevent.
+- **`20260810230000_links.sql` is not applied in production** (checked 2026-08-11:
+  the REST schema exposes no `links` relation). `/enlaces` therefore serves
+  `FALLBACK_LINKS` behind a permanent degraded notice, which inverts the usual rule:
+  for that one page, editing `src/lib/fallback-data.ts` and deploying **is** how
+  content reaches readers, and `supabase/seed.sql` is the copy that does nothing.
+  That inversion lasts exactly until the migration lands.
+- **Applying the links migration without seeding rows in the same session blanks
+  `/enlaces`.** `query()` in `src/lib/data.ts` falls back only when `data === null`;
+  an empty table returns `[]`, which is not null, so the page renders zero links and
+  *no* degraded notice — silently dropping the Cruz Roja missing-persons channel,
+  the highest-stakes link on the site. Run `supabase db push` and the `links` insert
+  from `seed.sql` together, then load `/enlaces` before walking away.

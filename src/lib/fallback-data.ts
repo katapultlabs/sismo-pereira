@@ -398,6 +398,21 @@ export const FALLBACK_LINKS: SiteLink[] = [
   {
     id: "fallback-link-2",
     category: "missing_persons",
+    title: "Encontrados",
+    url: "https://encontrados.co/",
+    description:
+      "Registro ciudadano creado tras el sismo del 10 de agosto para reportar y " +
+      "buscar personas desaparecidas. Reúne los reportes publicados en Colombia " +
+      "Te Busca y permite a rescatistas subir fotos de personas encontradas. No " +
+      "es un canal oficial y no reemplaza a las autoridades.",
+    operator: "Iniciativa ciudadana (Ni500 y Torrenegra)",
+    source: "community",
+    sort_order: 20,
+    verified: true,
+  },
+  {
+    id: "fallback-link-3",
+    category: "missing_persons",
     title: "Colombia Te Busca",
     url: "https://colombiatebusca.com/",
     description:
@@ -406,11 +421,11 @@ export const FALLBACK_LINKS: SiteLink[] = [
       "lucro: no es un canal oficial y no reemplaza a las autoridades.",
     operator: "Iniciativa ciudadana (softwareparati.com)",
     source: "community",
-    sort_order: 20,
+    sort_order: 30,
     verified: true,
   },
   {
-    id: "fallback-link-3",
+    id: "fallback-link-4",
     category: "seismic",
     title: "Sismos recientes en Colombia",
     url: "https://www.sgc.gov.co/sismos",
@@ -423,7 +438,7 @@ export const FALLBACK_LINKS: SiteLink[] = [
     verified: true,
   },
   {
-    id: "fallback-link-4",
+    id: "fallback-link-5",
     category: "official",
     title: "Unidad Nacional para la Gestión del Riesgo de Desastres",
     url: "https://portal.gestiondelriesgo.gov.co/",
@@ -436,7 +451,7 @@ export const FALLBACK_LINKS: SiteLink[] = [
     verified: true,
   },
   {
-    id: "fallback-link-5",
+    id: "fallback-link-6",
     category: "official",
     title: "Alcaldía de Pereira",
     url: "https://www.pereira.gov.co/",
@@ -447,7 +462,7 @@ export const FALLBACK_LINKS: SiteLink[] = [
     verified: true,
   },
   {
-    id: "fallback-link-6",
+    id: "fallback-link-7",
     category: "official",
     title: "Gobernación de Risaralda",
     url: "https://www.risaralda.gov.co/",
@@ -458,7 +473,7 @@ export const FALLBACK_LINKS: SiteLink[] = [
     verified: true,
   },
   {
-    id: "fallback-link-7",
+    id: "fallback-link-8",
     category: "aid",
     title: "Cruz Roja Colombiana",
     url: "https://www.cruzrojacolombiana.org/",
@@ -477,7 +492,7 @@ export const FALLBACK_LINKS: SiteLink[] = [
    * official channel, so the UI badges it "No es un canal oficial".
    */
   {
-    id: "fallback-link-8",
+    id: "fallback-link-9",
     category: "donations",
     title: "Fondo de emergencia para Colombia (Vaki)",
     url: "https://helpcolombia.vaki.org/",

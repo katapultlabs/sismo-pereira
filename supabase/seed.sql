@@ -227,10 +227,13 @@ on conflict (slug) do nothing;
 --
 -- Missing persons leads. We deliberately do not run a registry
 -- (docs/DECISIONS.md#no-missing-persons-registry), so pointing outward *is*
--- our answer to the person asking — which makes these two rows the highest
--- stakes on the page. The Cruz Roja / ICRC channel is ordered first because it
--- is the authoritative one; the citizen-run registry follows, labelled
--- 'community' so the UI can never present it as official.
+-- our answer to the person asking — which makes these rows the highest stakes
+-- on the page. The Cruz Roja / ICRC channel is ordered first because it is the
+-- authoritative one; the citizen-run registries follow, labelled 'community' so
+-- the UI can never present them as official. Among those, Encontrados precedes
+-- Colombia Te Busca because it was built for this earthquake and republishes
+-- Colombia Te Busca's reports — sending someone to the subset first would cost
+-- them the superset.
 -- ---------------------------------------------------------------------------
 insert into links (category, title, url, description, operator, source, sort_order, verified, org_id) values
   (
@@ -244,13 +247,24 @@ insert into links (category, title, url, description, operator, source, sort_ord
   ),
   (
     'missing_persons',
+    'Encontrados',
+    'https://encontrados.co/',
+    'Registro ciudadano creado tras el sismo del 10 de agosto para reportar y '
+    || 'buscar personas desaparecidas. Reúne los reportes publicados en Colombia '
+    || 'Te Busca y permite a rescatistas subir fotos de personas encontradas. No '
+    || 'es un canal oficial y no reemplaza a las autoridades.',
+    'Iniciativa ciudadana (Ni500 y Torrenegra)',
+    'community', 20, true, null
+  ),
+  (
+    'missing_persons',
     'Colombia Te Busca',
     'https://colombiatebusca.com/',
     'Registro ciudadano para publicar y consultar reportes de personas '
     || 'desaparecidas en Colombia. Es una iniciativa voluntaria y sin ánimo de '
     || 'lucro: no es un canal oficial y no reemplaza a las autoridades.',
     'Iniciativa ciudadana (softwareparati.com)',
-    'community', 20, true, null
+    'community', 30, true, null
   ),
   (
     'seismic',
