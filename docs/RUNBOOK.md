@@ -97,6 +97,37 @@ values ('restablecimiento-cuba-2026-08-11',
 - `source_name` and `source_url` are effectively mandatory — see Rule 3 in
   [EDITORIAL.md](./EDITORIAL.md).
 
+## Publishing a service status
+
+The status board reads `current_service_status`, which is the row with the newest
+`reported_at` per service and zone. Publishing is an `insert`, never an update —
+the history stays intact and the newest row wins:
+
+```sql
+insert into service_status
+  (service, zone_slug, status, headline, detail, source, org_id, reported_at)
+select 'health', 'pereira', 'outage',
+       'Titular corto',
+       'Detalle…',
+       'official', o.id, '2026-08-10T16:47:00Z'
+from organizations o where o.slug = 'alcaldia-pereira';
+```
+
+**Verify with `current_service_status`, not the insert's return code.** An insert
+can succeed and still not reach the board: the seed stamps all seven baseline
+`unknown` rows with the moment the database was seeded, so a report whose true
+`reported_at` predates that bulk insert is written but never surfaces.
+
+```sql
+select service, status, headline, reported_at
+from current_service_status where service = 'health';
+```
+
+If a stale baseline is winning, move *that placeholder* back to an earlier time.
+Do not restamp the real report with `now()` — the card renders `reported_at` as
+«Actualizado», and a four-hour-old hospital status shown as current is precisely
+the failure Rule 1 exists to prevent.
+
 ### Correcting something already published
 
 Publish a new update describing the correction, then set the original to

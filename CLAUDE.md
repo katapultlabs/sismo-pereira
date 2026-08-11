@@ -48,8 +48,18 @@ both of which passed types and build and were only visible on click.
 that way), so `supabase start` needs no `supabase init`.
 
 **The site runs with no `.env.local` at all** — every read falls back to seed content.
-Supabase is currently **not provisioned in production** either; report submission,
-moderation, and partner ingestion are inert until it is.
+That is a property of local development. **Production is provisioned**: it has a live
+Supabase, and the site reads the database there, not `fallback-data.ts`.
+
+That distinction is the trap. Editing `src/lib/fallback-data.ts` and `supabase/seed.sql`
+changes what a *developer* sees and what a fresh `supabase db reset` produces — it does
+**not** change production, where those constants are never reached. `seed.sql` never
+runs against production. Shipping content by editing the seed looks completely correct
+locally, passes `pnpm build`, deploys green, and changes nothing on the live site.
+
+To actually publish content, write to the live database — see
+[docs/RUNBOOK.md](./docs/RUNBOOK.md#publishing-an-update). Only hardcoded components
+(the emergency lines, `MedicalClosures`) reach production through a deploy.
 
 ## Shipping
 
@@ -193,6 +203,18 @@ adding one to the enum without adding it there silently hides that category.
   or placeholder email. Render the honest empty state. This has already slipped in
   once as a "sensible default" (commit `eca5dd3`, `NEXT_PUBLIC_CONTACT_EMAIL` on the
   **organizaciones page** — the footer does not use it).
+- **A seeded `unknown` can outrank a real report.** `current_service_status` is
+  `distinct on (service, zone_slug) order by reported_at desc` — newest
+  `reported_at` wins, and the seed stamps all seven baseline rows with the moment
+  the database was seeded. Publishing a report whose true `reported_at` is *older*
+  than that bulk insert therefore inserts fine, returns `201`, and changes nothing
+  on the board. This bit the PMU hospital status: the mayor spoke at 16:47Z, the
+  database was seeded at 20:29Z, and the placeholder won.
+  **Do not "fix" it by stamping the report with `now()`** — the card renders
+  `reported_at` as «Actualizado», so that publishes a four-hour-old hospital status
+  as fresh, which is the stale-green failure [EDITORIAL](./docs/EDITORIAL.md#rule-1--unknown-is-a-first-class-status)
+  exists to prevent. Correct the placeholder's artifact timestamp instead, and check
+  `current_service_status` — not the `insert` status code — to confirm a publish.
 - **`supabase-js` infers row types from the `select()` string literal.** Splitting one
   across lines with `+` widens it to `string` and breaks inference. Keep select strings
   on one line.
