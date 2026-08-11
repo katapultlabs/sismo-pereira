@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useState } from "react";
+import { useActionState, useEffect, useState } from "react";
 import { useFormStatus } from "react-dom";
 import dynamic from "next/dynamic";
 import {
@@ -18,6 +18,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { track } from "@/lib/analytics";
 import {
   submitServiceReport,
   type SubmitServiceReportState,
@@ -97,6 +98,15 @@ function SubmitButton({ lang }: { lang: Lang }) {
 export function LuzReportForm({ lang, zones }: { lang: Lang; zones: Zone[] }) {
   const t = getDictionary(lang).luz;
   const [state, formAction] = useActionState(submitServiceReport, INITIAL);
+
+  /* The utility reads the rows themselves. The gap this fills is the household
+   * that opened `/luz`, filled it in, and bounced off a validation error. */
+  useEffect(() => {
+    if (state.ok) track("report_submitted", { form: "household" });
+    else if (state.error) {
+      track("report_failed", { form: "household", reason: state.error });
+    }
+  }, [state]);
 
   const [fix, setFix] = useState<Fix | null>(null);
   const [locating, setLocating] = useState(false);

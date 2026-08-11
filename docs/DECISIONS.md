@@ -357,6 +357,94 @@ compelled to hand over.
 
 ---
 
+### Analytics: a PostHog project inside Katapult, not its own organisation
+
+**Decision:** the site reports to the **Sismo Pereira** project (ID `513780`) in the
+existing **Katapult** PostHog organisation, rather than to a PostHog organisation of
+its own.
+
+**Why:** the Vercel project already lives in the Katapult team, so this keeps one
+owner, one member list, and one login for the person who has to look something up
+during an aftershock. PostHog's isolation boundary is the *project*, not the
+organisation — separate token, separate event stream, separate dashboards — so
+nothing is gained on that front by splitting.
+
+The counter-argument was real and is worth recording, because the constraint that
+settled it will resurface: **PostHog's free plan allows one project per
+organisation.** Katapult now spends that slot on this site. A second project needs a
+card on file (which unlocks six); a second organisation would have kept both free.
+That was judged the cheaper problem — adding a card costs nothing in usage, whereas
+splitting the org would have meant switching accounts to read the numbers.
+
+Moving a project between organisations is not self-serve, so if stewardship of
+sismopereira.org is ever handed to a Colombian partner this is the piece that has to
+be rebuilt rather than transferred.
+
+---
+
+### Analytics measures the site, and never the people who use it
+
+**Decision:** pageviews and autocapture on the public bulletin; nothing at all from
+`/panel` or `/admin`; no session replay; no person profiles; no stored IPs; query
+strings stripped from every captured URL.
+
+**Why:** the site collects phone numbers under a promise
+([above](#collecting-and-handing-over-contact-details)), and an analytics SDK is
+exactly the kind of thing that quietly breaks such a promise. Three of these are
+guarding against a specific, checked mechanism rather than a vague worry:
+
+- **`/panel` and `/admin` are dropped in `before_send`, not merely skipped at init.**
+  PostHog autocapture records the `href` of every anchor it sees, and those two pages
+  render reporter phone numbers as `tel:` links. Dropping at send time also covers a
+  client-side navigation *into* a control room, where the SDK is already loaded and
+  running. It does **not** capture what anyone types — input values are never
+  autocaptured — so the public forms are safe as they stand.
+- **Session replay is off in the project settings as well as in the client.** The
+  client flag is a statement of intent; the project setting is the authority.
+- **`person_profiles: "never"`.** Nobody signs in to the bulletin, so there is no
+  profile worth building and none is created.
+
+IPs are discarded by PostHog *after* GeoIP and bot detection run, so the city
+breakdown survives without the site holding an address.
+
+**What we chose not to do:** cookieless mode. It would have removed the last argument
+for a consent banner, but it strips the IP *before* enrichment — costing both the
+geographic breakdown and bot filtering — and rotates its identity salt daily, which
+inflates weekly and monthly unique counts. Trading accurate numbers for a banner the
+site does not currently show was the wrong way round for a project whose editorial
+rules are about not publishing figures it cannot stand behind. Revisit if a banner
+ever appears.
+
+**Also not done:** a reverse proxy through `next.config.ts` rewrites. It is PostHog's
+recommended defence against ad blockers, but it requires
+`skipTrailingSlashRedirect: true` — a site-wide change that stops Next redirecting
+`/servicios/` to `/servicios`, i.e. an SEO change made for an analytics reason — and
+it needs `src/proxy.ts`'s catch-all matcher amended, or the matcher swallows the
+ingestion path and the SDK silently sends nothing while still *looking* connected.
+This audience is overwhelmingly mobile, where blocking is rare, so the loss is small
+and the two new failure modes are not.
+
+---
+
+### The analytics SDK loads after the page is interactive
+
+**Decision:** `src/instrumentation-client.ts` reaches PostHog through a dynamic
+`import()` rather than a static one, and `track()` in `src/lib/analytics.ts` does the
+same.
+
+**Why:** `instrumentation-client.ts` runs before React hydrates, so a static import
+puts the SDK in front of the page becoming usable. Measured on the production build:
+posthog-js is **233 KB raw / ~72 KB gzipped**, and with the static import it was
+pulled into a chunk the home page loads directly; with the dynamic import it lands in
+a chunk that appears nowhere in the initial HTML and is fetched afterwards. Same
+bytes eventually, but not ahead of the fold on a low-end phone on one bar — the same
+trade `luz-report-form.tsx` already makes for MapLibre.
+
+Verify it the same way if this is ever refactored: build, then check that the chunk
+containing the SDK is absent from `curl`'s output for `/`.
+
+---
+
 ## Process
 
 ### No PRs, no CI gate; `main` deploys

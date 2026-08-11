@@ -1,3 +1,8 @@
 allowBuilds:
+  # posthog-js pulls in core-js, whose postinstall only prints a funding
+  # banner. It has to be allowed rather than denied: pnpm 11 exits 1 on an
+  # unapproved build script, and `false` still counts as unapproved — so
+  # denying it here fails `pnpm install`, and with it every Vercel deploy.
+  core-js: true
   sharp: false
   unrs-resolver: false

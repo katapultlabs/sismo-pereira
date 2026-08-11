@@ -117,14 +117,46 @@ it waits on a build.
 Managed with `vercel env`. See [`.env.example`](../.env.example) for the full list and
 [SUPABASE.md](./SUPABASE.md#3-set-environment-variables) for what still needs setting.
 
+Verified against `vercel env ls production` on 2026-08-11.
+
 | Variable | Set? | Notes |
 |---|---|---|
-| `REPORT_HASH_SALT` | ✅ all three envs | Salt for the one-way submitter fingerprint. Changing it resets abuse history. |
+| `REPORT_HASH_SALT` | ✅ production | Salt for the one-way submitter fingerprint. Changing it resets abuse history. |
 | `NEXT_PUBLIC_SITE_URL` | ✅ production | `https://sismopereira.org`. Drives `metadataBase`, canonical URLs, share cards. |
-| `NEXT_PUBLIC_SUPABASE_URL` | ❌ | |
-| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | ❌ | |
-| `SUPABASE_SERVICE_ROLE_KEY` | ❌ | **Server-only.** Bypasses RLS. Never `NEXT_PUBLIC_`. |
+| `NEXT_PUBLIC_SUPABASE_URL` | ✅ production | |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | ✅ production | |
+| `SUPABASE_SERVICE_ROLE_KEY` | ✅ production | **Server-only.** Bypasses RLS. Never `NEXT_PUBLIC_`. |
+| `NEXT_PUBLIC_POSTHOG_KEY` | ✅ production only | Project token for the PostHog project below. Public by design — it is a write-only key. |
+| `NEXT_PUBLIC_POSTHOG_HOST` | ✅ production only | `https://us.i.posthog.com`. |
 | `NEXT_PUBLIC_CONTACT_EMAIL` | ❌ | Optional. When unset the partners page links to the repo rather than inventing an address. |
+
+**The two PostHog variables are deliberately set on production only.** Preview and
+development builds therefore have no key, and `src/instrumentation-client.ts` does
+nothing without one — so `pnpm dev` and every preview deployment stay out of the
+production dataset instead of quietly inflating it.
+
+## Analytics
+
+| | |
+|---|---|
+| Organisation | **Katapult** (`tomas@katapultlabs.ai`) — the same owner as the Vercel team |
+| Project | **Sismo Pereira**, project ID `513780`, US Cloud |
+| Dashboard | <https://us.posthog.com/project/513780> |
+
+Settings that are part of the privacy posture and are **not** in the repository, so
+they have to be re-checked in the PostHog UI rather than read off a diff:
+
+- **Session replay: off.** Residents type phone numbers and street hints into `/luz`
+  and `/reportar`. `disable_session_recording: true` in the client says the same
+  thing, but the project setting is the one that actually governs.
+- **Discard client IP data: on.** GeoIP and bot detection still run — they happen
+  before the address is dropped — so the city breakdown survives without the site
+  storing anyone's IP.
+- Autocapture and web-vitals autocapture: on. Timezone: `America/Bogota`.
+
+What the code contributes on top of that is in
+[`src/lib/analytics.ts`](../src/lib/analytics.ts): `/panel` and `/admin` are dropped
+entirely, and query strings are stripped from captured URLs.
 
 ---
 

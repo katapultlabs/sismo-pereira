@@ -1,9 +1,10 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useEffect } from "react";
 import { useFormStatus } from "react-dom";
 import { CheckCircle2, TriangleAlert } from "lucide-react";
 
+import { track } from "@/lib/analytics";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -50,6 +51,15 @@ function SubmitButton({ lang }: { lang: Lang }) {
 export function ReportForm({ lang, zones }: { lang: Lang; zones: Zone[] }) {
   const t = getDictionary(lang);
   const [state, formAction] = useActionState(submitReport, INITIAL);
+
+  /* The database counts the reports that were filed. What it cannot show is
+   * the person who tried and was turned away, so that is what we record. */
+  useEffect(() => {
+    if (state.ok) track("report_submitted", { form: "community" });
+    else if (state.error) {
+      track("report_failed", { form: "community", reason: state.error });
+    }
+  }, [state]);
 
   if (state.ok) {
     return (

@@ -331,6 +331,14 @@ a resident is never offered it.
   defaults — the local check passes for the wrong reason. Verify grants with
   `has_column_privilege(...)` against the actual project. RLS is unaffected by any of
   this and kept the PII closed throughout, which is the argument for having both.
+- **A new internal route is invisible to analytics only if you say so.**
+  `PRIVATE_PREFIXES` in `src/lib/analytics.ts` lists `/panel` and `/admin`, and
+  PostHog's `before_send` drops everything from them. Autocapture records the `href`
+  of every anchor it sees, and those pages render reporter phone numbers as `tel:`
+  links — so any new route that displays resident data has to be added to that array
+  or it starts shipping phone numbers to an analytics server. Nothing type-checks
+  this. (Typed input values are never autocaptured, so the public forms are fine;
+  it is rendered `href`s and link text that leak.)
 - **Seed content exists twice** — `supabase/seed.sql` and `src/lib/fallback-data.ts` —
   and they are kept in sync by hand. Change one, change the other.
 - **React Compiler lint rules are enforced.** Mutating anything outside a component
