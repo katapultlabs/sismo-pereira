@@ -2,6 +2,7 @@ import Link from "next/link";
 import { ArrowRight, Info, Megaphone, Phone } from "lucide-react";
 
 import { DegradedNotice } from "@/components/degraded-notice";
+import { DonateBlock } from "@/components/donate-banner";
 import { SectionHeading } from "@/components/section-heading";
 import { ServiceStatusCard } from "@/components/service-status-card";
 import { UpdateCard } from "@/components/update-card";
@@ -119,6 +120,17 @@ export default async function HomePage() {
           ))}
         </section>
       ) : null}
+
+      {/* ---------------------------------------------------------------- */}
+      {/* Donation drive                                                    */}
+      {/* ---------------------------------------------------------------- */}
+      {/*
+       * Deliberately below the pinned alerts and above the status board. The
+       * pinned slot carries critical, time-sensitive safety notices, and an
+       * appeal for money must never sit above "do not enter this building".
+       * Everywhere after that, it leads.
+       */}
+      <DonateBlock lang={lang} className="mt-10" />
 
       {/* ---------------------------------------------------------------- */}
       {/* Service status grid                                               */}

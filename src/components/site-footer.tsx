@@ -2,6 +2,7 @@
 import { Code } from "lucide-react";
 import Link from "next/link";
 
+import { DonateFooterLink } from "@/components/donate-banner";
 import { EMERGENCY_LINES } from "@/lib/fallback-data";
 import { getDictionary, type Lang } from "@/lib/i18n";
 
@@ -13,7 +14,11 @@ export function SiteFooter({ lang }: { lang: Lang }) {
   return (
     <footer className="mt-auto border-t-2 border-foreground/25 bg-muted/30">
       <div className="mx-auto max-w-6xl px-4 py-10">
-        <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+        {/* Above the columns, not inside one: none of the three headings
+            ("Líneas de emergencia", "Organizaciones") would be honest over it. */}
+        <DonateFooterLink lang={lang} />
+
+        <div className="mt-8 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
           <div>
             <p className="display-condensed flex items-baseline gap-2 text-base uppercase">
               <span className="size-2 translate-y-px bg-down" aria-hidden />

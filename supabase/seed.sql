@@ -297,5 +297,20 @@ insert into links (category, title, url, description, operator, source, sort_ord
     'Ayuda humanitaria, banco de sangre y canales de donación y voluntariado.',
     'Sociedad Nacional de la Cruz Roja Colombiana',
     'official', 10, true, null
+  ),
+  -- Also rendered site-wide by `DonateBanner`, which is hardcoded so the appeal
+  -- survives a degraded read. This row is what places it in its category on
+  -- /enlaces alongside the alternatives. 'private' because Vaki is a company,
+  -- not an official channel — the UI badges it "No es un canal oficial".
+  (
+    'donations',
+    'Fondo de emergencia para Colombia (Vaki)',
+    'https://helpcolombia.vaki.org/',
+    'Campaña de recaudo para la emergencia del sismo del 10 de agosto, en la '
+    || 'plataforma colombiana Vaki. Recibe aportes desde Colombia y desde el '
+    || 'exterior. Según la campaña, los fondos se destinan a organizaciones que '
+    || 'operan en las zonas afectadas.',
+    'Vaki (Vaki Global Ltd)',
+    'private', 10, true, null
   )
 on conflict (url) do nothing;

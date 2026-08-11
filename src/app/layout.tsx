@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Archivo, IBM_Plex_Mono, Source_Sans_3 } from "next/font/google";
 
+import { DonateBar } from "@/components/donate-banner";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import { ThemeProvider } from "@/components/theme-provider";
@@ -91,6 +92,9 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
             {t.nav.skipToContent}
           </a>
           <SiteHeader lang={lang} />
+          {/* Outside <main> and after the header: it is chrome, not content,
+              and it scrolls away rather than joining the sticky masthead. */}
+          <DonateBar lang={lang} />
           <main id="contenido" className="flex-1">
             {children}
           </main>

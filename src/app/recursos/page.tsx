@@ -3,6 +3,7 @@ import Link from "next/link";
 import { ArrowRight, Phone } from "lucide-react";
 
 import { DegradedNotice } from "@/components/degraded-notice";
+import { DonateBlock } from "@/components/donate-banner";
 import { MedicalClosures } from "@/components/medical-closures";
 import { SectionHeading } from "@/components/section-heading";
 import { StatusBadge } from "@/components/status-badge";
@@ -95,6 +96,11 @@ export default async function ResourcesPage() {
        * now the answer is "not these four".
        */}
       <MedicalClosures lang={lang} />
+
+      {/* After the two life-safety blocks, before the resource grid — which is
+          empty far more often than not, so the appeal would otherwise land
+          below a dashed empty state. */}
+      <DonateBlock lang={lang} className="mt-12" />
 
       {degraded ? (
         <div className="mt-8">

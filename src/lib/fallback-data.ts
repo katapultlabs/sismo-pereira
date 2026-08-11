@@ -469,6 +469,28 @@ export const FALLBACK_LINKS: SiteLink[] = [
     sort_order: 10,
     verified: true,
   },
+  /*
+   * Also rendered site-wide by `DonateBanner`, which is hardcoded so the
+   * appeal survives a degraded read. This row is what puts it in its category
+   * on `/enlaces` alongside the alternatives, with the same badge and domain
+   * every other row carries. `source: private` — Vaki is a company, not an
+   * official channel, so the UI badges it "No es un canal oficial".
+   */
+  {
+    id: "fallback-link-8",
+    category: "donations",
+    title: "Fondo de emergencia para Colombia (Vaki)",
+    url: "https://helpcolombia.vaki.org/",
+    description:
+      "Campaña de recaudo para la emergencia del sismo del 10 de agosto, en la " +
+      "plataforma colombiana Vaki. Recibe aportes desde Colombia y desde el " +
+      "exterior. Según la campaña, los fondos se destinan a organizaciones que " +
+      "operan en las zonas afectadas.",
+    operator: "Vaki (Vaki Global Ltd)",
+    source: "private",
+    sort_order: 10,
+    verified: true,
+  },
 ];
 
 /**

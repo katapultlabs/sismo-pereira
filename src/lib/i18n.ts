@@ -169,6 +169,34 @@ const es = {
     },
     linksCta: "Ver enlaces útiles",
   },
+  /*
+   * The donation drive. Hardcoded rather than a `links` row on purpose: this
+   * has to reach production through a deploy and keep working when Supabase
+   * does not — see Rule 7. It is also the one outbound link we amplify on
+   * every page, so it carries the same apparatus as `/enlaces` (operator,
+   * bare domain, an explicit note that we checked the operator and nothing
+   * more). Donation scams follow disasters reliably; amplifying a link
+   * without printing its domain is how a lookalike gets a free ride.
+   */
+  donate: {
+    eyebrow: "Donaciones",
+    barTitle: "Fondo de emergencia para el sismo",
+    title: "Dona al fondo de emergencia",
+    body:
+      "Vaki, la plataforma colombiana de recaudo colectivo, abrió un fondo " +
+      "para la emergencia del sismo del 10 de agosto. Recibe aportes desde " +
+      "Colombia y desde el exterior.",
+    /* Their claim, marked as theirs — we have not audited the disbursement. */
+    scope:
+      "Según la campaña, los aportes se destinan a organizaciones que operan " +
+      "en las zonas afectadas.",
+    cta: "Donar",
+    verifyNote:
+      "Confirmamos quién opera este sitio antes de publicarlo, pero no " +
+      "controlamos la campaña ni administramos los fondos. Compara el dominio " +
+      "con el de la barra de direcciones antes de donar — durante una " +
+      "emergencia circulan copias falsas.",
+  },
   links: {
     heading: "Enlaces útiles",
     subheading:
@@ -375,6 +403,24 @@ const en: typeof es = {
       reportedLabel: "As of",
     },
     linksCta: "See useful links",
+  },
+  donate: {
+    eyebrow: "Donations",
+    barTitle: "Earthquake emergency fund",
+    title: "Donate to the emergency fund",
+    body:
+      "Vaki, the Colombian crowdfunding platform, has opened a fund for the " +
+      "August 10 earthquake emergency. It accepts donations from inside " +
+      "Colombia and from abroad.",
+    scope:
+      "According to the campaign, contributions go to organizations operating " +
+      "in the affected areas.",
+    cta: "Donate",
+    verifyNote:
+      "We confirmed who operates this site before publishing it, but we do " +
+      "not control the campaign and do not handle the funds. Check the domain " +
+      "against your address bar before donating — fake copies circulate " +
+      "during an emergency.",
   },
   links: {
     heading: "Useful links",
