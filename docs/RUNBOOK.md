@@ -93,7 +93,19 @@ values ('restablecimiento-cuba-2026-08-11',
 
 - `severity`: `info` | `warning` | `critical`. Reserve `critical` for
   life-safety. If everything is critical, nothing is.
-- `pinned` holds an item at the top of the home page. Two or three maximum.
+- `pinned` puts the item in the strap line high on the home page — above the six
+  route tiles, below the two life-safety plates (123 and the medical closures).
+  Two or three maximum.
+
+  A pinned row shows **severity, headline, and age, and nothing else**: no summary,
+  no source line. The headline has to carry the notice on its own, and it gets about
+  two lines on a phone, so write it as a statement rather than a topic —
+  "Puente Mosquera cerrado en ambos sentidos", not "Actualización sobre el puente".
+  The full card, with summary and source, is in the feed further down the page.
+
+  Pinning does **not** create an alert. If something needs to be on screen for
+  everyone before they do anything else, it belongs in a hardcoded component, not in
+  `updates` — see Rule 7 in [EDITORIAL.md](./EDITORIAL.md).
 - `source_name` and `source_url` are effectively mandatory — see Rule 3 in
   [EDITORIAL.md](./EDITORIAL.md).
 

@@ -2,15 +2,23 @@
 
 **Audience:** anyone working on the database, auth, or who-can-see-what.
 
-> **Status: not provisioned.** The site runs today entirely on fallback seed content.
-> Report submission, moderation, and partner ingestion all require the steps in
-> [Provisioning](#provisioning) below.
+> **Status: provisioned in production.** `sismopereira.org` reads a live Supabase —
+> the "mostrando información de respaldo" banner does not appear there, and the
+> organization directory serves rows that exist only in the database.
+>
+> **Local development is the opposite, and that difference is the trap.** The site
+> runs with no `.env.local` at all, so every read falls back to `fallback-data.ts`.
+> Editing that file or `seed.sql` changes what *you* see and what a fresh
+> `supabase db reset` produces; it publishes nothing. To change the live site, write
+> to the database — see [RUNBOOK.md](./RUNBOOK.md#publishing-an-update).
 
 ---
 
 ## Provisioning
 
-Nothing here is done yet. Roughly 30 minutes end to end.
+Production has been through these steps. They are kept because they are still what
+you follow to stand up a second environment, to rebuild after a loss, or to run a
+full local stack. Roughly 30 minutes end to end.
 
 ### 1. Create the project
 

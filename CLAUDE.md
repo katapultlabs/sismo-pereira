@@ -74,6 +74,36 @@ Because nothing reviews a change before it is live, `pnpm build` and
 Never force-push `main`. Deploy commands and rollback are in
 [docs/INFRASTRUCTURE.md](./docs/INFRASTRUCTURE.md#branches-and-deploying).
 
+## Gardening
+
+When the maintainer asks for **"gardening"** (or "document gardening"), it means:
+go over the documentation in light of what just changed and leave it in a state that
+makes the next collaboration cheaper — updating what is now wrong, writing what is
+now missing, and **deleting what no longer earns its place**. Deleting is part of the
+job; a doc nobody trusts costs more than no doc.
+
+It is a real pass over the tree, not a changelog entry for the work just done. In
+practice:
+
+1. **Hunt staleness first, and verify before rewriting.** Claims about state — what
+   is provisioned, what is pending, what is not built yet — rot fastest and mislead
+   hardest. Check them against reality (`curl` production, read the code, run the
+   query) rather than against memory. A stale "not provisioned yet" in a README sent
+   the reader straight into the `seed.sql` trap for several commits.
+2. **Grep the whole tree for the fact you just changed**, not just the file you
+   remember. That same claim was wrong in three files at once.
+3. **Put each thing where its reader will look**: invariants and traps in this file,
+   reasoning in [DECISIONS.md](./docs/DECISIONS.md), operator steps in
+   [RUNBOOK.md](./docs/RUNBOOK.md), publishing rules in
+   [EDITORIAL.md](./docs/EDITORIAL.md). Duplicating prose across them guarantees
+   they drift apart; link instead.
+4. **Record the measurement, not just the conclusion.** "Three pins cost ~540px and
+   pushed the board off a phone screen" survives a rewrite; "keep pins short" does
+   not, because the next person cannot tell whether it still applies.
+5. **Write down what was deliberately *not* done**, and why. Half of
+   [DECISIONS.md](./docs/DECISIONS.md) is that, and it is the half that stops work
+   being redone.
+
 ## Architecture
 
 ### Reads never fail; writes fail loudly
@@ -196,6 +226,23 @@ adding one to the enum without adding it there silently hides that category.
 - The inline header nav starts at `lg`, not `md` — six items plus the 123 button and
   the language/theme controls do not fit at 768. Adding a seventh means reworking the
   bar, not tightening the gap.
+- **The home page is an action hub, and its fold order is load-bearing.** `/` runs
+  masthead → `EmergencyPlates` → `PinnedAlerts` → `ActionRoutes` → status board →
+  donate → update feed. The two plates lead because they are standing instructions
+  rendered from hardcoded constants (they survive a degraded read); pinned notices
+  are compressed to a strap line rather than cards because three `UpdateCard`s cost
+  ~540px and pushed everything actionable off a phone screen. Don't reorder these
+  without re-measuring on a 390px viewport — the previous hero passed every check
+  and still left nothing actionable above the fold.
+  ([why](./docs/DECISIONS.md#the-home-page-is-a-hub-not-a-bulletin))
+- **A route tile must carry a live readout**, and must be named for what the reader
+  does ("Busca a una persona"), not for a part of the site ("Enlaces"). A tile with
+  no readout is a nav link wearing a card. Any count shown must be the number the
+  reader actually finds on the far side — the reports tile reads with the same limit
+  `/reportes` renders, deliberately.
+- **The route board is full at six.** Two rows of `lg:grid-cols-3`. A seventh means
+  removing one, same as the masthead. The plates are the only chroma the board adds;
+  the six tiles stay achromatic so they don't compete with the four status hues.
 - **The masthead row is full.** It is capped at `max-w-6xl` (1152px), so its space
   does **not** grow with the viewport — a control that fits at 1600 fits at 1280 and
   no better. The three actions are ranked and appear at different breakpoints: 123
@@ -221,6 +268,12 @@ adding one to the enum without adding it there silently hides that category.
   as fresh, which is the stale-green failure [EDITORIAL](./docs/EDITORIAL.md#rule-1--unknown-is-a-first-class-status)
   exists to prevent. Correct the placeholder's artifact timestamp instead, and check
   `current_service_status` — not the `insert` status code — to confirm a publish.
+- **Two anchors are load-bearing and nothing type-checks them.** The home page's
+  route tiles link to `/recursos#centros-medicos` (the `MedicalClosures` block) and
+  `/enlaces#personas-desaparecidas` (the `missing_persons` category section). Both
+  ids carry `scroll-mt-20` to clear the sticky masthead. Rename or drop either id and
+  the link silently degrades to "top of page" — a build passes, a browser says
+  nothing, and someone looking for a missing person lands on the wrong block.
 - **`supabase-js` infers row types from the `select()` string literal.** Splitting one
   across lines with `+` widens it to `string` and breaks inference. Keep select strings
   on one line.

@@ -133,6 +133,61 @@ space does not grow with the viewport; `Donar` appears from `sm`, `Reportar` mov
 from the wordmark (it survives in the footer). Measured, not guessed: with the tagline
 present the wordmark truncated to "SISMO PER…" at every width where it rendered.
 
+### The home page is a hub, not a bulletin
+
+**Decision:** `/` opens with actions, in a fixed order — two life-safety plates, then
+pinned notices as a compressed strap line, then six route tiles. The full-height hero
+it replaced (a `7xl` headline, a lede, two CTAs, and the event readout as a `20rem`
+sidebar) is gone; the masthead survives at roughly half the height.
+
+**Why:** measured, not guessed. On a 390×844 phone *nothing actionable was above the
+fold at all*, and on a 1196px laptop you got the headline and the first pinned card.
+The page spent its most valuable space telling a reader in Pereira that there had
+been an earthquake, which is the one thing they already knew. Someone arriving
+mid-aftershock is asking "what do I do now".
+
+**Why this order.** It is the whole argument of the page:
+
+1. **The two plates lead** because they are *standing instructions* — call 123, and
+   these four hospital doors are shut. True on every visit, and rendered from
+   hardcoded constants, so they survive a degraded read (Rule 7).
+2. **Pinned notices are second** because they are curated and time-sensitive, which
+   ranks below "call 123" but above navigation. They are compressed to ruled rows:
+   three pins as full `UpdateCard`s cost ~540px and pushed everything else off the
+   first screen. The cards remain in the feed below, which is still the full record.
+3. **The six routes are third**, because choosing where to go is what you do after
+   you have dealt with anything on fire.
+
+**Every tile carries a live readout** — services down and unconfirmed, emergency
+lines, verified reports. This is the difference between a hub and a nav menu: a tile
+that only names a destination makes the reader open the door to find out what is
+behind it. The counts are honest by construction — the reports tile reads with the
+same limit `/reportes` renders, so the number is exactly what the reader will find,
+never an estimate.
+
+**Tiles are named for what the reader does** ("Busca a una persona"), never for a
+part of the site ("Enlaces"). A tile that names a section is a decision handed back
+to someone who is scared and scrolling fast.
+
+**Why no numbering:** priority is carried by plate size and chroma instead. `01/02/03`
+markers would claim a sequence, and nobody works through these in order. The numbered
+sections on the page remain the bulletin's own records — the status board and the
+update feed.
+
+**Why only two coloured things:** the plates are the only chroma the board adds; the
+six tiles stay achromatic. Three competing red things would spend the reader's alarm
+budget on navigation, and the four status hues still need it.
+
+**Consequence:** the board is now a fixed-size budget, like the masthead row. Six
+tiles fit a `lg:grid-cols-3` board in two clean rows; a seventh means removing one,
+not tightening the gap. The board also made two anchors load-bearing —
+`#centros-medicos` on `/recursos` and `#personas-desaparecidas` on `/enlaces` — and
+removed the hero's two buttons, since the board carries both routes as plates.
+
+**Deliberately not on the board: a donate tile.** Donations already have a header
+button, the site-wide strip, and a plate further down `/`. A fourth touchpoint above
+the fold is over-amplification, and Rule 10 asks us to be careful with exactly that.
+
 ### No map yet
 
 **Decision:** `reports` and `resources` carry `lat`/`lng`, but nothing renders them.
