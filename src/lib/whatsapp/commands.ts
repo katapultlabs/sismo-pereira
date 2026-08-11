@@ -23,7 +23,14 @@ export type Command =
   | { kind: "emergency" }
   | { kind: "report" };
 
-/** Lowercase, strip accents, collapse whitespace, drop trailing punctuation. */
+/**
+ * Lowercase, strip accents, collapse whitespace, drop surrounding punctuation.
+ *
+ * Punctuation is stripped from **both** ends, not just the trailing one:
+ * Spanish opens a question with `¿`, so `¿señal?` is the natural way to ask it,
+ * and leaving the opening mark attached would drop the message through to the
+ * report queue instead of answering it.
+ */
 export function normalise(input: string): string {
   return input
     .normalize("NFD")
@@ -31,7 +38,7 @@ export function normalise(input: string): string {
     .toLowerCase()
     .replace(/\s+/g, " ")
     .trim()
-    .replace(/[.!?¿¡,;:]+$/g, "");
+    .replace(/^[.!?¿¡,;:]+|[.!?¿¡,;:]+$/g, "");
 }
 
 const SERVICE_KEYWORDS: Record<string, ServiceType> = {

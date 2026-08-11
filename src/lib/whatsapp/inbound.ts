@@ -16,6 +16,8 @@ import {
   statusAllReply,
   statusServiceReply,
   subscribedReply,
+  subscriptionFailedReply,
+  langChangeFailedReply,
   tooShortReply,
   unsubscribedReply,
 } from "./replies";
@@ -42,6 +44,22 @@ import type { NormalisedInbound, WaInboundMessage, WaStatusUpdate, WaWebhookPayl
 const MIN_REPORT_LENGTH = 10;
 
 /**
+ * What happened to one inbound message.
+ *
+ * `error` is the one that matters: it makes the webhook answer non-200 so Meta
+ * redelivers, instead of acknowledging a message we failed to keep.
+ */
+export type InboundOutcome = "handled" | "duplicate" | "skipped" | "error";
+
+/**
+ * A wa_id is a phone number, and Rule 4 confines those to the moderator queue.
+ * Logs are not that surface, so anything that reaches a log is masked.
+ */
+function maskWaId(waId: string): string {
+  return `***${waId.slice(-4)}`;
+}
+
+/**
  * Turn Meta's per-type message envelope into one shape.
  *
  * Unknown types degrade to a labelled placeholder rather than throwing: Meta
@@ -55,8 +73,18 @@ export function normaliseInbound(
   const waId = normaliseWaId(message.from ?? "");
   if (!waId || !message.id) return null;
 
+  // `occurred_at` is Meta's send time when Meta gives us one. When it does
+  // not, we fall back to *our receipt time* — which is a fact we actually
+  // observed, not an invented send time — and say so in the log, because that
+  // column also drives the 24-hour reply window.
   const seconds = Number.parseInt(message.timestamp ?? "", 10);
-  const occurredAt = Number.isFinite(seconds)
+  const hasTimestamp = Number.isFinite(seconds) && seconds > 0;
+  if (!hasTimestamp) {
+    console.warn(
+      `[whatsapp] message ${message.id} arrived without a usable timestamp; using receipt time`,
+    );
+  }
+  const occurredAt = hasTimestamp
     ? new Date(seconds * 1000).toISOString()
     : new Date().toISOString();
 
@@ -152,14 +180,18 @@ export function normaliseInbound(
 export async function handleInboundMessage(
   message: WaInboundMessage,
   profileName: string | null,
-): Promise<void> {
+): Promise<InboundOutcome> {
   const normalised = normaliseInbound(message, profileName);
-  if (!normalised) return;
+  if (!normalised) return "skipped";
 
   const contact = await upsertContact(normalised.waId, normalised.profileName);
   if (!contact) {
-    console.error(`[whatsapp] could not resolve contact for ${normalised.waId}`);
-    return;
+    // Never log the raw wa_id: it is a phone number, and application logs are
+    // not the moderator-only surface Rule 4 confines contact details to.
+    console.error(
+      `[whatsapp] could not resolve contact for ${maskWaId(normalised.waId)}`,
+    );
+    return "error";
   }
 
   const stored = await recordInbound({
@@ -174,12 +206,16 @@ export async function handleInboundMessage(
 
   // Already ingested — a Meta retry. Do nothing else; answering again would
   // send the same person the same reply twice.
-  if (!stored) return;
+  if (stored.status === "duplicate") return "duplicate";
+
+  // The write failed. Report it so the webhook can return a non-200 and Meta
+  // redelivers, rather than acknowledging a message we did not keep.
+  if (stored.status === "error") return "error";
 
   // A moderator has silenced this number. Keep the transcript, send nothing.
   if (contact.blocked) {
     await setHandledAs(stored.id, "blocked", null);
-    return;
+    return "handled";
   }
 
   await markRead(normalised.waMessageId);
@@ -215,18 +251,24 @@ export async function handleInboundMessage(
     case "missing_person":
       reply = (await missingPersonReply(lang)).text;
       break;
-    case "subscribe":
-      await setSubscription(contact.id, "subscribed");
-      reply = subscribedReply(lang);
+    case "subscribe": {
+      const ok = await setSubscription(contact.id, "subscribed");
+      reply = ok ? subscribedReply(lang) : subscriptionFailedReply(lang, "subscribe");
+      if (!ok) label = "subscribe_failed";
       break;
-    case "unsubscribe":
-      await setSubscription(contact.id, "unsubscribed");
-      reply = unsubscribedReply(lang);
+    }
+    case "unsubscribe": {
+      const ok = await setSubscription(contact.id, "unsubscribed");
+      reply = ok ? unsubscribedReply(lang) : subscriptionFailedReply(lang, "unsubscribe");
+      if (!ok) label = "unsubscribe_failed";
       break;
-    case "set_lang":
-      await setContactLang(contact.id, command.lang);
-      reply = langChangedReply(command.lang);
+    }
+    case "set_lang": {
+      const ok = await setContactLang(contact.id, command.lang);
+      reply = ok ? langChangedReply(command.lang) : langChangeFailedReply(lang);
+      if (!ok) label = "set_lang_failed";
       break;
+    }
     case "report": {
       const text = normalised.body.trim();
 
@@ -271,6 +313,11 @@ export async function handleInboundMessage(
 
   await setHandledAs(stored.id, label, reportId);
   await sendTextAndRecord(contact, reply, `auto:${label}`);
+
+  // A failed report write is a failed ingest even though the transcript row
+  // exists: the message is not in the moderation queue, which is the only
+  // place it does any good.
+  return label === "report_failed" ? "error" : "handled";
 }
 
 /** Meta's delivery receipt for something we sent. */
@@ -287,16 +334,22 @@ export async function handleStatusUpdate(status: WaStatusUpdate): Promise<void> 
 /**
  * Walk a webhook payload.
  *
- * Every unit of work is individually try/caught: one malformed message in a
- * batch must not stop the rest, and must not turn into a non-200 that makes
- * Meta redeliver the whole batch.
+ * Every unit of work is individually try/caught so one malformed message in a
+ * batch cannot stop the rest. Failures are *counted* rather than swallowed:
+ * the caller turns a non-zero `failed` into a non-200 so Meta redelivers the
+ * batch, and the UNIQUE `wa_message_id` makes that redelivery harmless for the
+ * messages that did succeed.
  */
 export async function processWebhookPayload(payload: WaWebhookPayload): Promise<{
-  messages: number;
+  handled: number;
+  duplicates: number;
+  failed: number;
   statuses: number;
   ignored: number;
 }> {
-  let messages = 0;
+  let handled = 0;
+  let duplicates = 0;
+  let failed = 0;
   let statuses = 0;
   let ignored = 0;
 
@@ -322,10 +375,13 @@ export async function processWebhookPayload(payload: WaWebhookPayload): Promise<
         const profileName =
           value.contacts?.find((c) => c.wa_id === message.from)?.profile?.name ?? null;
         try {
-          await handleInboundMessage(message, profileName);
-          messages += 1;
+          const outcome = await handleInboundMessage(message, profileName);
+          if (outcome === "handled") handled += 1;
+          else if (outcome === "duplicate") duplicates += 1;
+          else if (outcome === "error") failed += 1;
         } catch (err) {
           console.error("[whatsapp] inbound handler threw:", err);
+          failed += 1;
         }
       }
 
@@ -340,5 +396,5 @@ export async function processWebhookPayload(payload: WaWebhookPayload): Promise<
     }
   }
 
-  return { messages, statuses, ignored };
+  return { handled, duplicates, failed, statuses, ignored };
 }

@@ -112,17 +112,31 @@ export interface InboundRecord {
 }
 
 /**
+ * The three genuinely different outcomes of trying to store an inbound message.
+ *
+ * Collapsing these into `null` was a real bug: a transient database error is
+ * NOT "already handled". Treating it as one makes the webhook answer 200, Meta
+ * never retries, and someone's report of a collapsed building is gone. Rule 7
+ * says writes fail loudly — so the caller has to be able to tell "duplicate"
+ * (do nothing, answer 200) from "broken" (answer non-200, let Meta redeliver).
+ */
+export type InboundResult =
+  | { status: "stored"; id: string }
+  | { status: "duplicate" }
+  | { status: "error"; message: string };
+
+/**
  * Persist an inbound message.
  *
- * Returns `null` when the message was already stored. Meta retries a webhook
- * until it receives a 200, so this UNIQUE-violation check is the single point
- * that stops one earthquake report becoming five.
+ * Meta retries a webhook until it receives a 200, so the UNIQUE violation on
+ * `wa_message_id` is the single point that stops one earthquake report
+ * becoming five.
  */
-export async function recordInbound(
-  record: InboundRecord,
-): Promise<{ id: string } | null> {
+export async function recordInbound(record: InboundRecord): Promise<InboundResult> {
   const sb = client();
-  if (!sb) return null;
+  if (!sb) {
+    return { status: "error", message: "Supabase service role is not configured." };
+  }
 
   const { data, error } = await sb
     .from("whatsapp_messages")
@@ -143,12 +157,16 @@ export async function recordInbound(
     .single();
 
   if (error) {
-    if (error.code === UNIQUE_VIOLATION) return null;
+    if (error.code === UNIQUE_VIOLATION) return { status: "duplicate" };
     console.error(`[whatsapp/store] inbound insert failed: ${error.message}`);
-    return null;
+    return { status: "error", message: error.message };
   }
 
-  return data as { id: string };
+  if (!data) {
+    return { status: "error", message: "Insert returned no row." };
+  }
+
+  return { status: "stored", id: (data as { id: string }).id };
 }
 
 export async function recordOutbound(params: {
@@ -215,15 +233,24 @@ export async function setHandledAs(
     .eq("id", messageId);
 }
 
+/**
+ * Change someone's subscription state.
+ *
+ * Returns whether it actually happened, and the caller must respect that.
+ * Telling someone "ya no recibirás avisos" while they are still subscribed is
+ * the worst failure this channel can produce short of losing a report: they
+ * have asked to be left alone, been told they were, and will be messaged
+ * again anyway.
+ */
 export async function setSubscription(
   contactId: string,
   subscription: "subscribed" | "unsubscribed",
-): Promise<void> {
+): Promise<boolean> {
   const sb = client();
-  if (!sb) return;
+  if (!sb) return false;
 
   const stamp = new Date().toISOString();
-  await sb
+  const { data, error } = await sb
     .from("whatsapp_contacts")
     .update({
       subscription,
@@ -231,13 +258,98 @@ export async function setSubscription(
         ? { subscribed_at: stamp }
         : { unsubscribed_at: stamp }),
     })
-    .eq("id", contactId);
+    .eq("id", contactId)
+    .select("id");
+
+  if (error) {
+    console.error(`[whatsapp/store] subscription update failed: ${error.message}`);
+    return false;
+  }
+
+  return (data?.length ?? 0) > 0;
 }
 
-export async function setContactLang(contactId: string, lang: Lang): Promise<void> {
+export async function setContactLang(contactId: string, lang: Lang): Promise<boolean> {
+  const sb = client();
+  if (!sb) return false;
+
+  const { data, error } = await sb
+    .from("whatsapp_contacts")
+    .update({ lang })
+    .eq("id", contactId)
+    .select("id");
+
+  if (error) {
+    console.error(`[whatsapp/store] language update failed: ${error.message}`);
+    return false;
+  }
+
+  return (data?.length ?? 0) > 0;
+}
+
+/**
+ * Claim a recipient for a broadcast, atomically.
+ *
+ * Inserts the transcript row *before* the Graph call, so the partial unique
+ * index on `(broadcast_id, contact_id)` — not an earlier SELECT — decides who
+ * sends. Two concurrent chunks race on the index and exactly one wins; a crash
+ * between claiming and sending leaves a `queued` row rather than a recipient
+ * who looks un-messaged and gets messaged twice.
+ *
+ * Returns the row id to fill in afterwards, or null if someone else has it.
+ */
+export async function claimBroadcastRecipient(
+  broadcastId: string,
+  contactId: string,
+  preview: string,
+  templateName: string,
+): Promise<string | null> {
+  const sb = client();
+  if (!sb) return null;
+
+  const { data, error } = await sb
+    .from("whatsapp_messages")
+    .insert({
+      contact_id: contactId,
+      broadcast_id: broadcastId,
+      direction: "outbound",
+      message_type: "template",
+      template_name: templateName,
+      body: preview,
+      delivery: "queued",
+      occurred_at: new Date().toISOString(),
+    })
+    .select("id")
+    .single();
+
+  if (error) {
+    if (error.code !== UNIQUE_VIOLATION) {
+      console.error(`[whatsapp/store] broadcast claim failed: ${error.message}`);
+    }
+    return null;
+  }
+
+  return (data as { id: string }).id;
+}
+
+/** Fill in the outcome of a claimed broadcast send. */
+export async function settleBroadcastRecipient(
+  messageId: string,
+  outcome:
+    | { ok: true; waMessageId: string | null }
+    | { ok: false; error: string },
+): Promise<void> {
   const sb = client();
   if (!sb) return;
-  await sb.from("whatsapp_contacts").update({ lang }).eq("id", contactId);
+
+  await sb
+    .from("whatsapp_messages")
+    .update(
+      outcome.ok
+        ? { delivery: "sent", wa_message_id: outcome.waMessageId }
+        : { delivery: "failed", error_detail: outcome.error },
+    )
+    .eq("id", messageId);
 }
 
 /**

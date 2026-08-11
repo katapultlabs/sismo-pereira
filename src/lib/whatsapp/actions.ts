@@ -83,17 +83,6 @@ export async function replyToThread(
     : { ok: false, message: `No se pudo enviar: ${result.error}` };
 }
 
-export async function markThreadRead(contactId: string): Promise<void> {
-  const moderator = await getModerator();
-  if (!moderator) return;
-
-  const sb = getServiceSupabase();
-  if (!sb) return;
-
-  await sb.from("whatsapp_contacts").update({ unread_count: 0 }).eq("id", contactId);
-  revalidatePath("/admin/whatsapp", "page");
-}
-
 const blockSchema = z.object({ contactId: z.uuid(), blocked: z.enum(["true", "false"]) });
 
 /**
@@ -127,10 +116,15 @@ export async function setBlocked(
   return { ok: true };
 }
 
+/**
+ * Only the *selection* comes from the form. The title and URL that go out to
+ * hundreds of phones are re-read from the database below, because a server
+ * action is a public endpoint and its hidden fields are client-controlled —
+ * accepting them would let any moderator broadcast arbitrary text and links
+ * under our name, with no published update behind it (Rules 3 and 5).
+ */
 const broadcastSchema = z.object({
-  updateId: z.uuid().nullish(),
-  title: z.string().trim().min(3).max(300),
-  url: z.string().trim().url().max(500),
+  updateId: z.uuid(),
   zoneSlug: z.string().trim().max(64).nullish(),
   lang: z.enum(["es", "en"]).nullish(),
 });
@@ -159,20 +153,48 @@ export async function startBroadcast(
 
   const parsed = broadcastSchema.safeParse({
     updateId: formData.get("updateId") || undefined,
-    title: formData.get("title"),
-    url: formData.get("url"),
     zoneSlug: formData.get("zoneSlug") || undefined,
     lang: formData.get("lang") || undefined,
   });
 
   if (!parsed.success) {
-    return { ok: false, message: "Revisa el título y el enlace." };
+    return { ok: false, message: "Selecciona una actualización publicada." };
   }
 
+  // Re-read the update, and require it to be published. This is the publishing
+  // gate the composer promises: a broadcast can only ever carry something that
+  // already cleared moderation.
+  const sb = getServiceSupabase();
+  if (!sb) return { ok: false, message: "Backend no disponible." };
+
+  const { data: update, error: updateError } = await sb
+    .from("updates")
+    .select("id, slug, title, status")
+    .eq("id", parsed.data.updateId)
+    .maybeSingle();
+
+  if (updateError) {
+    console.error(`[startBroadcast] update lookup failed: ${updateError.message}`);
+    return { ok: false, message: "No se pudo leer la actualización." };
+  }
+
+  const row = update as { id: string; slug: string | null; title: string; status: string } | null;
+
+  if (!row) return { ok: false, message: "Esa actualización no existe." };
+  if (row.status !== "published") {
+    return {
+      ok: false,
+      message: "Esa actualización no está publicada. Publícala antes de difundirla.",
+    };
+  }
+
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://sismopereira.org";
+  const url = row.slug ? `${siteUrl}/actualizaciones/${row.slug}` : siteUrl;
+
   const created = await createBroadcast({
-    updateId: parsed.data.updateId ?? null,
-    bodyPreview: `${parsed.data.title} — ${parsed.data.url}`,
-    templateParams: [parsed.data.title, parsed.data.url],
+    updateId: row.id,
+    bodyPreview: `${row.title} — ${url}`,
+    templateParams: [row.title, url],
     audience: {
       zone_slug: parsed.data.zoneSlug ?? null,
       lang: parsed.data.lang ?? null,

@@ -156,8 +156,17 @@ curl -sS localhost:3000/api/webhooks/whatsapp \
   -d "$BODY"
 ```
 
+The response counts outcomes rather than deliveries: `handled`, `duplicates`,
+`failed`, `statuses`, `ignored`. A first delivery returns `"handled":1`.
+
 Reuse the same `wamid.test1` to confirm deduplication: the second call must
-report `"messages":0` and must not send a second reply.
+report `"handled":0,"duplicates":1` and must not send a second reply.
+
+**A non-200 is deliberate.** If any message in the batch could not be stored,
+the endpoint answers `503` with `"failed"` non-zero so Meta redelivers.
+Acknowledging a message we failed to persist would drop a crisis report
+permanently; redelivery is safe because the UNIQUE `wa_message_id` makes
+re-ingesting the successful ones a no-op.
 
 ---
 
@@ -290,6 +299,22 @@ the view inherits `whatsapp_contacts_moderator_all` and a non-moderator session
 reads an empty inbox instead of every phone number the project holds.
 
 Nothing in this file is granted to `anon`.
+
+### New tables need an explicit `service_role` GRANT
+
+`supabase/config.toml` leaves `auto_expose_new_tables` unset, which is the new
+cloud default: entities created after that point are **not** reachable through
+the Data API roles without a `GRANT` — and that includes `service_role`.
+
+This does not fail the migration. It fails at runtime, with `42501 permission
+denied`, on every webhook write — which before this was caught meant inbound
+crisis reports being accepted with a 200 and never stored. The migration
+therefore grants `service_role` explicitly on all three tables plus `reports`.
+
+**Any future migration adding a table the webhook or the partner API touches
+must do the same.** It is worth checking whether the pre-existing tables
+(`service_status`, `updates`) carry those grants in production, since
+`api/v1/*` writes to them the same way.
 
 ### Why the webhook uses the service role
 

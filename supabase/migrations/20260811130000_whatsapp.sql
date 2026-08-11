@@ -144,6 +144,16 @@ create table whatsapp_messages (
 
 create index whatsapp_messages_thread_idx
   on whatsapp_messages (contact_id, occurred_at desc);
+
+-- One row per (broadcast, recipient). This is not bookkeeping: it is how a
+-- recipient is *claimed*. The sender inserts this row BEFORE calling Meta, so
+-- two concurrent chunks race on the index instead of both sending, and a
+-- crash between send and transcript-write cannot re-queue someone who has
+-- already been messaged. Partial, because ordinary conversation rows have a
+-- null broadcast_id.
+create unique index whatsapp_messages_broadcast_recipient_uniq
+  on whatsapp_messages (broadcast_id, contact_id)
+  where broadcast_id is not null;
 create index whatsapp_messages_report_idx
   on whatsapp_messages (report_id) where report_id is not null;
 create index whatsapp_messages_broadcast_idx
@@ -242,6 +252,13 @@ create policy whatsapp_broadcasts_moderator_all on whatsapp_broadcasts
 -- `anon` gets nothing at all here — not even on the view. Webhook ingestion
 -- runs with the service role (the caller is Meta, not a signed-in user), and
 -- the moderator UI runs as an authenticated user under the policies above.
+--
+-- `service_role` MUST be granted explicitly. `supabase/config.toml` leaves
+-- `auto_expose_new_tables` unset, which is the new cloud default: entities
+-- created after that point are NOT reachable through the Data API roles
+-- without a GRANT — service_role included. Omitting these lines does not fail
+-- the migration; it fails every webhook write at runtime with 42501, which is
+-- how a crisis report gets silently dropped.
 -- ---------------------------------------------------------------------------
 revoke all on whatsapp_contacts   from anon, authenticated;
 revoke all on whatsapp_messages   from anon, authenticated;
@@ -251,6 +268,15 @@ grant select, insert, update on whatsapp_contacts   to authenticated;
 grant select, insert, update on whatsapp_messages   to authenticated;
 grant select, insert, update on whatsapp_broadcasts to authenticated;
 grant select on whatsapp_threads to authenticated;
+
+grant select, insert, update, delete on whatsapp_contacts   to service_role;
+grant select, insert, update, delete on whatsapp_messages   to service_role;
+grant select, insert, update, delete on whatsapp_broadcasts to service_role;
+grant select on whatsapp_threads to service_role;
+
+-- The webhook also files inbound messages into the community moderation queue,
+-- and reads zones/links/status to compose replies. Same reasoning as above.
+grant select, insert, update on reports to service_role;
 
 -- ---------------------------------------------------------------------------
 -- Realtime — the moderator inbox subscribes to incoming messages

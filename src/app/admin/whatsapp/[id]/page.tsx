@@ -73,16 +73,39 @@ export default async function WhatsAppThreadPage({
   const supabase = await getServerSupabase();
   if (!supabase) notFound();
 
-  const { data: contactRow } = await supabase
+  const { data: contactRow, error: contactError } = await supabase
     .from("whatsapp_contacts")
     .select("id, wa_id, phone_e164, display_name, lang, zone_slug, subscription, blocked, last_inbound_at, inbound_count, moderator_note")
     .eq("id", id)
     .maybeSingle();
 
+  // A failed read is not a missing thread. Rendering 404 for an infrastructure
+  // error tells a moderator the conversation does not exist, which during an
+  // incident is a worse lie than an error page.
+  if (contactError) {
+    return (
+      <AdminShell
+        title="Conversación"
+        user={moderator.email}
+        tabs={ADMIN_TABS}
+        active="/admin/whatsapp"
+      >
+        <Alert className="border-down/40 bg-down-muted text-down-foreground">
+          <ShieldAlert className="size-4" aria-hidden />
+          <AlertTitle>No se pudo leer la conversación</AlertTitle>
+          <AlertDescription>
+            {contactError.message} — esto es un fallo de lectura, no una
+            conversación vacía.
+          </AlertDescription>
+        </Alert>
+      </AdminShell>
+    );
+  }
+
   if (!contactRow) notFound();
   const contact = contactRow as Contact;
 
-  const { data: messageRows } = await supabase
+  const { data: messageRows, error: messagesError } = await supabase
     .from("whatsapp_messages")
     .select("id, direction, message_type, body, media_id, media_mime, media_filename, delivery, error_detail, handled_as, report_id, occurred_at")
     .eq("contact_id", id)
@@ -189,7 +212,16 @@ export default async function WhatsAppThreadPage({
         })}
       </ol>
 
-      {messages.length === 0 ? (
+      {messagesError ? (
+        <Alert className="border-down/40 bg-down-muted text-down-foreground">
+          <ShieldAlert className="size-4" aria-hidden />
+          <AlertTitle>No se pudo leer el historial</AlertTitle>
+          <AlertDescription>
+            {messagesError.message} — la conversación existe, pero esta lista
+            está incompleta. No respondas basándote en ella.
+          </AlertDescription>
+        </Alert>
+      ) : messages.length === 0 ? (
         <p className="border border-dashed border-border p-8 text-center text-sm text-muted-foreground">
           Sin mensajes.
         </p>

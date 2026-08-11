@@ -43,8 +43,26 @@ function footer(lang: Lang): string {
     : "—\n⚠️ This is not an emergency line. If life is at risk, call *123*.\n" + SITE;
 }
 
-function withFooter(body: string, lang: Lang): string {
-  return `${body}\n\n${footer(lang)}`;
+/**
+ * The website renders `<DegradedNotice>` whenever a query fell back to seed
+ * content. WhatsApp has no banner, so the warning has to travel inside the
+ * message — otherwise a stale fallback status reads exactly like a live one,
+ * which is the failure Rule 7 makes the site visibly announce.
+ */
+const DEGRADED_NOTE: Record<Lang, string> = {
+  es:
+    "⚠️ No pudimos consultar la base de datos en vivo. Esto es el último " +
+    "contenido publicado con el sitio y puede estar desactualizado.",
+  en:
+    "⚠️ We could not reach the live database. This is the last content shipped " +
+    "with the site and may be out of date.",
+};
+
+function withFooter(body: string, lang: Lang, degraded = false): string {
+  const parts = [body];
+  if (degraded) parts.push(DEGRADED_NOTE[lang]);
+  parts.push(footer(lang));
+  return parts.join("\n\n");
 }
 
 /**
@@ -62,10 +80,13 @@ function statusLine(row: ServiceStatus, lang: Lang): string {
 
   const parts = [`*${label}* — ${scope}`];
   if (row.headline) parts.push(row.headline);
-  parts.push(
-    lang === "es" ? `${when} · ${who}` : `${when} · ${who}`,
-  );
+  parts.push(`${when} · ${who}`);
   return parts.join("\n");
+}
+
+/** Who told us. Rule 3: a status line without an attribution is not a claim. */
+function attribution(row: ServiceStatus, lang: Lang): string {
+  return row.org_short_name ?? row.org_name ?? SOURCE_LABELS[lang][row.source];
 }
 
 const UNKNOWN_NOTE: Record<Lang, string> = {
@@ -182,6 +203,7 @@ export async function statusAllReply(
           ? `Todavía no tenemos ningún estado confirmado.\n\n${UNKNOWN_NOTE.es}`
           : `We have no confirmed status yet.\n\n${UNKNOWN_NOTE.en}`,
         lang,
+        degraded,
       ),
       degraded,
     };
@@ -211,9 +233,12 @@ export async function statusAllReply(
           : ` (+${others} zone${others === 1 ? "" : "s"})`
         : "";
 
+    // Time AND source on every line. The summary is not a lighter-weight
+    // claim than the detail view — it is the same claim, read faster, and it
+    // is the version that gets screenshotted.
     lines.push(
       `*${SERVICE_LABELS[lang][service]}*: ${STATUS_LABELS[lang][lead.status]}${suffix}` +
-        `\n  ${formatDateTime(lead.reported_at, lang)}`,
+        `\n  ${formatDateTime(lead.reported_at, lang)} · ${attribution(lead, lang)}`,
     );
   }
 
@@ -234,7 +259,7 @@ export async function statusAllReply(
     detail,
   ].join("\n");
 
-  return { text: withFooter(body, lang), degraded };
+  return { text: withFooter(body, lang, degraded), degraded };
 }
 
 export async function statusServiceReply(
@@ -245,7 +270,7 @@ export async function statusServiceReply(
   const mine = sortRows(rows.filter((r) => r.service === service));
 
   if (mine.length === 0) {
-    return { text: withFooter(noDataFor(service, lang), lang), degraded };
+    return { text: withFooter(noDataFor(service, lang), lang, degraded), degraded };
   }
 
   const body = [
@@ -256,7 +281,7 @@ export async function statusServiceReply(
     `${SITE}/servicios`,
   ].join("\n");
 
-  return { text: withFooter(body, lang), degraded };
+  return { text: withFooter(body, lang, degraded), degraded };
 }
 
 // ---------------------------------------------------------------------------
@@ -283,7 +308,7 @@ export async function resourcesReply(
           "sending someone to a place that does not exist is worse than " +
           "giving no information.\n\n" +
           `For immediate help call *123*.\n${SITE}/recursos`;
-    return { text: withFooter(body, lang), degraded };
+    return { text: withFooter(body, lang, degraded), degraded };
   }
 
   const lines = resources.slice(0, 15).map((r) => {
@@ -305,7 +330,10 @@ export async function resourcesReply(
       ? "*Puntos verificados*"
       : "*Verified aid points*";
 
-  return { text: withFooter(`${header}\n\n${lines.join("\n\n")}${more}`, lang), degraded };
+  return {
+    text: withFooter(`${header}\n\n${lines.join("\n\n")}${more}`, lang, degraded),
+    degraded,
+  };
 }
 
 // ---------------------------------------------------------------------------
@@ -324,6 +352,7 @@ export async function linksReply(
           ? `Todavía no hay enlaces publicados.\n${SITE}/enlaces`
           : `No links published yet.\n${SITE}/enlaces`,
         lang,
+        degraded,
       ),
       degraded,
     };
@@ -349,6 +378,7 @@ export async function linksReply(
     text: withFooter(
       `${header}\n\n${lines.join("\n\n")}\n\n${note}\n${SITE}/enlaces`,
       lang,
+      degraded,
     ),
     degraded,
   };
@@ -383,7 +413,7 @@ export async function missingPersonReply(
           .join("\n\n")
       : `${intro}\n\n${SITE}/enlaces`;
 
-  return { text: withFooter(body, lang), degraded };
+  return { text: withFooter(body, lang, degraded), degraded };
 }
 
 // ---------------------------------------------------------------------------
@@ -414,6 +444,44 @@ export function unsubscribedReply(lang: Lang): string {
 
 export function langChangedReply(lang: Lang): string {
   return helpReply(lang);
+}
+
+/**
+ * The subscription change did not persist.
+ *
+ * Never say "done" when it is not. Someone who sends SALIR and is told they
+ * are unsubscribed, then keeps receiving broadcasts, has been lied to about
+ * the one thing they asked for — and the only honest recovery is to say the
+ * change failed and give them a person to reach.
+ */
+export function subscriptionFailedReply(
+  lang: Lang,
+  intent: "subscribe" | "unsubscribe",
+): string {
+  const body =
+    lang === "es"
+      ? intent === "subscribe"
+        ? "No pudimos activar los avisos por un problema técnico. Vuelve a " +
+          "escribir *ALERTAS* en un momento."
+        : "*No pudimos darte de baja por un problema técnico.* Vuelve a " +
+          "escribir *SALIR* en un momento. Si sigues recibiendo mensajes, " +
+          "respóndenos y un moderador lo hará manualmente."
+      : intent === "subscribe"
+        ? "We could not turn alerts on due to a technical problem. Please send " +
+          "*SUBSCRIBE* again shortly."
+        : "*We could not unsubscribe you due to a technical problem.* Please " +
+          "send *STOP* again shortly. If messages keep arriving, reply here " +
+          "and a moderator will do it by hand.";
+  return withFooter(body, lang);
+}
+
+/** A language change that did not persist. Minor, but do not claim success. */
+export function langChangeFailedReply(lang: Lang): string {
+  const body =
+    lang === "es"
+      ? "No pudimos guardar tu preferencia de idioma. Inténtalo de nuevo."
+      : "We could not save your language preference. Please try again.";
+  return withFooter(body, lang);
 }
 
 // ---------------------------------------------------------------------------

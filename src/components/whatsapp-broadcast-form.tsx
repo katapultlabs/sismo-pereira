@@ -10,8 +10,7 @@ import {
   startBroadcast,
   type BroadcastState,
 } from "@/lib/whatsapp/actions";
-import type { Update } from "@/lib/types";
-import type { Zone } from "@/lib/types";
+import type { Update, Zone } from "@/lib/types";
 
 const INITIAL: BroadcastState = { ok: false };
 
@@ -60,9 +59,12 @@ export function WhatsAppBroadcastForm({
   return (
     <div className="space-y-4">
       <form action={formAction} className="space-y-3">
+        {/*
+          * Only the selection is submitted. The title and URL that actually go
+          * out are re-read from the database by the action, so what is shown
+          * below is a preview of that, not the payload.
+          */}
         <input type="hidden" name="updateId" value={update?.id ?? ""} />
-        <input type="hidden" name="title" value={update?.title ?? ""} />
-        <input type="hidden" name="url" value={url} />
 
         <div className="space-y-1.5">
           <label htmlFor="wa-update" className="label-signage text-muted-foreground">
@@ -119,7 +121,7 @@ export function WhatsAppBroadcastForm({
 
         <div className="space-y-1.5">
           <span className="label-signage text-muted-foreground">
-            Enlace que recibirán
+            Enlace que recibirán (se vuelve a leer del servidor)
           </span>
           <Input value={url} readOnly className="font-mono text-xs" />
         </div>

@@ -251,6 +251,13 @@ adding one to the enum without adding it there silently hides that category.
   [docs/WHATSAPP.md](./docs/WHATSAPP.md#credentials-this-is-procarmelitas-phone-number).
   Message limits and sender reputation are shared either way, which is why
   broadcasting is opt-in, template-only, and rate-limited.
+- **A new table is invisible to `service_role` until you `GRANT` it.**
+  `supabase/config.toml` leaves `auto_expose_new_tables` unset — the new cloud
+  default — so entities created afterwards are not reachable through the Data
+  API roles without an explicit grant, `service_role` included. The migration
+  still applies cleanly; it fails at *runtime* with `42501` on every
+  service-role write. Anything reachable from `/api/webhooks/*` or `/api/v1/*`
+  needs `grant ... to service_role` in the same migration.
 - **`supabase-js` infers row types from the `select()` string literal.** Splitting one
   across lines with `+` widens it to `string` and breaks inference. Keep select strings
   on one line.

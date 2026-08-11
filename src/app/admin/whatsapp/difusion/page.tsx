@@ -57,25 +57,26 @@ export default async function BroadcastPage() {
     getZones(),
   ]);
 
-  const { data: subscriberRows } = supabase
+  // `head: true` counts server-side rather than shipping every row back just
+  // to call `.length` on it.
+  const { count: subscriberCount, error: subscriberError } = supabase
     ? await supabase
         .from("whatsapp_contacts")
-        .select("id", { count: "exact", head: false })
+        .select("id", { count: "exact", head: true })
         .eq("subscription", "subscribed")
         .eq("blocked", false)
-        .limit(5000)
-    : { data: null };
+    : { count: null, error: null };
 
-  const { data: historyRows } = supabase
+  const { data: historyRows, error: historyError } = supabase
     ? await supabase
         .from("whatsapp_broadcasts")
         .select("id, body_preview, status, recipient_count, sent_count, failed_count, created_at")
         .order("created_at", { ascending: false })
         .limit(10)
-    : { data: null };
+    : { data: null, error: null };
 
-  const subscribers = (subscriberRows ?? []).length;
   const history = (historyRows ?? []) as BroadcastRow[];
+  const readError = subscriberError ?? historyError;
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://sismopereira.org";
 
   return (
@@ -91,9 +92,21 @@ export default async function BroadcastPage() {
           data-readout
           className="label-signage ml-auto rounded-sm bg-secondary px-1.5 py-1 text-secondary-foreground"
         >
-          {subscribers}
+          {/* "?" not "0": a failed count must never read as an empty list. */}
+          {subscriberError ? "?" : (subscriberCount ?? 0)}
         </span>
       </div>
+
+      {readError ? (
+        <Alert className="border-down/40 bg-down-muted text-down-foreground">
+          <ShieldAlert className="size-4" aria-hidden />
+          <AlertTitle>No se pudo leer la lista de suscriptores</AlertTitle>
+          <AlertDescription>
+            {readError.message} — no difundas hasta saber a cuántas personas
+            llegaría.
+          </AlertDescription>
+        </Alert>
+      ) : null}
 
       {!template ? (
         <Alert className="rounded-sm">

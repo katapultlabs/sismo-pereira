@@ -2,8 +2,12 @@ import "server-only";
 
 import { getServiceSupabase } from "../supabase/server";
 import { getBroadcastTemplate } from "./config";
-import { sendTemplateAndRecord } from "./send";
-import type { WhatsAppContact } from "./store";
+import { sendTemplate } from "./client";
+import {
+  claimBroadcastRecipient,
+  settleBroadcastRecipient,
+  type WhatsAppContact,
+} from "./store";
 
 /**
  * Broadcasting a published update to opted-in subscribers.
@@ -76,7 +80,15 @@ export async function createBroadcast(params: {
   const sb = getServiceSupabase();
   if (!sb) return { ok: false, error: "Supabase service role is not configured." };
 
-  const recipients = await eligibleContactIds(params.audience);
+  let recipients: string[];
+  try {
+    recipients = await eligibleContactIds(params.audience);
+  } catch (err) {
+    const message = err instanceof Error ? err.message : "audience lookup failed";
+    console.error(`[whatsapp/broadcast] ${message}`);
+    return { ok: false, error: "Could not read the subscriber list. Try again." };
+  }
+
   if (recipients.length === 0) {
     return { ok: false, error: "No subscribers match that audience." };
   }
@@ -114,6 +126,10 @@ async function eligibleContactIds(audience: BroadcastAudience): Promise<string[]
     .select("id")
     .eq("subscription", "subscribed")
     .eq("blocked", false)
+    // Ordered because the result is compared across invocations. Without an
+    // ORDER BY, Postgres may return a different subset each time once the
+    // audience exceeds the limit, so a resumed chunk could skip people.
+    .order("id", { ascending: true })
     .limit(MAX_AUDIENCE);
 
   if (audience.zone_slug) q = q.eq("zone_slug", audience.zone_slug);
@@ -121,8 +137,10 @@ async function eligibleContactIds(audience: BroadcastAudience): Promise<string[]
 
   const { data, error } = await q;
   if (error) {
-    console.error(`[whatsapp/broadcast] audience query failed: ${error.message}`);
-    return [];
+    // Fail closed. An empty audience because the query broke is indistinguishable
+    // from an empty audience because nobody subscribed, and the caller must not
+    // read the former as "done".
+    throw new Error(`audience query failed: ${error.message}`);
   }
   return (data ?? []).map((r) => (r as { id: string }).id);
 }
@@ -168,8 +186,19 @@ export async function runBroadcastChunk(broadcastId: string): Promise<{
     .eq("id", broadcastId)
     .is("started_at", null);
 
-  const eligible = await eligibleContactIds(broadcast.audience ?? {});
-  const alreadyAttempted = await attemptedContactIds(broadcastId);
+  let eligible: string[];
+  let alreadyAttempted: Set<string>;
+  try {
+    eligible = await eligibleContactIds(broadcast.audience ?? {});
+    alreadyAttempted = await attemptedContactIds(broadcastId);
+  } catch (err) {
+    // Never treat a failed lookup as "nobody left". Stop and report, so the
+    // moderator retries rather than seeing a broadcast marked complete.
+    const message = err instanceof Error ? err.message : "lookup failed";
+    console.error(`[whatsapp/broadcast] ${message}`);
+    return { ok: false, sent: 0, failed: 0, remaining: 0, error: message };
+  }
+
   const pending = eligible.filter((id) => !alreadyAttempted.has(id));
   const batch = pending.slice(0, CHUNK_SIZE);
 
@@ -177,26 +206,47 @@ export async function runBroadcastChunk(broadcastId: string): Promise<{
   let failed = 0;
 
   for (const contactId of batch) {
+    // Claim BEFORE sending. The partial unique index on
+    // (broadcast_id, contact_id) is what actually serialises this: if another
+    // invocation already holds this recipient, the insert loses the race and
+    // we skip, instead of both of us messaging the same person.
+    const claimId = await claimBroadcastRecipient(
+      broadcastId,
+      contactId,
+      broadcast.body_preview,
+      broadcast.template_name,
+    );
+    if (!claimId) continue;
+
     const { data: contact } = await sb
       .from("whatsapp_contacts")
       .select("id, wa_id, blocked")
       .eq("id", contactId)
       .maybeSingle();
 
-    if (!contact) {
+    const row = contact as Pick<WhatsAppContact, "id" | "wa_id" | "blocked"> | null;
+
+    if (!row || row.blocked) {
+      await settleBroadcastRecipient(claimId, {
+        ok: false,
+        error: row ? "Contact is blocked by a moderator." : "Contact disappeared.",
+      });
       failed += 1;
       continue;
     }
 
-    const result = await sendTemplateAndRecord(
-      contact as Pick<WhatsAppContact, "id" | "wa_id" | "blocked">,
-      {
-        name: broadcast.template_name,
-        lang: broadcast.template_lang,
-        params: broadcast.template_params ?? [],
-      },
-      broadcast.body_preview,
-      broadcastId,
+    const result = await sendTemplate(
+      row.wa_id,
+      broadcast.template_name,
+      broadcast.template_lang,
+      broadcast.template_params ?? [],
+    );
+
+    await settleBroadcastRecipient(
+      claimId,
+      result.ok
+        ? { ok: true, waMessageId: result.waMessageId }
+        : { ok: false, error: result.error },
     );
 
     if (result.ok) sent += 1;
@@ -205,18 +255,22 @@ export async function runBroadcastChunk(broadcastId: string): Promise<{
     await sleep(SEND_DELAY_MS);
   }
 
-  const remaining = pending.length - batch.length;
-  const totalSent = broadcast.sent_count + sent;
-  const totalFailed = broadcast.failed_count + failed;
+  // Counters are recomputed from the transcript, not accumulated from a
+  // snapshot read before sending. Concurrent chunks and mid-chunk timeouts
+  // both make snapshot arithmetic drift, and a broadcast whose totals
+  // disagree with its own transcript is not auditable.
+  const totals = await broadcastTotals(broadcastId);
+  const remaining = Math.max(0, pending.length - batch.length);
 
   await sb
     .from("whatsapp_broadcasts")
     .update({
-      sent_count: totalSent,
-      failed_count: totalFailed,
+      sent_count: totals.sent,
+      failed_count: totals.failed,
       ...(remaining === 0
         ? {
-            status: totalSent === 0 ? "failed" : totalFailed > 0 ? "partial" : "sent",
+            status:
+              totals.sent === 0 ? "failed" : totals.failed > 0 ? "partial" : "sent",
             finished_at: new Date().toISOString(),
           }
         : {}),
@@ -226,10 +280,38 @@ export async function runBroadcastChunk(broadcastId: string): Promise<{
   return { ok: true, sent, failed, remaining };
 }
 
-/** Contacts with any row for this broadcast — success or failure. */
+/** Authoritative per-broadcast counts, straight from the message rows. */
+async function broadcastTotals(
+  broadcastId: string,
+): Promise<{ sent: number; failed: number }> {
+  const sb = getServiceSupabase();
+  if (!sb) return { sent: 0, failed: 0 };
+
+  const count = async (delivery: string) => {
+    const { count: n } = await sb
+      .from("whatsapp_messages")
+      .select("id", { count: "exact", head: true })
+      .eq("broadcast_id", broadcastId)
+      .eq("delivery", delivery);
+    return n ?? 0;
+  };
+
+  // 'sent' covers anything Meta accepted; delivery receipts later promote
+  // those rows to delivered/read, which still counts as sent.
+  const [accepted, delivered, read, failed] = await Promise.all([
+    count("sent"),
+    count("delivered"),
+    count("read"),
+    count("failed"),
+  ]);
+
+  return { sent: accepted + delivered + read, failed };
+}
+
+/** Contacts already claimed for this broadcast — sent, failed, or in flight. */
 async function attemptedContactIds(broadcastId: string): Promise<Set<string>> {
   const sb = getServiceSupabase();
-  if (!sb) return new Set();
+  if (!sb) throw new Error("No service role for attempted-recipient lookup.");
 
   const ids = new Set<string>();
   const PAGE = 1000;
@@ -239,11 +321,14 @@ async function attemptedContactIds(broadcastId: string): Promise<Set<string>> {
       .from("whatsapp_messages")
       .select("contact_id")
       .eq("broadcast_id", broadcastId)
+      // Ordered so the pages are stable; LIMIT/OFFSET without ORDER BY may
+      // repeat or skip rows, and a skipped row here means a double send.
+      .order("contact_id", { ascending: true })
       .range(from, from + PAGE - 1);
 
     if (error) {
-      console.error(`[whatsapp/broadcast] attempted query failed: ${error.message}`);
-      break;
+      // Fail loudly: a partial set here reads as "not yet messaged".
+      throw new Error(`attempted-recipient query failed: ${error.message}`);
     }
     const rows = (data ?? []) as Array<{ contact_id: string }>;
     for (const row of rows) ids.add(row.contact_id);

@@ -14,11 +14,11 @@ import type { WaWebhookPayload } from "@/lib/whatsapp/types";
  *  * It is the only public route that writes to the moderation queue, so the
  *    signature check is not optional. A missing `WHATSAPP_APP_SECRET` makes
  *    the endpoint refuse traffic rather than accept it unverified.
- *  * It returns 200 for anything it managed to parse, even if individual
- *    messages failed. A non-200 makes Meta redeliver the whole batch, which
- *    during an aftershock turns a transient database error into a retry storm.
- *    Failures are logged and the transcript records them; the HTTP status is
- *    only an acknowledgement of receipt.
+ *  * The HTTP status is a durability claim, not politeness. 200 means "this is
+ *    stored"; anything we failed to persist answers 503 so Meta redelivers.
+ *    Retries are safe because the UNIQUE `wa_message_id` makes re-ingestion a
+ *    no-op, and the alternative — acknowledging a message we dropped — loses a
+ *    crisis report permanently, which is exactly what Rule 7 forbids.
  */
 
 // Ingestion is a handful of round trips plus one Graph call per message, and a
@@ -84,10 +84,20 @@ export async function POST(request: Request) {
 
   try {
     const counts = await processWebhookPayload(payload);
+
+    // A message we failed to store is a message that is NOT in the moderation
+    // queue. Acknowledging it with 200 would stop Meta retrying and lose it
+    // for good — so we answer 503 and let the batch come back. Redelivery is
+    // safe: the UNIQUE `wa_message_id` turns the already-stored messages in
+    // the batch into no-ops.
+    if (counts.failed > 0) {
+      console.error(`[whatsapp] ${counts.failed} message(s) failed; asking Meta to retry`);
+      return Response.json({ ok: false, ...counts }, { status: 503 });
+    }
+
     return Response.json({ ok: true, ...counts });
   } catch (err) {
     console.error("[whatsapp] webhook processing threw:", err);
-    // Acknowledge anyway — see the note at the top of the file.
-    return Response.json({ ok: false, error: "processing error" });
+    return Response.json({ ok: false, error: "processing error" }, { status: 503 });
   }
 }
