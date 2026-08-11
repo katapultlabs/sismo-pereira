@@ -64,15 +64,18 @@ site displays.
 | [docs/EDITORIAL.md](./docs/EDITORIAL.md) | What we publish and refuse to publish. The most important document here. |
 | [docs/RUNBOOK.md](./docs/RUNBOOK.md) | Operating during an incident: moderation, publishing, partner onboarding. |
 | [docs/PARTNER-API.md](./docs/PARTNER-API.md) | The API contract. Self-contained — safe to send to a partner. |
-| [docs/SUPABASE.md](./docs/SUPABASE.md) | Schema, the RLS trust model, and the provisioning still pending. |
+| [docs/SUPABASE.md](./docs/SUPABASE.md) | Schema, the RLS trust model, and how the database was provisioned. |
 | [docs/INFRASTRUCTURE.md](./docs/INFRASTRUCTURE.md) | Vercel, DNS, the domain, and failure modes already hit. |
 | [docs/DECISIONS.md](./docs/DECISIONS.md) | Why things are this way, and what we chose not to build. |
 
 Coding agents should start at [CLAUDE.md](./CLAUDE.md).
 
-> **Current state:** the site is live but **read-only in practice** — Supabase is not
-> provisioned, so submission, moderation, and partner ingestion are inert. See
-> [docs/SUPABASE.md](./docs/SUPABASE.md#provisioning).
+> **Current state:** the site is live and **production reads a live Supabase** — the
+> fallback banner does not appear there. Local development is the opposite: it runs
+> with no `.env.local` and every read falls back to seed content. That difference is
+> the trap — editing `seed.sql` or `src/lib/fallback-data.ts` publishes nothing. To
+> change the live site, write to the database:
+> [docs/RUNBOOK.md](./docs/RUNBOOK.md#publishing-an-update).
 
 ---
 

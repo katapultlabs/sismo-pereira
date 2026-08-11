@@ -52,9 +52,15 @@ export function SiteHeader({ lang }: { lang: Lang }) {
               Pereira
             </span>
           </span>
-          <span className="label-signage hidden text-muted-foreground/70 xl:inline">
-            {t.nav.tagline}
-          </span>
+          {/*
+           * The "Boletín de situación" tagline used to sit here at `xl`. It
+           * was dropped when the donate button joined the right-hand cluster:
+           * this row is capped at `max-w-6xl` (1152px), so the space does not
+           * grow with the viewport, and the tagline was truncating the
+           * wordmark to "SISMO PER…" at every width where it appeared. It is
+           * decoration and it still runs under the footer wordmark; the
+           * masthead's job is the six routes, 123, and the two actions.
+           */}
         </Link>
 
         {/*
@@ -99,9 +105,29 @@ export function SiteHeader({ lang }: { lang: Lang }) {
             123
           </Button>
 
+          {/*
+           * Donate outranks Report in the masthead and appears from `sm`,
+           * where Report only appears from `xl`. The cluster does not hold
+           * both plus 123 below 1280 — measured, not guessed — and between
+           * the two, Report stays reachable from the hero, the reports page,
+           * the footer, and the sheet, while this is the appeal we were asked
+           * to put in front of everyone. 123 is still never displaced.
+           *
+           * Solid fill for Donate, outline for Report: three solid buttons in
+           * one cluster flattens the hierarchy that the red 123 depends on.
+           */}
           <Button
             size="sm"
-            className="label-signage hidden rounded-sm lg:inline-flex"
+            className="label-signage hidden rounded-sm sm:inline-flex"
+            render={<Link href="/donar" />}
+          >
+            {t.donate.cta}
+          </Button>
+
+          <Button
+            size="sm"
+            variant="outline"
+            className="label-signage hidden rounded-sm xl:inline-flex"
             render={<Link href="/reportar" />}
           >
             {t.nav.submit}
@@ -158,6 +184,13 @@ export function SiteHeader({ lang }: { lang: Lang }) {
                 ))}
                 <Button
                   className="label-signage mt-4 rounded-sm"
+                  render={<Link href="/donar" />}
+                >
+                  {t.donate.cta}
+                </Button>
+                <Button
+                  variant="outline"
+                  className="label-signage mt-2 rounded-sm"
                   render={<Link href="/reportar" />}
                 >
                   {t.nav.submit}

@@ -20,17 +20,28 @@ invariants and links back here for detail.
 
 ## Current state
 
-The site is live at **https://sismopereira.org** and serves content, but it is
-**read-only in practice**: Supabase is not provisioned, so report submission,
-moderation, and partner ingestion do not work yet. Everything falls back to seed
-content and shows a visible "showing fallback information" banner.
+The site is live at **https://sismopereira.org** and **production reads a live
+Supabase** — the "mostrando información de respaldo" banner does not appear there,
+and pages serve rows that exist only in the database.
 
-Two things block real use, and both are decisions rather than code:
+**Local development is the opposite.** The site runs with no `.env.local` at all and
+every read falls back to `src/lib/fallback-data.ts`. This is deliberate — it is what
+makes the site survivable when our own infrastructure is not — but it is also the
+most expensive misunderstanding available here:
 
-1. **Provision Supabase** — see [SUPABASE.md](./SUPABASE.md).
-2. **Name 2–3 moderators** — see [RUNBOOK.md](./RUNBOOK.md). A moderation queue
-   nobody drains is worse than no submissions at all, because the site implies
-   somebody is checking.
+> Editing `supabase/seed.sql` or `src/lib/fallback-data.ts` changes what a developer
+> sees and what a fresh `supabase db reset` produces. It does **not** change
+> production. Shipping content that way looks correct locally, passes `pnpm build`,
+> deploys green, and changes nothing on the live site.
+
+To publish, write to the live database — see
+[RUNBOOK.md](./RUNBOOK.md#publishing-an-update). The exception is hardcoded
+components (the emergency lines, the medical closures, the donation drive), which
+reach production through a deploy on purpose, so that they survive a degraded read.
+
+**The open item is people, not code:** naming 2–3 moderators — see
+[RUNBOOK.md](./RUNBOOK.md). A moderation queue nobody drains is worse than no
+submissions at all, because the site implies somebody is checking.
 
 ## A note on tone
 

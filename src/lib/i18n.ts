@@ -46,11 +46,14 @@ const es = {
   hero: {
     eyebrow: "Sismo del 10 de agosto de 2026",
     title: "Qué sabemos ahora en Pereira",
-    subtitle:
-      "Información verificada sobre servicios públicos, daños y recursos de " +
-      "emergencia. Cada dato indica su fuente y su hora.",
+    /* Two sentences became one. The first restated the site's scope, which the
+       action board below now demonstrates rather than announces; the second is
+       the promise nobody else makes, and it earns the line on its own. */
+    subtitle: "Cada dato que publicamos indica su fuente y su hora.",
+    /* `emergencyCta` labels the 123 button in the masthead and on /reportar.
+       The matching `reportCta` went with the hero buttons the action board
+       replaced — the board names that route itself, in `actions.report`. */
     emergencyCta: "Líneas de emergencia",
-    reportCta: "Reportar una situación",
     /*
      * The same four facts that used to be one run-on sentence, split into
      * labelled fields so the hero can set them as an instrument readout.
@@ -62,6 +65,71 @@ const es = {
       { label: "Epicentro", value: "Chocó, ~55 km al occidente de Pereira" },
       { label: "Profundidad", value: "~107 km" },
     ],
+  },
+  /*
+   * The action board — the hub that occupies the fold.
+   *
+   * Every tile names an action the reader takes ("Llama al 123", "Busca a una
+   * persona"), never a section of the site ("Emergencias", "Enlaces"). A tile
+   * that names a destination is a nav link; a tile that names an action is a
+   * decision already made for someone who is scared and scrolling fast.
+   */
+  actions: {
+    heading: "Qué necesitas ahora",
+    subheading: "Los accesos más usados, con lo último que sabemos de cada uno.",
+    emergency: {
+      eyebrow: "Emergencias",
+      title: "Llama al 123",
+      body:
+        "Vidas en riesgo, personas heridas, incendios o rescates. Línea única " +
+        "nacional, gratuita desde cualquier teléfono.",
+    },
+    medical: {
+      eyebrow: "Salud",
+      title: "No acudas a estos centros médicos",
+      body: "No están recibiendo pacientes. Llama al 123 antes de desplazarte.",
+      count: (n: number) => `${n} centros`,
+      cta: "Ver el detalle y la fuente",
+    },
+    services: {
+      eyebrow: "Servicios públicos",
+      title: "Mira el estado de tu servicio",
+      body: "Energía, agua, gas, internet y transporte, zona por zona.",
+    },
+    report: {
+      eyebrow: "Reportar",
+      title: "Cuenta qué está pasando",
+      body: "Daños, fallas de servicio, vías bloqueadas o ayuda que se necesita.",
+      meta: "Lo revisa un moderador",
+    },
+    missing: {
+      eyebrow: "Búsqueda",
+      title: "Busca a una persona",
+      body: "Canales oficiales de búsqueda. Aquí no publicamos nombres.",
+      meta: "Sitios de otras organizaciones",
+    },
+    resources: {
+      eyebrow: "Recursos",
+      title: "Líneas, albergues y ayuda",
+      body: "Todos los números de emergencia y los puntos de ayuda verificados.",
+      meta: (n: number) => `${n} líneas de emergencia`,
+    },
+    community: {
+      eyebrow: "Comunidad",
+      title: "Lee los reportes de vecinos",
+      body: "Lo que reporta la gente, publicado solo después de confirmarse.",
+      meta: (n: number) =>
+        n === 1 ? "1 reporte verificado" : `${n} reportes verificados`,
+      metaEmpty: "Aún sin reportes verificados",
+    },
+    orgs: {
+      eyebrow: "Organizaciones",
+      title: "Publica información oficial",
+      body:
+        "Empresas de servicios públicos, entidades y organismos de socorro " +
+        "publican directamente aquí.",
+      meta: "Con cuenta o llave de API",
+    },
   },
   status: {
     heading: "Estado de servicios",
@@ -82,6 +150,7 @@ const es = {
     empty: "Todavía no hay actualizaciones publicadas.",
     readMore: "Leer más",
     pinned: "Fijado",
+    pinnedHeading: "Avisos fijados",
     viewSource: "Ver fuente original",
     backToFeed: "Volver a actualizaciones",
   },
@@ -327,6 +396,119 @@ const es = {
       "controlamos la campaña ni administramos los fondos. Compara el dominio " +
       "con el de la barra de direcciones antes de donar — durante una " +
       "emergencia circulan copias falsas.",
+    /* Every internal CTA lands here first. One audited exit point means the
+     * disclosure and the verification are read before anyone leaves the site,
+     * rather than after. */
+    learnMore: "Por qué este fondo",
+    blockNote:
+      "Antes de aportar, revisa qué verificamos, qué afirma la campaña y qué " +
+      "todavía no es público.",
+    page: {
+      heading: "Dona al fondo de emergencia",
+      lede:
+        "Adónde va tu aporte, quién lo administra, qué pudimos verificar y " +
+        "qué todavía no. Revisa esto antes de donar aquí o en cualquier otra " +
+        "parte.",
+      checkedOn: "Revisado el 11 de agosto de 2026",
+
+      actionTitle: "Aportar a la campaña",
+      actionBody:
+        "La campaña ofrece tres rutas de pago: donación deducible de " +
+        "impuestos desde Estados Unidos, donación internacional, y pago en " +
+        "pesos con métodos locales colombianos. Todas se procesan con Stripe.",
+
+      verifiedHeading: "Qué verificamos nosotros",
+      verifiedLede:
+        "Lo que comprobamos por nuestra cuenta, con la fuente al lado. No " +
+        "auditamos la campaña: verificamos quién está detrás de ella.",
+      verified: [
+        {
+          title: "Vaki es una plataforma establecida, no creada para esta emergencia",
+          detail:
+            "Opera desde Colombia desde hace años, ha recaudado más de USD $11 " +
+            "millones de cerca de 500.000 aportantes y se expandió a México. Su " +
+            "campaña más conocida recaudó USD $1,1 millones de 23.651 personas.",
+          source: "Crunchbase, Tracxn, Contxto",
+        },
+        {
+          title: "La campaña vive en el dominio propio de Vaki",
+          detail:
+            "helpcolombia.vaki.org es un subdominio de vaki.org. No es un " +
+            "dominio parecido registrado después del sismo, que es la forma " +
+            "más común de fraude tras un desastre.",
+          source: "Verificación directa del dominio",
+        },
+        {
+          title: "Hay una entidad estadounidense dedicada, con personas con nombre propio",
+          detail:
+            "Vaki Foundation publica una dirección en Miami, Florida, y tres " +
+            "fundadores identificados: Nicolás Contreras, Raissa Joao y " +
+            "Ricardo Mejía.",
+          source: "vaki.org",
+        },
+        {
+          title: "Los pagos se procesan con Stripe",
+          detail:
+            "No se piden datos de tarjeta en un formulario propio: el cobro " +
+            "ocurre en la pasarela de Stripe, que es un procesador " +
+            "internacional conocido.",
+          source: "helpcolombia.vaki.org",
+        },
+      ],
+
+      claimsHeading: "Qué dice la campaña",
+      claimsLede:
+        "Afirmaciones de la propia campaña. Las reproducimos porque son " +
+        "relevantes, y las marcamos como suyas porque no las comprobamos.",
+      claims: [
+        {
+          title: "Se describe como una entidad sin ánimo de lucro 501(c)(3) de EE. UU.",
+          detail:
+            "Sobre esa base ofrece deducción tributaria a donantes " +
+            "estadounidenses.",
+        },
+        {
+          title: "Dice que los fondos van a organizaciones verificadas en las zonas afectadas",
+          detail:
+            "No nombra cuáles ni publica el criterio con el que las verifica.",
+        },
+        {
+          title: "Se compromete a registrar y publicar cada desembolso",
+          detail:
+            "Es un compromiso a futuro, no un reporte que hoy puedas revisar.",
+        },
+      ],
+
+      gapsHeading: "Qué todavía no es público",
+      gapsLede:
+        "Ninguna de estas cosas indica que algo esté mal. Son los datos que " +
+        "aún no pudimos consultar, y son las preguntas que vale la pena hacer " +
+        "a cualquier campaña, incluida esta.",
+      gaps: [
+        "El número de identificación tributaria (EIN) no está publicado, así " +
+          "que no pudimos confirmar el estatus 501(c)(3) en un registro " +
+          "independiente. La propia Vaki Foundation recomienda consultar a un " +
+          "asesor tributario antes de asumir la deducción.",
+        "A la fecha de esta revisión no había todavía un informe de " +
+          "desembolsos publicado que se pudiera consultar.",
+        "No se publican las organizaciones receptoras ni qué porcentaje del " +
+          "aporte se destina a comisiones de plataforma o de procesamiento.",
+      ],
+
+      disclosureHeading: "Declaración de interés",
+      disclosureBody:
+        "Quien opera este sitio tiene una participación como inversionista en " +
+        "Vaki. Lo decimos aquí, y no en una nota al pie, porque esta página " +
+        "recomienda una campaña de esa plataforma — y esa relación es " +
+        "exactamente el tipo de dato que deberías conocer antes de decidir.",
+
+      alternativesHeading: "No es el único canal",
+      alternativesBody:
+        "La Cruz Roja Colombiana y otros canales oficiales también reciben " +
+        "donaciones para la emergencia. Los listamos junto a este, con el " +
+        "mismo detalle de quién los opera.",
+      alternativesCta: "Ver todos los canales",
+    },
   },
   links: {
     heading: "Enlaces útiles",
@@ -428,17 +610,71 @@ const en: typeof es = {
   hero: {
     eyebrow: "August 10, 2026 earthquake",
     title: "What we know right now in Pereira",
-    subtitle:
-      "Verified information on utilities, damage, and emergency resources. " +
-      "Every item shows its source and timestamp.",
+    subtitle: "Every item we publish shows its source and its time.",
     emergencyCta: "Emergency lines",
-    reportCta: "Report a situation",
     quakeFacts: [
       { label: "Magnitude", value: "7.4" },
       { label: "Local time", value: "7:34 a.m." },
       { label: "Epicenter", value: "Chocó, ~55 km west of Pereira" },
       { label: "Depth", value: "~107 km" },
     ],
+  },
+  actions: {
+    heading: "What do you need right now",
+    subheading: "The most-used routes, each showing the latest we know.",
+    emergency: {
+      eyebrow: "Emergencies",
+      title: "Call 123",
+      body:
+        "Lives at risk, injured people, fires, or rescues. National single " +
+        "emergency line, free from any phone.",
+    },
+    medical: {
+      eyebrow: "Health",
+      title: "Do not go to these medical centres",
+      body: "They are not receiving patients. Call 123 before travelling.",
+      count: (n: number) => `${n} centres`,
+      cta: "See the detail and the source",
+    },
+    services: {
+      eyebrow: "Utilities",
+      title: "Check your service status",
+      body: "Electricity, water, gas, internet, and transport, area by area.",
+    },
+    report: {
+      eyebrow: "Report",
+      title: "Tell us what is happening",
+      body: "Damage, utility failures, blocked roads, or aid that is needed.",
+      meta: "Reviewed by a moderator",
+    },
+    missing: {
+      eyebrow: "Search",
+      title: "Look for a person",
+      body: "Official search channels. We do not publish names here.",
+      meta: "Sites run by other organizations",
+    },
+    resources: {
+      eyebrow: "Resources",
+      title: "Helplines, shelters, and aid",
+      body: "Every emergency number and the verified aid points.",
+      meta: (n: number) => `${n} emergency lines`,
+    },
+    community: {
+      eyebrow: "Community",
+      title: "Read reports from neighbours",
+      body: "What people report, published only after it is confirmed.",
+      meta: (n: number) =>
+        n === 1 ? "1 verified report" : `${n} verified reports`,
+      metaEmpty: "No verified reports yet",
+    },
+    orgs: {
+      eyebrow: "Organizations",
+      title: "Publish official information",
+      body:
+        "Utilities, public agencies, and relief organizations publish here " +
+        "directly.",
+      meta: "With an account or an API key",
+    },
   },
   status: {
     heading: "Utility status",
@@ -459,6 +695,7 @@ const en: typeof es = {
     empty: "No updates published yet.",
     readMore: "Read more",
     pinned: "Pinned",
+    pinnedHeading: "Pinned notices",
     viewSource: "View original source",
     backToFeed: "Back to updates",
   },
@@ -659,6 +896,116 @@ const en: typeof es = {
       "not control the campaign and do not handle the funds. Check the domain " +
       "against your address bar before donating — fake copies circulate " +
       "during an emergency.",
+    learnMore: "Why this fund",
+    blockNote:
+      "Before contributing, review what we verified, what the campaign claims, " +
+      "and what is not public yet.",
+    page: {
+      heading: "Donate to the emergency fund",
+      lede:
+        "Where your contribution goes, who administers it, what we could " +
+        "verify and what we could not. Read this before donating here or " +
+        "anywhere else.",
+      checkedOn: "Reviewed on 11 August 2026",
+
+      actionTitle: "Contribute to the campaign",
+      actionBody:
+        "The campaign offers three payment routes: a tax-deductible donation " +
+        "from the United States, an international donation, and payment in " +
+        "pesos using local Colombian methods. All are processed by Stripe.",
+
+      verifiedHeading: "What we verified ourselves",
+      verifiedLede:
+        "What we checked independently, with the source beside it. We did not " +
+        "audit the campaign: we verified who is behind it.",
+      verified: [
+        {
+          title: "Vaki is an established platform, not one created for this emergency",
+          detail:
+            "It has operated from Colombia for years, has raised more than USD " +
+            "$11 million from around 500,000 contributors, and expanded to " +
+            "Mexico. Its best-known campaign raised USD $1.1 million from " +
+            "23,651 people.",
+          source: "Crunchbase, Tracxn, Contxto",
+        },
+        {
+          title: "The campaign lives on Vaki's own domain",
+          detail:
+            "helpcolombia.vaki.org is a subdomain of vaki.org. It is not a " +
+            "lookalike domain registered after the earthquake, which is the " +
+            "most common form of post-disaster fraud.",
+          source: "Direct domain verification",
+        },
+        {
+          title: "There is a dedicated U.S. entity, with named people behind it",
+          detail:
+            "Vaki Foundation publishes an address in Miami, Florida, and three " +
+            "identified founders: Nicolás Contreras, Raissa Joao, and Ricardo " +
+            "Mejía.",
+          source: "vaki.org",
+        },
+        {
+          title: "Payments are processed by Stripe",
+          detail:
+            "No card details are requested in a homemade form: the charge " +
+            "happens in Stripe's checkout, a well-known international " +
+            "processor.",
+          source: "helpcolombia.vaki.org",
+        },
+      ],
+
+      claimsHeading: "What the campaign says",
+      claimsLede:
+        "Claims made by the campaign itself. We reproduce them because they " +
+        "are relevant, and mark them as theirs because we did not verify them.",
+      claims: [
+        {
+          title: "It describes itself as a U.S. 501(c)(3) nonprofit",
+          detail: "On that basis it offers a tax deduction to U.S. donors.",
+        },
+        {
+          title:
+            "It says funds go to verified organizations in the affected areas",
+          detail:
+            "It does not name them or publish the criteria by which it verifies them.",
+        },
+        {
+          title: "It commits to logging and publishing every disbursement",
+          detail:
+            "That is a forward-looking commitment, not a report you can review today.",
+        },
+      ],
+
+      gapsHeading: "What is not public yet",
+      gapsLede:
+        "None of this indicates anything is wrong. These are the details we " +
+        "could not yet consult, and the questions worth asking of any " +
+        "campaign, including this one.",
+      gaps: [
+        "The tax identification number (EIN) is not published, so we could not " +
+          "confirm the 501(c)(3) status in an independent registry. Vaki " +
+          "Foundation itself recommends consulting a tax advisor before " +
+          "assuming the deduction.",
+        "As of this review there was not yet a published disbursement report " +
+          "available to consult.",
+        "Neither the recipient organizations nor the percentage of a " +
+          "contribution going to platform or processing fees is published.",
+      ],
+
+      disclosureHeading: "Declaration of interest",
+      disclosureBody:
+        "The operator of this site holds an investment stake in Vaki. We say " +
+        "so here, rather than in a footnote, because this page recommends a " +
+        "campaign on that platform — and that relationship is exactly the " +
+        "kind of fact you should know before deciding.",
+
+      alternativesHeading: "This is not the only channel",
+      alternativesBody:
+        "The Colombian Red Cross and other official channels also accept " +
+        "donations for the emergency. We list them alongside this one, with " +
+        "the same detail about who operates them.",
+      alternativesCta: "See all channels",
+    },
   },
   links: {
     heading: "Useful links",

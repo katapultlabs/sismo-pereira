@@ -1,7 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Archivo, IBM_Plex_Mono, Source_Sans_3 } from "next/font/google";
 
-import { DonateBar } from "@/components/donate-banner";
+import { DonateBar } from "@/components/donate-bar";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import { ThemeProvider } from "@/components/theme-provider";
