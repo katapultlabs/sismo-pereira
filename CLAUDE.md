@@ -319,6 +319,18 @@ a resident is never offered it.
 - **`supabase-js` infers row types from the `select()` string literal.** Splitting one
   across lines with `+` widens it to `string` and breaks inference. Keep select strings
   on one line.
+- **A new table in `public` is granted to `anon` and `authenticated` before you say
+  anything.** Supabase ships default privileges that grant ALL on every new table in
+  that schema, so a narrow `grant insert (col, col)` restricts *nothing* — the blanket
+  grant already covers every column. Any migration creating a table must
+  `revoke all on <table> from anon, authenticated` first and then grant back, the way
+  the initial schema does for `organizations`. `service_reports` shipped without the
+  revoke and it took a `20260811120000` follow-up to fix
+  ([what it cost](./supabase/migrations/20260811120000_service_reports_grants.sql)).
+  **This cannot be caught locally against a plain Postgres**, which has no such
+  defaults — the local check passes for the wrong reason. Verify grants with
+  `has_column_privilege(...)` against the actual project. RLS is unaffected by any of
+  this and kept the PII closed throughout, which is the argument for having both.
 - **Seed content exists twice** — `supabase/seed.sql` and `src/lib/fallback-data.ts` —
   and they are kept in sync by hand. Change one, change the other.
 - **React Compiler lint rules are enforced.** Mutating anything outside a component
