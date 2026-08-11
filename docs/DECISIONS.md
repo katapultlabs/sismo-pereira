@@ -53,6 +53,41 @@ from the rest.
 **Obligation this creates:** if moderation cannot be staffed, the form should come
 down rather than collect unread reports.
 
+### Collecting and handing over contact details
+
+**Decision (2026-08-11):** `/luz` requires a phone number, captures location at
+household precision, and exists to hand both to the Empresa de Energía de Pereira. No
+consent checkbox, no SMS verification, no data processing agreement, no privacy review
+before launch. We collect now and hand over as we go.
+
+**Why:** EEP is locked out of its systems and its building. Its only channel is a call
+centre that is saturated, which means it is restoring a grid it cannot see. A crowd
+signal is the only instrument available, and it is worth more in the next 48 hours than
+it will be in a week. The project has direct access to EEP's CEO and executives, so the
+hand-off is a real path rather than a hope.
+
+**Why the phone is required, given it suppresses reports:** it is what upgrades a
+report into a callback an operator can dispatch on, and it is the identity key that
+lets the public aggregate count *households* instead of submissions. Without it the
+number on the page is inflated by every re-submission and by anyone who wants to
+inflate it.
+
+**Risk accepted, explicitly:** this is personal data collected under Ley 1581 de 2012
+without prior express authorization, shared with a third party without a written
+agreement, from unverified phone numbers. The call was made by the project owner, who
+chose forgiveness over permission for the duration of the emergency. Recording it here
+is the point — a risk that is written down is one that can be revisited on a normal
+Tuesday, and this one should be.
+
+**What was NOT given up:** individual rows stay off the public site. The public reads
+zone-level household counts. Publishing pins would expose which houses are dark and
+empty, which harms the reporters without making the page more useful — that is a
+different question from the regulatory risk above, and it was not part of the decision.
+
+**Revisit when:** the emergency phase ends, EEP is back inside its own systems, or
+anyone asks for their data back. A deletion procedure is in
+[RUNBOOK.md](./RUNBOOK.md#retiring-luz-and-purging-what-it-collected).
+
 ---
 
 ## Product scope
@@ -200,6 +235,28 @@ per `(service, zone)`.
 **Why:** a free audit trail. "What did the site say at 3pm, and who said it?" is a
 question that matters after an emergency.
 
+### Map tiles: MapLibre GL + OpenFreeMap, loaded on demand
+
+**Decision:** the location picker on `/luz` uses MapLibre GL JS against OpenFreeMap's
+public vector tiles. No API key, no quota, no account to provision, nothing to bill.
+
+**Why not a keyed provider** (Mapbox, MapTiler, Stadia): every one of them needs an
+account, a key in the environment, and a credit card that becomes a single point of
+failure the first time this site gets linked from a national newspaper. Provisioning
+that was slower than shipping the form.
+
+**Why the map is not on the critical path:** MapLibre is ~250 KB of JavaScript and
+needs WebGL, which is a real cost on the low-end Android someone is holding on a dying
+battery. So it loads **only** when a reporter taps "ajustar en el mapa". The default
+path — device GPS fix, or a zone from the dropdown — never downloads it, and the form
+submits fine if the map never loads at all.
+
+**Known weakness:** OpenFreeMap is run by one person as a free service, and we have no
+contract with it. If it degrades, the fix is a Protomaps PMTiles extract of Risaralda
+on Vercel Blob: same MapLibre code, one URL change, and it removes the third party
+entirely. Deliberately not built yet — it is a ~100 MB artifact and a build step, for a
+failure mode that costs us a pin-drag and nothing else.
+
 ### Submitter IPs are never stored
 
 **Decision:** `submitReport` keeps a salted SHA-256 prefix for abuse triage only.
@@ -243,6 +300,23 @@ Until then, added process is not caution — it is overhead charged to an emerge
 ---
 
 ## Reversed or superseded
+
+### "No map yet" → a map, because the data now exists
+
+The original entry said `lat`/`lng` were carried but unrendered, because "building the
+map before the data would be building the demo." That reasoning held exactly as long as
+there was no data to plot.
+
+`/luz` produces the data — household-level reports of whether the power is on, arriving
+continuously. So the map ships on 2026-08-11, in two forms with different rules:
+
+- **The reporter's map** (public) places a single pin: their own, or one they drag when
+  reporting for someone else. It plots nothing it was not just handed.
+- **The operator's map** (`/panel`, authenticated) plots every report for that
+  organization's services, which is the entire purpose of the exercise.
+
+There is still **no public map of reports**, and that is not an unfinished edge — see
+the PII entry above.
 
 ### `/es` and `/en` route prefixes → removed
 

@@ -93,17 +93,46 @@ hours ago" is useless in a screenshot someone shares tomorrow.
 
 ## Rule 4 — Contact details are never published
 
-A reporter may leave a name, phone, or email so a moderator can verify with them. That
-data:
+"Published" is the operative word, and it is the part of this rule that does not bend.
+Contact details never appear on the public site. The public reads `public_reports` and
+`service_report_density`, which drop every identifying column at the database level,
+not in a component.
 
-- is visible **only** to moderators, in the queue;
-- never appears on the public site — the public reads the `public_reports` view, which
-  drops every PII column at the database level, not in a component;
-- is not exported, aggregated, or used for anything but verifying that one report.
+Everything else about this rule changed on 2026-08-11, deliberately — see
+[DECISIONS.md](./DECISIONS.md#collecting-and-handing-over-contact-details).
 
-The submitter's IP is **never stored**. `submitReport` keeps a salted SHA-256 prefix
-(`REPORT_HASH_SALT`) purely so repeat abuse can be spotted; it is not reversible and
-not linked to identity.
+### What we collect, and who gets it
+
+Two different things now live under this rule.
+
+**Community reports** (`/reportar`) work as they always did. Name, phone, and email are
+optional, visible only to moderators in the queue, and used only to verify that one
+report.
+
+**Service reports** (`/luz`) are a collection instrument built for an operator. A phone
+number is **required**, location is captured at household precision, and the entire
+point is to hand that data to the utility that operates the service — currently the
+Empresa de Energía de Pereira, whose own telemetry is unreachable. Staff of the
+verified organization operating a service read those rows directly, scoped by
+`organizations.services` in RLS.
+
+We do this **without a consent gate, without SMS verification, and without a data
+processing agreement**, as an accepted risk for the duration of this emergency. That is
+a decision taken with eyes open, not an oversight, and it is written down so it can be
+revisited rather than discovered. The submission page states plainly what happens to
+the number; it does not ask permission.
+
+### What still holds
+
+- **Nothing individual is public.** Not the phone, not the matrícula, not the
+  coordinates, not the free-text note. The public sees household counts per zone.
+  A public map of pins reading "nobody has power here" is a map of empty houses, and
+  we do not publish one.
+- **Scope is enforced in Postgres.** An electricity utility cannot read water reports.
+  If you change who may see what, change the policy — don't filter in a component.
+- **The submitter's IP is never stored.** Both submission paths keep a salted SHA-256
+  prefix (`REPORT_HASH_SALT`) purely so repeat abuse can be spotted; it is not
+  reversible and not linked to identity.
 
 **If you are moderating:** you will sometimes see a phone number attached to a report
 about a missing person or a trapped neighbour. Use it to verify, then leave it alone.

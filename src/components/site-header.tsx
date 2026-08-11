@@ -127,6 +127,20 @@ export function SiteHeader({ lang }: { lang: Lang }) {
                 </SheetTitle>
               </SheetHeader>
               <nav className="flex flex-col px-4">
+                {/*
+                 * Above the nav list rather than in it. The inline bar is full
+                 * at six items plus the right-hand cluster — a seventh means
+                 * reworking the bar, not tightening the gap — and this is a
+                 * time-boxed campaign rather than a permanent section, so it
+                 * reads as a call to act and can be removed without leaving a
+                 * hole in the navigation.
+                 */}
+                <Button
+                  className="label-signage mb-4 rounded-sm"
+                  render={<Link href="/luz" />}
+                >
+                  {t.luz.ctaFromHome}
+                </Button>
                 {items.map((item) => (
                   <Link
                     key={item.href}

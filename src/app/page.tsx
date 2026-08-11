@@ -111,6 +111,37 @@ export default async function HomePage() {
       ) : null}
 
       {/* ---------------------------------------------------------------- */}
+      {/* Electricity reporting drive                                       */}
+      {/* ---------------------------------------------------------------- */}
+      {/*
+       * Above the pinned slot is reserved for life-safety, so this sits just
+       * below it — but above the status board, because right now the board
+       * cannot answer "is there power in my barrio" and this is how it starts
+       * being able to. It is a call to act, not a status, so it carries no
+       * status colour: the arrow and the rule do the work.
+       */}
+      <section className="mt-10 border border-foreground/25 p-5 sm:p-6">
+        <p className="label-signage text-muted-foreground">{t.luz.eyebrow}</p>
+        <h2 className="display-condensed mt-2 text-2xl font-extrabold uppercase sm:text-3xl">
+          {t.luz.title}
+        </h2>
+        <p className="mt-2 max-w-2xl text-sm leading-relaxed text-muted-foreground">
+          {t.luz.lede}
+        </p>
+        <Button
+          size="lg"
+          className="label-signage mt-5 h-11 rounded-sm"
+          render={<Link href="/luz" />}
+        >
+          {t.luz.ctaFromHome}
+          <ArrowRight className="size-4" aria-hidden />
+        </Button>
+        <p className="mt-3 font-mono text-xs text-muted-foreground">
+          {t.luz.minutes}
+        </p>
+      </section>
+
+      {/* ---------------------------------------------------------------- */}
       {/* Pinned / critical updates                                         */}
       {/* ---------------------------------------------------------------- */}
       {pinned.length > 0 ? (

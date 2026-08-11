@@ -13,6 +13,7 @@ import type {
   Organization,
   PublicReport,
   Resource,
+  ServiceReportDensity,
   ServiceStatus,
   SiteLink,
   Update,
@@ -371,6 +372,15 @@ export const FALLBACK_ORGS: Organization[] = [
 export const FALLBACK_RESOURCES: Resource[] = [];
 
 export const FALLBACK_REPORTS: PublicReport[] = [];
+
+/**
+ * Empty for the same reason as `FALLBACK_RESOURCES`: this is operational data.
+ *
+ * A seeded count of neighbours reporting no power is a fabricated outage map,
+ * and it would be read as one. If the database is unreachable we know nothing
+ * about who has power, and the page says exactly that.
+ */
+export const FALLBACK_REPORT_DENSITY: ServiceReportDensity[] = [];
 
 /**
  * Mirrors the `links` rows in `supabase/seed.sql` — change one, change both.

@@ -52,6 +52,23 @@ export type ResourceKind =
 
 export type ZoneKind = "comuna" | "corregimiento" | "municipio";
 
+/** How a service report's coordinates were obtained. A dragged pin is a weaker
+ *  claim than a device fix, and the operator needs to be able to tell. */
+export type LocationSource = "gps" | "map" | "zone";
+
+/** Roughly when the service went out, in the buckets people actually know. */
+export type OutageSince = "since_quake" | "today" | "last_hour" | "unknown";
+
+/**
+ * What a resident may say about a service. A narrowing of `StatusLevel`:
+ * `restoring` is an operator's word, not a resident's, and is enforced out at
+ * the database by a check constraint.
+ */
+export type ReportedStatus = Extract<
+  StatusLevel,
+  "outage" | "degraded" | "operational" | "unknown"
+>;
+
 /** Declaration order is display order, matching the Postgres enum. */
 export type LinkCategory =
   | "missing_persons"
@@ -144,6 +161,53 @@ export interface SiteLink {
   source: SourceKind;
   sort_order: number;
   verified: boolean;
+}
+
+/**
+ * The public projection of `service_reports` — the *only* one.
+ *
+ * Counts, never locations. Individual rows carry a phone number and a
+ * house-accurate GPS fix; publishing them as pins would identify households.
+ * Mirrors the `service_report_density` view, which aggregates over a rolling
+ * 12-hour window.
+ */
+export interface ServiceReportDensity {
+  service: ServiceType;
+  zone_slug: string | null;
+  zone_name: string | null;
+  zone_kind: ZoneKind | null;
+  outage_count: number;
+  degraded_count: number;
+  operational_count: number;
+  hazard_count: number;
+  total_count: number;
+  last_reported_at: string;
+}
+
+/**
+ * A precise report row. Readable only by moderators and by staff of the
+ * verified organization that operates the reported service — see the RLS in
+ * `supabase/migrations/20260811090000_service_reports.sql`. Never render this
+ * on a public page.
+ */
+export interface ServiceReport {
+  id: string;
+  service: ServiceType;
+  status: ReportedStatus;
+  zone_slug: string | null;
+  lat: number | null;
+  lng: number | null;
+  location_accuracy_m: number | null;
+  location_source: LocationSource | null;
+  address_hint: string | null;
+  matricula: string | null;
+  contact_phone: string | null;
+  on_behalf: boolean;
+  hazard: boolean;
+  since: OutageSince;
+  note: string | null;
+  acknowledged_at: string | null;
+  created_at: string;
 }
 
 export interface Resource {

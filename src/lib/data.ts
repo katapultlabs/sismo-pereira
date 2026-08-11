@@ -5,6 +5,7 @@ import {
   FALLBACK_LINKS,
   FALLBACK_ORGS,
   FALLBACK_REPORTS,
+  FALLBACK_REPORT_DENSITY,
   FALLBACK_RESOURCES,
   FALLBACK_STATUS,
   FALLBACK_UPDATES,
@@ -14,7 +15,9 @@ import type {
   Organization,
   PublicReport,
   Resource,
+  ServiceReportDensity,
   ServiceStatus,
+  ServiceType,
   SiteLink,
   Update,
   Zone,
@@ -114,6 +117,32 @@ export async function getPublicReports(limit = 50) {
       .limit(limit);
     return res as { data: PublicReport[] | null; error: { message: string } | null };
   });
+}
+
+/**
+ * Zone-level counts of what residents report about a service.
+ *
+ * This is *not* the status board and must never be rendered as one — see Rule 3
+ * in docs/EDITORIAL.md. `current_service_status` is what the operator told us;
+ * this is what neighbours told us, and the UI has to keep the two visibly
+ * apart. The underlying view covers a rolling 12-hour window.
+ */
+export async function getServiceReportDensity(service: ServiceType = "electricity") {
+  return query<ServiceReportDensity[]>(
+    "getServiceReportDensity",
+    FALLBACK_REPORT_DENSITY,
+    async (sb) => {
+      const res = await sb
+        .from("service_report_density")
+        .select("service, zone_slug, zone_name, zone_kind, outage_count, degraded_count, operational_count, hazard_count, total_count, last_reported_at")
+        .eq("service", service)
+        .order("total_count", { ascending: false });
+      return res as {
+        data: ServiceReportDensity[] | null;
+        error: { message: string } | null;
+      };
+    },
+  );
 }
 
 export async function getOrganizations() {

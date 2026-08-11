@@ -108,6 +108,35 @@ Authorization lives in `supabase/migrations/*.sql`, not TypeScript. The public r
 base tables — `public_reports` is what drops the PII columns. If you change who may
 see what, change the policy; don't filter in a component.
 
+### Household service reports (`/luz` → `/panel`)
+
+A separate collection instrument from everything above, added for the electricity
+utility after it lost access to its own telemetry. Residents report whether they have
+power; the operating utility reads the precise rows.
+
+**It is not the status board and must never feed it.** `service_status` is what an
+operator told us; `service_reports` is what residents told us. Twenty thousand reports
+do not flip a card on `/servicios` — see [EDITORIAL Rule 3](./docs/EDITORIAL.md).
+
+Three things about it are load-bearing:
+
+- **A phone number is required, and it goes to the utility.** That is a deliberate
+  departure from how `/reportar` treats contact details, taken as an accepted risk —
+  [why](./docs/DECISIONS.md#collecting-and-handing-over-contact-details). Individual
+  rows still never reach a public page.
+- **The public reads `service_report_density` only**, which counts *households*, not
+  submissions: `distinct on (phone) … order by created_at desc`, over a rolling 12-hour
+  window. Counting rows instead would publish a number inflated by every
+  re-submission. Never expose the base table to `anon`.
+- **Access is RLS, not roles.** `can_see_service_reports(service)` admits moderators
+  plus any profile attached to a *verified* org whose `services` cover that service.
+  A silently empty `/panel` is almost always a missing `org_id`, `verified = false`, or
+  a `services` array without the service — RLS filters rather than refuses.
+
+`/panel` reads through `src/lib/panel-data.ts`, **not** `query()` in `data.ts`. That
+helper degrades to seed content on failure, which is right for a public page and wrong
+for a control room: a dispatcher shown fallback data would send crews against fiction.
+
 ### Partner ingestion
 
 `src/lib/api-auth.ts` authenticates `Authorization: Bearer sp_…` against the SHA-256
@@ -157,6 +186,13 @@ A `link_category` is the same drill plus `LINK_CATEGORIES` in `i18n.ts`, which t
 links page iterates so a live query and the offline fallback order identically —
 adding one to the enum without adding it there silently hides that category.
 
+`location_source` and `outage_since` follow the same rule, plus their `*_OPTIONS`
+arrays in `i18n.ts` (declaration order is display order) and the `LOCATION_SOURCES` /
+`OUTAGE_SINCE` const arrays in `src/lib/actions.ts`. `ReportedStatus` is deliberately
+an `Extract<>` of `StatusLevel` rather than its own enum — the database enforces the
+same narrowing with a check constraint, because `restoring` is an operator's word and
+a resident is never offered it.
+
 ## UI conventions
 
 - shadcn/ui on **Base UI** (`@base-ui/react`), not Radix. Composition uses
@@ -191,8 +227,9 @@ adding one to the enum without adding it there silently hides that category.
 - Status is always encoded three ways — colour, icon, and text — so it survives colour
   blindness, greyscale, and a cracked screen. Preserve that when adding indicators.
 - Route segments are Spanish (`/servicios`, `/reportes`, `/recursos`, `/enlaces`,
-  `/reportar`, `/organizaciones`, `/actualizaciones/[slug]`); code identifiers are
-  English.
+  `/reportar`, `/luz`, `/organizaciones`, `/actualizaciones/[slug]`); code identifiers
+  are English. `/admin` and `/panel` are internal and **Spanish-only** — the bilingual
+  machinery is for the public bulletin, not for a control room in Pereira.
 - The inline header nav starts at `lg`, not `md` — six items plus the 123 button and
   the language/theme controls do not fit at 768. Adding a seventh means reworking the
   bar, not tightening the gap.

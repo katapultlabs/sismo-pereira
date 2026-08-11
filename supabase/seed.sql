@@ -328,3 +328,17 @@ insert into links (category, title, url, description, operator, source, sort_ord
     'private', 10, true, null
   )
 on conflict (url) do nothing;
+
+-- ---------------------------------------------------------------------------
+-- Service reports (/luz) — deliberately NOT seeded.
+--
+-- These are operational data of the most consequential kind. A seeded row is a
+-- household that does not exist claiming it has no power: it inflates the
+-- public household counts, puts a fake pin on the operator's map, and can send
+-- a crew down a street that never reported anything.
+--
+-- `FALLBACK_REPORT_DENSITY` in src/lib/fallback-data.ts is an empty array for
+-- the same reason, so the two halves of the seed agree precisely by both being
+-- empty. If you need example content for a screenshot, insert it locally and
+-- roll it back — do not commit it here.
+-- ---------------------------------------------------------------------------

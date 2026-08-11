@@ -1,5 +1,8 @@
 import type {
   LinkCategory,
+  LocationSource,
+  OutageSince,
+  ReportedStatus,
   ResourceKind,
   ServiceType,
   SeverityLevel,
@@ -127,6 +130,134 @@ const es = {
     errorGeneric: "No pudimos enviar el reporte. Intenta de nuevo.",
     required: "Campo obligatorio",
     tooShort: "Escribe al menos 10 caracteres",
+  },
+  /*
+   * /luz — the electricity reporting instrument.
+   *
+   * Written for someone standing in a dark house on a phone at 12% battery, so
+   * the wording is short, second-person, and free of the word "servicio
+   * eléctrico" where "luz" is what people actually say.
+   *
+   * Two things are said plainly rather than buried: this is not EEP's official
+   * channel, and the number you type goes to EEP. See docs/EDITORIAL.md Rule 4.
+   */
+  luz: {
+    metaTitle: "Reportar si hay luz — Sismo Pereira",
+    metaDescription:
+      "Reporta si tienes luz en tu casa. Estamos reuniendo los reportes de " +
+      "toda Pereira para entregárselos a la Empresa de Energía.",
+    eyebrow: "Energía",
+    title: "¿Hay luz en tu casa?",
+    lede:
+      "La Empresa de Energía de Pereira perdió el acceso a sus sistemas y está " +
+      "restableciendo el servicio casi a ciegas. Tu reporte ayuda a ubicar " +
+      "dónde sigue sin haber luz.",
+    /* Said before anything is asked, not after it is collected. */
+    handoverNotice:
+      "Estamos reuniendo estos reportes para entregárselos a la Empresa de " +
+      "Energía de Pereira. Tu teléfono y tu ubicación se comparten con ellos " +
+      "para que puedan revisar tu sector. No los publicamos en este sitio.",
+    notOfficialNotice:
+      "Este no es un canal oficial de la Empresa de Energía y no es un " +
+      "servicio de emergencia. Reportar aquí no abre un caso ante ellos.",
+    /*
+     * The banner at the top of the page, before the reporter has told us
+     * anything. Distinct from `hazardWarning`, which is what they see *after*
+     * saying there is a cable down — that one tells them to stop and call, and
+     * as an opening line it would be addressing a situation most readers do
+     * not have.
+     */
+    emergencyWarning:
+      "Si hay un cable o un poste caído, o alguien está en peligro, llama al " +
+      "123 antes de llenar este formulario. Esta página no es un servicio de " +
+      "emergencia.",
+    minutes: "Toma menos de un minuto.",
+
+    statusQuestion: "¿Cómo está la luz ahora mismo?",
+    statusOutage: "No tengo luz",
+    statusDegraded: "Va y viene",
+    statusOperational: "Ya tengo luz",
+    statusOperationalHint:
+      "Reportar que volvió la luz es igual de útil: así saben qué circuitos ya " +
+      "quedaron arriba.",
+
+    sinceQuestion: "¿Desde cuándo?",
+
+    locationHeading: "Ubicación",
+    locationWhy:
+      "Sin ubicación el reporte no le sirve a nadie. Con el GPS es más preciso " +
+      "que escribir la dirección.",
+    useLocation: "Usar mi ubicación",
+    locating: "Ubicando…",
+    locationReady: "Ubicación tomada",
+    accuracy: "Precisión",
+    locationDenied:
+      "No nos diste permiso de ubicación. Selecciona tu comuna abajo y, si " +
+      "puedes, agrega una referencia.",
+    locationUnavailable:
+      "No pudimos obtener tu ubicación. Selecciona tu comuna abajo.",
+    adjustOnMap: "Ajustar en el mapa",
+    hideMap: "Ocultar el mapa",
+    mapHint: "Arrastra el mapa para mover el punto al lugar correcto.",
+    mapLoading: "Cargando el mapa…",
+    mapFailed:
+      "No pudimos cargar el mapa. Puedes seguir con la comuna y la referencia.",
+    mapAria: "Mapa para ajustar la ubicación del reporte",
+    onBehalf: "Estoy reportando por otra persona",
+    onBehalfHint:
+      "Marca esto si el punto no es donde estás tú. Así saben que el teléfono " +
+      "no contesta en esa dirección.",
+
+    hazardHeading: "¿Hay un cable o un poste caído?",
+    hazardLabel: "Sí, hay un cable, un poste caído o algo chispeando",
+    hazardWarning:
+      "Un cable en el suelo puede estar energizado. No te acerques, no lo " +
+      "toques y llama al 123 ahora — no esperes a que alguien lea este reporte.",
+    hazardCall: "Llamar al 123",
+
+    contactHeading: "Tu teléfono",
+    phone: "Teléfono",
+    phoneHint:
+      "Obligatorio. La Empresa de Energía lo usa para confirmar contigo y para " +
+      "no contar dos veces la misma casa. No aparece en el sitio.",
+    phoneError: "Escribe un número de teléfono válido.",
+    matricula: "Matrícula o número de cuenta (opcional)",
+    matriculaHint:
+      "Está en tu factura de energía. Con ella pueden ubicar el medidor exacto.",
+    note: "Algo más que debamos saber (opcional)",
+    notePlaceholder:
+      "Ej. el transformador de la esquina hizo un ruido fuerte y se apagó todo " +
+      "el bloque.",
+
+    submit: "Enviar reporte",
+    submitting: "Enviando…",
+    successTitle: "Reporte recibido",
+    successBody:
+      "Gracias. Queda en el consolidado que le entregamos a la Empresa de " +
+      "Energía. Si la luz cambia, vuelve y repórtalo — el reporte más reciente " +
+      "de tu número es el que cuenta.",
+    submitAnother: "Enviar otro reporte",
+    errorGeneric:
+      "No pudimos enviar el reporte. Vuelve a intentarlo — no quedó guardado.",
+    errorLocation: "Indica tu comuna o comparte tu ubicación.",
+    required: "Campo obligatorio",
+
+    densityHeading: "Lo que está reportando la gente",
+    densitySubheading: "Hogares que han reportado en las últimas 12 horas",
+    densityEmpty:
+      "Todavía no hay reportes en las últimas 12 horas. Sé el primero de tu " +
+      "sector.",
+    densityNotOfficial:
+      "Esto es lo que reportan los vecinos, no el estado oficial de la red. " +
+      "El estado que publica el operador está en Servicios.",
+    households: "hogares",
+    householdsOutage: "sin luz",
+    householdsDegraded: "intermitente",
+    householdsOperational: "con luz",
+    hazards: "cables o postes caídos",
+    noZone: "Sin comuna indicada",
+    lastReport: "Último reporte",
+    ctaFromHome: "Reportar si hay luz",
   },
   resources: {
     heading: "Recursos de emergencia",
@@ -374,6 +505,113 @@ const en: typeof es = {
     errorGeneric: "We could not send the report. Please try again.",
     required: "Required field",
     tooShort: "Write at least 10 characters",
+  },
+  luz: {
+    metaTitle: "Report whether you have power — Pereira Earthquake",
+    metaDescription:
+      "Report whether you have electricity at home. We are collecting reports " +
+      "across Pereira to hand to the electricity utility.",
+    eyebrow: "Electricity",
+    title: "Do you have power at home?",
+    lede:
+      "The Empresa de Energía de Pereira has lost access to its own systems and " +
+      "is restoring the grid nearly blind. Your report helps locate where the " +
+      "power is still out.",
+    handoverNotice:
+      "We are collecting these reports to hand to the Empresa de Energía de " +
+      "Pereira. Your phone number and location are shared with them so they can " +
+      "check your area. We do not publish them on this site.",
+    notOfficialNotice:
+      "This is not an official channel of the Empresa de Energía, and it is not " +
+      "an emergency service. Reporting here does not open a case with them.",
+    emergencyWarning:
+      "If there is a downed cable or pole, or anyone is in danger, call 123 " +
+      "before filling in this form. This page is not an emergency service.",
+    minutes: "Takes under a minute.",
+
+    statusQuestion: "How is the power right now?",
+    statusOutage: "No power",
+    statusDegraded: "Coming and going",
+    statusOperational: "Power is back",
+    statusOperationalHint:
+      "Reporting that your power came back is just as useful: it shows which " +
+      "circuits are already up.",
+
+    sinceQuestion: "Since when?",
+
+    locationHeading: "Location",
+    locationWhy:
+      "Without a location the report is no use to anyone. GPS is more precise " +
+      "than typing an address.",
+    useLocation: "Use my location",
+    locating: "Locating…",
+    locationReady: "Location captured",
+    accuracy: "Accuracy",
+    locationDenied:
+      "You did not grant location permission. Pick your comuna below and add a " +
+      "landmark if you can.",
+    locationUnavailable:
+      "We could not get your location. Pick your comuna below.",
+    adjustOnMap: "Adjust on the map",
+    hideMap: "Hide the map",
+    mapHint: "Drag the map to move the pin to the right place.",
+    mapLoading: "Loading the map…",
+    mapFailed:
+      "We could not load the map. You can continue with the comuna and a landmark.",
+    mapAria: "Map for adjusting the report location",
+    onBehalf: "I am reporting for someone else",
+    onBehalfHint:
+      "Tick this if the pin is not where you are, so they know the phone will " +
+      "not answer at that address.",
+
+    hazardHeading: "Is there a downed cable or pole?",
+    hazardLabel: "Yes — a downed cable or pole, or something sparking",
+    hazardWarning:
+      "A cable on the ground may be live. Stay away, do not touch it, and call " +
+      "123 now — do not wait for someone to read this report.",
+    hazardCall: "Call 123",
+
+    contactHeading: "Your phone number",
+    phone: "Phone",
+    phoneHint:
+      "Required. The utility uses it to confirm with you and to avoid counting " +
+      "the same household twice. It never appears on the site.",
+    phoneError: "Enter a valid phone number.",
+    matricula: "Account or meter number (optional)",
+    matriculaHint:
+      "It is on your electricity bill. It lets them locate the exact meter.",
+    note: "Anything else we should know (optional)",
+    notePlaceholder:
+      "e.g. the transformer on the corner made a loud noise and the whole block " +
+      "went dark.",
+
+    submit: "Send report",
+    submitting: "Sending…",
+    successTitle: "Report received",
+    successBody:
+      "Thank you. It is in the summary we hand to the utility. If your power " +
+      "changes, report again — the most recent report from your number is the " +
+      "one that counts.",
+    submitAnother: "Send another report",
+    errorGeneric: "We could not send the report. Try again — nothing was saved.",
+    errorLocation: "Choose your comuna or share your location.",
+    required: "Required field",
+
+    densityHeading: "What people are reporting",
+    densitySubheading: "Households that reported in the last 12 hours",
+    densityEmpty:
+      "No reports in the last 12 hours yet. Be the first in your area.",
+    densityNotOfficial:
+      "This is what neighbours report, not the official state of the grid. The " +
+      "operator's own status is under Services.",
+    households: "households",
+    householdsOutage: "no power",
+    householdsDegraded: "intermittent",
+    householdsOperational: "have power",
+    hazards: "downed cables or poles",
+    noZone: "No comuna given",
+    lastReport: "Last report",
+    ctaFromHome: "Report whether you have power",
   },
   resources: {
     heading: "Emergency resources",
@@ -675,6 +913,84 @@ export const CATEGORY_LABELS: Record<Lang, Record<ReportCategory, string>> = {
     aid_offered: "Offering aid",
     misinformation: "Misinformation spreading",
     other: "Other",
+  },
+};
+
+// ---------------------------------------------------------------------------
+// Service reports (/luz)
+//
+// Declaration order is display order, and it is deliberate: "no tengo luz" is
+// the answer most people are coming to give, so it is the first and largest
+// target. Adding a value to the `status_level` check constraint or to the
+// `outage_since` enum means adding it here too.
+// ---------------------------------------------------------------------------
+
+export const REPORTED_STATUS_OPTIONS = [
+  "outage",
+  "degraded",
+  "operational",
+] as const satisfies readonly ReportedStatus[];
+
+/**
+ * Resident-facing wording, which is not the operator's wording. The status
+ * board says "Sin servicio" because that is how a utility describes its own
+ * network; a person in a dark kitchen says "no tengo luz". Same enum value,
+ * different voice — do not collapse these into `STATUS_LABELS`.
+ */
+export const REPORTED_STATUS_LABELS: Record<
+  Lang,
+  Record<ReportedStatus, string>
+> = {
+  es: {
+    outage: "No tengo luz",
+    degraded: "Va y viene",
+    operational: "Ya tengo luz",
+    unknown: "No sé",
+  },
+  en: {
+    outage: "No power",
+    degraded: "Coming and going",
+    operational: "Power is back",
+    unknown: "Not sure",
+  },
+};
+
+export const OUTAGE_SINCE_OPTIONS = [
+  "since_quake",
+  "today",
+  "last_hour",
+  "unknown",
+] as const satisfies readonly OutageSince[];
+
+export const OUTAGE_SINCE_LABELS: Record<Lang, Record<OutageSince, string>> = {
+  es: {
+    since_quake: "Desde el sismo",
+    today: "Se fue hoy, después de haber vuelto",
+    last_hour: "En la última hora",
+    unknown: "No sé",
+  },
+  en: {
+    since_quake: "Since the earthquake",
+    today: "Went out today, after coming back",
+    last_hour: "Within the last hour",
+    unknown: "Not sure",
+  },
+};
+
+/** Shown in the operator console so a dispatcher can weigh a pin's precision. */
+export const LOCATION_SOURCE_LABELS: Record<
+  Lang,
+  Record<LocationSource, string>
+> = {
+  es: {
+    gps: "GPS del dispositivo",
+    map: "Ubicado en el mapa",
+    zone: "Solo comuna",
+  },
+  en: {
+    gps: "Device GPS",
+    map: "Placed on the map",
+    zone: "Comuna only",
   },
 };
 

@@ -135,6 +135,104 @@ Publish a new update describing the correction, then set the original to
 
 ---
 
+## Running the electricity reporting drive (`/luz` → `/panel`)
+
+`/luz` collects household reports of whether the power is on. `/panel` is where the
+operating utility reads them. Read
+[EDITORIAL Rule 4](./EDITORIAL.md#rule-4--contact-details-are-never-published) and the
+[decision entry](./DECISIONS.md#collecting-and-handing-over-contact-details) before
+touching either — this is the one surface that collects a required phone number and
+hands it to a third party.
+
+### Giving utility staff access to `/panel`
+
+There is no separate login. `/panel` uses the same magic-link sign-in as `/admin`, and
+access is decided entirely by RLS.
+
+1. The person signs in once at `/admin/login`, so their `auth.users` row exists.
+2. Attach them to the organization and confirm the org is verified and scoped:
+
+   ```sql
+   update profiles
+      set org_id = (select id from organizations where slug = 'energia-pereira'),
+          role   = 'viewer'          -- 'publisher' if they should also publish status
+    where id = '<auth-user-id>';
+   ```
+
+3. The organization must be `verified = true` and must list the service:
+
+   ```sql
+   select slug, verified, services from organizations where slug = 'energia-pereira';
+   -- services must contain 'electricity', or /panel shows an empty queue
+   ```
+
+`role` governs *publishing*, not *seeing*: any profile attached to a verified org whose
+`services` cover the service reads those reports. That is deliberate — a control room
+needs read-only staff, and `viewer` is the safe default for them.
+
+**The commonest failure is a silent empty panel.** An account with no `org_id`, an org
+with `verified = false`, or a `services` array missing `electricity` all produce zero
+rows rather than an error, because RLS filters rather than refuses. Check those three
+things in that order.
+
+### Handing the data over without an account
+
+`/panel/export` returns a CSV of everything the signed-in session may see, scoped by
+the same policy. It is the right answer when the utility would rather work in its own
+tools than in ours. It contains contact details: send it the way you would send a key,
+and do not put it in a shared drive.
+
+### Watching whether it is working
+
+```sql
+-- Households reporting, by zone, over the public 12-hour window.
+select zone_slug, outage_count, operational_count, total_count, last_reported_at
+from service_report_density where service = 'electricity'
+order by total_count desc;
+
+-- Raw submission rate, to tell "nobody is reporting" from "the form is broken".
+select date_trunc('hour', created_at) as hour, count(*)
+from service_reports where created_at > now() - interval '12 hours'
+group by 1 order by 1 desc;
+```
+
+`service_report_density` counts **households, not submissions** — it keeps the newest
+report per phone number. A count that looks lower than the raw row count is the
+de-duplication working, not data loss.
+
+### Reports do not change the status board
+
+Nothing on `/luz` touches `service_status`. Ten thousand people reporting no power does
+not flip a card on `/servicios`; only the operator's own reporting does. If you want
+the board to say the grid is down, publish it as a status from the operator, or as an
+update with `source: media`. See
+[EDITORIAL Rule 3](./EDITORIAL.md#rule-3--every-claim-carries-its-source-and-its-time).
+
+### Retiring `/luz` and purging what it collected
+
+This drive is scoped to the emergency. When it ends — or if anyone asks for their data
+back — there is a deletion path, and someone has to actually run it.
+
+```sql
+-- One person's data, on request.
+delete from service_reports where contact_phone = '3001234567';
+
+-- Drop contact details but keep the anonymous outage geography for analysis.
+update service_reports
+   set contact_phone = null, matricula = null, note = null
+ where created_at < now() - interval '30 days';
+
+-- Or remove the lot.
+truncate service_reports;
+```
+
+Taking the page down is a deploy: remove the CTA from the home page and the header
+sheet, and either delete `src/app/luz/` or have it render the closing notice. Leaving
+a live form collecting phone numbers nobody reads is the Rule 5 failure with a
+regulator attached.
+
+---
+
 ## Onboarding a partner organization
 
 1. **Verify they are who they say.** An institutional email address and a named
