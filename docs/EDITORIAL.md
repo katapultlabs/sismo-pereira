@@ -203,6 +203,51 @@ the whole claim, and the notice at the top of the page says so.
 
 ---
 
+## Rule 10 — If we amplify it, we disclose our interest in it
+
+Rule 9 governs a row in a list. This rule governs the harder case: when the
+site stops merely listing a destination and starts **recommending** one.
+
+[`/donar`](../src/app/donar/page.tsx) recommends a specific donation campaign,
+and every donate CTA on the site routes through it rather than straight out.
+That is deliberate — it is the one page where a reader can see, before leaving,
+what we verified, what is only the campaign's claim, and who we are to be
+saying so.
+
+Three things are non-negotiable on any page that recommends rather than lists:
+
+1. **Our findings and their claims are visibly separate.** `/donar` renders
+   them in three different containers — verified findings as bordered cards
+   with a source line, the campaign's own assertions as quoted blocks, open
+   questions as dashed boxes. A reader skimming must be able to tell which is
+   which without reading the headings. Merging them into one confident block
+   is the failure this whole document exists to prevent.
+2. **A financial or personal interest is declared on the page itself**, in the
+   body, not a footnote — the site operator holds an investment stake in Vaki,
+   and `/donar` says so at full size. A reader who learns it somewhere else
+   has been misled by omission, and that costs more credibility than any
+   recommendation can buy back.
+3. **It is never the only option offered.** `/donar` closes by pointing at
+   `/enlaces`, where the official channels sit. A donation page with exactly
+   one destination is an advertisement.
+
+### No superlatives
+
+We do not publish "the most trustworthy option", "funds routed the best
+possible way", or any similar claim, however sincerely believed — they cannot
+be sourced, and Rule 3 applies to a recommendation exactly as it applies to a
+status card. The sourced version is also simply more persuasive: "raised USD
+$11M from ~500,000 people, on its own domain, processed by Stripe" survives a
+sceptical reader, and "most trustworthy" does not.
+
+**Say what is missing, too.** `/donar` states that the EIN is unpublished, that
+no disbursement report exists yet, and that fees are not disclosed. None of
+those means anything is wrong. Listing them is what makes the verified column
+worth reading — and it is the same instinct as Rule 1: the honest gap beats
+the confident guess.
+
+---
+
 ## Judgment calls
 
 Real situations that don't resolve cleanly from the rules above.

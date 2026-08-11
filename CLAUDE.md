@@ -191,11 +191,17 @@ adding one to the enum without adding it there silently hides that category.
 - Status is always encoded three ways — colour, icon, and text — so it survives colour
   blindness, greyscale, and a cracked screen. Preserve that when adding indicators.
 - Route segments are Spanish (`/servicios`, `/reportes`, `/recursos`, `/enlaces`,
-  `/reportar`, `/organizaciones`, `/actualizaciones/[slug]`); code identifiers are
-  English.
+  `/reportar`, `/organizaciones`, `/donar`, `/actualizaciones/[slug]`); code
+  identifiers are English.
 - The inline header nav starts at `lg`, not `md` — six items plus the 123 button and
   the language/theme controls do not fit at 768. Adding a seventh means reworking the
   bar, not tightening the gap.
+- **The masthead row is full.** It is capped at `max-w-6xl` (1152px), so its space
+  does **not** grow with the viewport — a control that fits at 1600 fits at 1280 and
+  no better. The three actions are ranked and appear at different breakpoints: 123
+  (always), Donar (`sm`), Reportar (`xl`, outline). The "Boletín de situación"
+  tagline was removed from the wordmark to make room; it still runs in the footer.
+  Adding anything here means removing something, not finding space.
 
 ## Things that will bite
 

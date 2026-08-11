@@ -135,6 +135,34 @@ Publish a new update describing the correction, then set the original to
 
 ---
 
+## Keeping `/donar` honest
+
+The donation page is **hardcoded**, so every change to it is a deploy — there is no
+moderation queue and no database row to edit. Its copy lives in the `donate` block of
+`src/lib/i18n.ts` (both languages), and its components in
+`src/components/donate-banner.tsx`.
+
+It carries a visible **"Revisado el …"** date. That date is a claim like any other, so:
+
+- **Re-check before you re-date.** Open the campaign, confirm the operator, the
+  domain, and the payment routes still match what section 01 says. Only then move the
+  date.
+- **Move findings between sections as facts change**, rather than quietly deleting
+  them. If Vaki publishes an EIN or a disbursement report, that item moves out of
+  "Qué todavía no es público" and into "Qué verificamos nosotros" *with a source* — it
+  does not simply disappear.
+- **Never soften section 03 to make the page read better.** The open questions are
+  what make section 01 credible; a page with only good news is an advertisement.
+- **The declaration of interest stays** for as long as the operator holds a stake in
+  Vaki, at full size and in the body. See
+  [EDITORIAL.md](./EDITORIAL.md#rule-10--if-we-amplify-it-we-disclose-our-interest-in-it).
+
+If the campaign closes or the fund stops accepting donations, pull the whole drive in
+one deploy — the bar, the blocks, the header button, and the page — rather than
+leaving a live "Donar" button pointing at a dead campaign.
+
+---
+
 ## Onboarding a partner organization
 
 1. **Verify they are who they say.** An institutional email address and a named

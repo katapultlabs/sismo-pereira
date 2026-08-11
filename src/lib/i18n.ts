@@ -196,6 +196,119 @@ const es = {
       "controlamos la campaña ni administramos los fondos. Compara el dominio " +
       "con el de la barra de direcciones antes de donar — durante una " +
       "emergencia circulan copias falsas.",
+    /* Every internal CTA lands here first. One audited exit point means the
+     * disclosure and the verification are read before anyone leaves the site,
+     * rather than after. */
+    learnMore: "Por qué este fondo",
+    blockNote:
+      "Antes de aportar, revisa qué verificamos, qué afirma la campaña y qué " +
+      "todavía no es público.",
+    page: {
+      heading: "Dona al fondo de emergencia",
+      lede:
+        "Adónde va tu aporte, quién lo administra, qué pudimos verificar y " +
+        "qué todavía no. Revisa esto antes de donar aquí o en cualquier otra " +
+        "parte.",
+      checkedOn: "Revisado el 11 de agosto de 2026",
+
+      actionTitle: "Aportar a la campaña",
+      actionBody:
+        "La campaña ofrece tres rutas de pago: donación deducible de " +
+        "impuestos desde Estados Unidos, donación internacional, y pago en " +
+        "pesos con métodos locales colombianos. Todas se procesan con Stripe.",
+
+      verifiedHeading: "Qué verificamos nosotros",
+      verifiedLede:
+        "Lo que comprobamos por nuestra cuenta, con la fuente al lado. No " +
+        "auditamos la campaña: verificamos quién está detrás de ella.",
+      verified: [
+        {
+          title: "Vaki es una plataforma establecida, no creada para esta emergencia",
+          detail:
+            "Opera desde Colombia desde hace años, ha recaudado más de USD $11 " +
+            "millones de cerca de 500.000 aportantes y se expandió a México. Su " +
+            "campaña más conocida recaudó USD $1,1 millones de 23.651 personas.",
+          source: "Crunchbase, Tracxn, Contxto",
+        },
+        {
+          title: "La campaña vive en el dominio propio de Vaki",
+          detail:
+            "helpcolombia.vaki.org es un subdominio de vaki.org. No es un " +
+            "dominio parecido registrado después del sismo, que es la forma " +
+            "más común de fraude tras un desastre.",
+          source: "Verificación directa del dominio",
+        },
+        {
+          title: "Hay una entidad estadounidense dedicada, con personas con nombre propio",
+          detail:
+            "Vaki Foundation publica una dirección en Miami, Florida, y tres " +
+            "fundadores identificados: Nicolás Contreras, Raissa Joao y " +
+            "Ricardo Mejía.",
+          source: "vaki.org",
+        },
+        {
+          title: "Los pagos se procesan con Stripe",
+          detail:
+            "No se piden datos de tarjeta en un formulario propio: el cobro " +
+            "ocurre en la pasarela de Stripe, que es un procesador " +
+            "internacional conocido.",
+          source: "helpcolombia.vaki.org",
+        },
+      ],
+
+      claimsHeading: "Qué dice la campaña",
+      claimsLede:
+        "Afirmaciones de la propia campaña. Las reproducimos porque son " +
+        "relevantes, y las marcamos como suyas porque no las comprobamos.",
+      claims: [
+        {
+          title: "Se describe como una entidad sin ánimo de lucro 501(c)(3) de EE. UU.",
+          detail:
+            "Sobre esa base ofrece deducción tributaria a donantes " +
+            "estadounidenses.",
+        },
+        {
+          title: "Dice que los fondos van a organizaciones verificadas en las zonas afectadas",
+          detail:
+            "No nombra cuáles ni publica el criterio con el que las verifica.",
+        },
+        {
+          title: "Se compromete a registrar y publicar cada desembolso",
+          detail:
+            "Es un compromiso a futuro, no un reporte que hoy puedas revisar.",
+        },
+      ],
+
+      gapsHeading: "Qué todavía no es público",
+      gapsLede:
+        "Ninguna de estas cosas indica que algo esté mal. Son los datos que " +
+        "aún no pudimos consultar, y son las preguntas que vale la pena hacer " +
+        "a cualquier campaña, incluida esta.",
+      gaps: [
+        "El número de identificación tributaria (EIN) no está publicado, así " +
+          "que no pudimos confirmar el estatus 501(c)(3) en un registro " +
+          "independiente. La propia Vaki Foundation recomienda consultar a un " +
+          "asesor tributario antes de asumir la deducción.",
+        "A la fecha de esta revisión no había todavía un informe de " +
+          "desembolsos publicado que se pudiera consultar.",
+        "No se publican las organizaciones receptoras ni qué porcentaje del " +
+          "aporte se destina a comisiones de plataforma o de procesamiento.",
+      ],
+
+      disclosureHeading: "Declaración de interés",
+      disclosureBody:
+        "Quien opera este sitio tiene una participación como inversionista en " +
+        "Vaki. Lo decimos aquí, y no en una nota al pie, porque esta página " +
+        "recomienda una campaña de esa plataforma — y esa relación es " +
+        "exactamente el tipo de dato que deberías conocer antes de decidir.",
+
+      alternativesHeading: "No es el único canal",
+      alternativesBody:
+        "La Cruz Roja Colombiana y otros canales oficiales también reciben " +
+        "donaciones para la emergencia. Los listamos junto a este, con el " +
+        "mismo detalle de quién los opera.",
+      alternativesCta: "Ver todos los canales",
+    },
   },
   links: {
     heading: "Enlaces útiles",
@@ -421,6 +534,116 @@ const en: typeof es = {
       "not control the campaign and do not handle the funds. Check the domain " +
       "against your address bar before donating — fake copies circulate " +
       "during an emergency.",
+    learnMore: "Why this fund",
+    blockNote:
+      "Before contributing, review what we verified, what the campaign claims, " +
+      "and what is not public yet.",
+    page: {
+      heading: "Donate to the emergency fund",
+      lede:
+        "Where your contribution goes, who administers it, what we could " +
+        "verify and what we could not. Read this before donating here or " +
+        "anywhere else.",
+      checkedOn: "Reviewed on 11 August 2026",
+
+      actionTitle: "Contribute to the campaign",
+      actionBody:
+        "The campaign offers three payment routes: a tax-deductible donation " +
+        "from the United States, an international donation, and payment in " +
+        "pesos using local Colombian methods. All are processed by Stripe.",
+
+      verifiedHeading: "What we verified ourselves",
+      verifiedLede:
+        "What we checked independently, with the source beside it. We did not " +
+        "audit the campaign: we verified who is behind it.",
+      verified: [
+        {
+          title: "Vaki is an established platform, not one created for this emergency",
+          detail:
+            "It has operated from Colombia for years, has raised more than USD " +
+            "$11 million from around 500,000 contributors, and expanded to " +
+            "Mexico. Its best-known campaign raised USD $1.1 million from " +
+            "23,651 people.",
+          source: "Crunchbase, Tracxn, Contxto",
+        },
+        {
+          title: "The campaign lives on Vaki's own domain",
+          detail:
+            "helpcolombia.vaki.org is a subdomain of vaki.org. It is not a " +
+            "lookalike domain registered after the earthquake, which is the " +
+            "most common form of post-disaster fraud.",
+          source: "Direct domain verification",
+        },
+        {
+          title: "There is a dedicated U.S. entity, with named people behind it",
+          detail:
+            "Vaki Foundation publishes an address in Miami, Florida, and three " +
+            "identified founders: Nicolás Contreras, Raissa Joao, and Ricardo " +
+            "Mejía.",
+          source: "vaki.org",
+        },
+        {
+          title: "Payments are processed by Stripe",
+          detail:
+            "No card details are requested in a homemade form: the charge " +
+            "happens in Stripe's checkout, a well-known international " +
+            "processor.",
+          source: "helpcolombia.vaki.org",
+        },
+      ],
+
+      claimsHeading: "What the campaign says",
+      claimsLede:
+        "Claims made by the campaign itself. We reproduce them because they " +
+        "are relevant, and mark them as theirs because we did not verify them.",
+      claims: [
+        {
+          title: "It describes itself as a U.S. 501(c)(3) nonprofit",
+          detail: "On that basis it offers a tax deduction to U.S. donors.",
+        },
+        {
+          title:
+            "It says funds go to verified organizations in the affected areas",
+          detail:
+            "It does not name them or publish the criteria by which it verifies them.",
+        },
+        {
+          title: "It commits to logging and publishing every disbursement",
+          detail:
+            "That is a forward-looking commitment, not a report you can review today.",
+        },
+      ],
+
+      gapsHeading: "What is not public yet",
+      gapsLede:
+        "None of this indicates anything is wrong. These are the details we " +
+        "could not yet consult, and the questions worth asking of any " +
+        "campaign, including this one.",
+      gaps: [
+        "The tax identification number (EIN) is not published, so we could not " +
+          "confirm the 501(c)(3) status in an independent registry. Vaki " +
+          "Foundation itself recommends consulting a tax advisor before " +
+          "assuming the deduction.",
+        "As of this review there was not yet a published disbursement report " +
+          "available to consult.",
+        "Neither the recipient organizations nor the percentage of a " +
+          "contribution going to platform or processing fees is published.",
+      ],
+
+      disclosureHeading: "Declaration of interest",
+      disclosureBody:
+        "The operator of this site holds an investment stake in Vaki. We say " +
+        "so here, rather than in a footnote, because this page recommends a " +
+        "campaign on that platform — and that relationship is exactly the " +
+        "kind of fact you should know before deciding.",
+
+      alternativesHeading: "This is not the only channel",
+      alternativesBody:
+        "The Colombian Red Cross and other official channels also accept " +
+        "donations for the emergency. We list them alongside this one, with " +
+        "the same detail about who operates them.",
+      alternativesCta: "See all channels",
+    },
   },
   links: {
     heading: "Useful links",

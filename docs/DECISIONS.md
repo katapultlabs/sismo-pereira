@@ -97,6 +97,42 @@ the last thing that should vanish with it.
 plus the right-hand controls need ~980px; at 768 they left the wordmark 9px to
 truncate into. Tablets get the existing sheet, which holds all six in a column.
 
+### A donation drive, hardcoded, funnelled through one page
+
+**Decision:** the Vaki emergency fund is featured site-wide — a strip under the
+masthead on every route, a plate on `/` and `/recursos`, a row above the footer
+columns, and a `Donar` button in the header. All of them link **inward** to
+[`/donar`](../src/app/donar/page.tsx), which is the only page that links out to the
+campaign.
+
+**Why hardcoded, when `/enlaces` exists:** a `links` row appears on exactly one page,
+and it disappears the moment Supabase does. This is the one outbound destination that
+has to survive a degraded read — an appeal that vanishes during the aftershock is an
+appeal nobody sees. The `links` row exists too (`donations` category), so the campaign
+also sits in the directory next to its alternatives, but the site-wide treatment is
+components, not data. See the note in CLAUDE.md: editing `seed.sql` publishes nothing.
+
+**Why one exit point rather than direct outbound links:** it costs a click, and it buys
+the only place where the verification, the open questions, and the operator's declared
+investment stake in Vaki are guaranteed to be on screen *before* anyone leaves. The
+alternative — a donation link on every page and a disclosure nowhere — is not a
+trade this site can make. See [EDITORIAL.md](./EDITORIAL.md#rule-10--if-we-amplify-it-we-disclose-our-interest-in-it).
+
+**Why no superlatives**, when the operator believes them: "the most trustworthy
+option" cannot be sourced, and Rule 3 does not stop applying because the claim is
+about a partner. The page makes the strongest *checkable* case instead — an
+established platform with a public track record, the campaign on the platform's own
+domain rather than a lookalike, a named US entity, Stripe checkout — and lists what is
+not public (no EIN, no disbursement report yet, no fee disclosure). A donor who checks
+our claims finds them true, which is the only durable version of persuasion this site
+can offer.
+
+**Consequence:** the masthead row is now full. It is capped at `max-w-6xl`, so its
+space does not grow with the viewport; `Donar` appears from `sm`, `Reportar` moved to
+`xl` and became an outline button, and the "Boletín de situación" tagline was dropped
+from the wordmark (it survives in the footer). Measured, not guessed: with the tagline
+present the wordmark truncated to "SISMO PER…" at every width where it rendered.
+
 ### No map yet
 
 **Decision:** `reports` and `resources` carry `lat`/`lng`, but nothing renders them.
