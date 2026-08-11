@@ -43,11 +43,14 @@ const es = {
   hero: {
     eyebrow: "Sismo del 10 de agosto de 2026",
     title: "Qué sabemos ahora en Pereira",
-    subtitle:
-      "Información verificada sobre servicios públicos, daños y recursos de " +
-      "emergencia. Cada dato indica su fuente y su hora.",
+    /* Two sentences became one. The first restated the site's scope, which the
+       action board below now demonstrates rather than announces; the second is
+       the promise nobody else makes, and it earns the line on its own. */
+    subtitle: "Cada dato que publicamos indica su fuente y su hora.",
+    /* `emergencyCta` labels the 123 button in the masthead and on /reportar.
+       The matching `reportCta` went with the hero buttons the action board
+       replaced — the board names that route itself, in `actions.report`. */
     emergencyCta: "Líneas de emergencia",
-    reportCta: "Reportar una situación",
     /*
      * The same four facts that used to be one run-on sentence, split into
      * labelled fields so the hero can set them as an instrument readout.
@@ -59,6 +62,71 @@ const es = {
       { label: "Epicentro", value: "Chocó, ~55 km al occidente de Pereira" },
       { label: "Profundidad", value: "~107 km" },
     ],
+  },
+  /*
+   * The action board — the hub that occupies the fold.
+   *
+   * Every tile names an action the reader takes ("Llama al 123", "Busca a una
+   * persona"), never a section of the site ("Emergencias", "Enlaces"). A tile
+   * that names a destination is a nav link; a tile that names an action is a
+   * decision already made for someone who is scared and scrolling fast.
+   */
+  actions: {
+    heading: "Qué necesitas ahora",
+    subheading: "Los accesos más usados, con lo último que sabemos de cada uno.",
+    emergency: {
+      eyebrow: "Emergencias",
+      title: "Llama al 123",
+      body:
+        "Vidas en riesgo, personas heridas, incendios o rescates. Línea única " +
+        "nacional, gratuita desde cualquier teléfono.",
+    },
+    medical: {
+      eyebrow: "Salud",
+      title: "No acudas a estos centros médicos",
+      body: "No están recibiendo pacientes. Llama al 123 antes de desplazarte.",
+      count: (n: number) => `${n} centros`,
+      cta: "Ver el detalle y la fuente",
+    },
+    services: {
+      eyebrow: "Servicios públicos",
+      title: "Mira el estado de tu servicio",
+      body: "Energía, agua, gas, internet y transporte, zona por zona.",
+    },
+    report: {
+      eyebrow: "Reportar",
+      title: "Cuenta qué está pasando",
+      body: "Daños, fallas de servicio, vías bloqueadas o ayuda que se necesita.",
+      meta: "Lo revisa un moderador",
+    },
+    missing: {
+      eyebrow: "Búsqueda",
+      title: "Busca a una persona",
+      body: "Canales oficiales de búsqueda. Aquí no publicamos nombres.",
+      meta: "Sitios de otras organizaciones",
+    },
+    resources: {
+      eyebrow: "Recursos",
+      title: "Líneas, albergues y ayuda",
+      body: "Todos los números de emergencia y los puntos de ayuda verificados.",
+      meta: (n: number) => `${n} líneas de emergencia`,
+    },
+    community: {
+      eyebrow: "Comunidad",
+      title: "Lee los reportes de vecinos",
+      body: "Lo que reporta la gente, publicado solo después de confirmarse.",
+      meta: (n: number) =>
+        n === 1 ? "1 reporte verificado" : `${n} reportes verificados`,
+      metaEmpty: "Aún sin reportes verificados",
+    },
+    orgs: {
+      eyebrow: "Organizaciones",
+      title: "Publica información oficial",
+      body:
+        "Empresas de servicios públicos, entidades y organismos de socorro " +
+        "publican directamente aquí.",
+      meta: "Con cuenta o llave de API",
+    },
   },
   status: {
     heading: "Estado de servicios",
@@ -79,6 +147,7 @@ const es = {
     empty: "Todavía no hay actualizaciones publicadas.",
     readMore: "Leer más",
     pinned: "Fijado",
+    pinnedHeading: "Avisos fijados",
     viewSource: "Ver fuente original",
     backToFeed: "Volver a actualizaciones",
   },
@@ -410,17 +479,71 @@ const en: typeof es = {
   hero: {
     eyebrow: "August 10, 2026 earthquake",
     title: "What we know right now in Pereira",
-    subtitle:
-      "Verified information on utilities, damage, and emergency resources. " +
-      "Every item shows its source and timestamp.",
+    subtitle: "Every item we publish shows its source and its time.",
     emergencyCta: "Emergency lines",
-    reportCta: "Report a situation",
     quakeFacts: [
       { label: "Magnitude", value: "7.4" },
       { label: "Local time", value: "7:34 a.m." },
       { label: "Epicenter", value: "Chocó, ~55 km west of Pereira" },
       { label: "Depth", value: "~107 km" },
     ],
+  },
+  actions: {
+    heading: "What do you need right now",
+    subheading: "The most-used routes, each showing the latest we know.",
+    emergency: {
+      eyebrow: "Emergencies",
+      title: "Call 123",
+      body:
+        "Lives at risk, injured people, fires, or rescues. National single " +
+        "emergency line, free from any phone.",
+    },
+    medical: {
+      eyebrow: "Health",
+      title: "Do not go to these medical centres",
+      body: "They are not receiving patients. Call 123 before travelling.",
+      count: (n: number) => `${n} centres`,
+      cta: "See the detail and the source",
+    },
+    services: {
+      eyebrow: "Utilities",
+      title: "Check your service status",
+      body: "Electricity, water, gas, internet, and transport, area by area.",
+    },
+    report: {
+      eyebrow: "Report",
+      title: "Tell us what is happening",
+      body: "Damage, utility failures, blocked roads, or aid that is needed.",
+      meta: "Reviewed by a moderator",
+    },
+    missing: {
+      eyebrow: "Search",
+      title: "Look for a person",
+      body: "Official search channels. We do not publish names here.",
+      meta: "Sites run by other organizations",
+    },
+    resources: {
+      eyebrow: "Resources",
+      title: "Helplines, shelters, and aid",
+      body: "Every emergency number and the verified aid points.",
+      meta: (n: number) => `${n} emergency lines`,
+    },
+    community: {
+      eyebrow: "Community",
+      title: "Read reports from neighbours",
+      body: "What people report, published only after it is confirmed.",
+      meta: (n: number) =>
+        n === 1 ? "1 verified report" : `${n} verified reports`,
+      metaEmpty: "No verified reports yet",
+    },
+    orgs: {
+      eyebrow: "Organizations",
+      title: "Publish official information",
+      body:
+        "Utilities, public agencies, and relief organizations publish here " +
+        "directly.",
+      meta: "With an account or an API key",
+    },
   },
   status: {
     heading: "Utility status",
@@ -441,6 +564,7 @@ const en: typeof es = {
     empty: "No updates published yet.",
     readMore: "Read more",
     pinned: "Pinned",
+    pinnedHeading: "Pinned notices",
     viewSource: "View original source",
     backToFeed: "Back to updates",
   },

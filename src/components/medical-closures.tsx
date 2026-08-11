@@ -22,7 +22,12 @@ export function MedicalClosures({ lang }: { lang: Lang }) {
   const t = getDictionary(lang).resources.medical;
 
   return (
-    <section className="mt-10 border border-down/40 bg-down-muted">
+    /* `scroll-mt` clears the sticky masthead: the home page's action board
+       links straight here, and without it the heading lands under the header. */
+    <section
+      id="centros-medicos"
+      className="mt-10 scroll-mt-20 border border-down/40 bg-down-muted"
+    >
       <div className="flex items-start gap-3 border-b border-down/25 p-4 sm:p-5">
         <Ban className="mt-0.5 size-6 shrink-0 text-down" aria-hidden />
         <div className="min-w-0">

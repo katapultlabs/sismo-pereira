@@ -1,14 +1,16 @@
 import Link from "next/link";
-import { ArrowRight, Info, Megaphone, Phone } from "lucide-react";
+import { ArrowRight, Info } from "lucide-react";
 
+import { ActionRoutes, EmergencyPlates } from "@/components/action-board";
 import { DegradedNotice } from "@/components/degraded-notice";
 import { DonateBlock } from "@/components/donate-banner";
+import { PinnedAlerts } from "@/components/pinned-alerts";
 import { SectionHeading } from "@/components/section-heading";
 import { ServiceStatusCard } from "@/components/service-status-card";
 import { UpdateCard } from "@/components/update-card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
-import { getServiceStatus, getUpdates } from "@/lib/data";
+import { getPublicReports, getServiceStatus, getUpdates } from "@/lib/data";
 import { getDictionary } from "@/lib/i18n";
 import { getLang } from "@/lib/lang";
 
@@ -16,25 +18,43 @@ export default async function HomePage() {
   const lang = await getLang();
   const t = getDictionary(lang);
 
-  const [statusResult, updatesResult] = await Promise.all([
+  const [statusResult, updatesResult, reportsResult] = await Promise.all([
     getServiceStatus(),
     getUpdates(8),
+    /* Only the tally is used here, and it is read with the same default limit
+       /reportes renders — so the number on the tile is exactly how many rows
+       the reader will find when they tap it, never an estimate. */
+    getPublicReports(),
   ]);
 
   const degraded = statusResult.degraded || updatesResult.degraded;
   const statuses = statusResult.data;
   const updates = updatesResult.data;
 
+  /* Pinned updates appear twice by design: compressed to a row in the strap
+     line above the board, and again as a full card in the feed below, which
+     stays the complete record. `UpdateCard` stamps them "fijado", so the
+     repeat reads as the same item rather than as two. */
   const pinned = updates.filter((u) => u.pinned);
-  const rest = updates.filter((u) => !u.pinned);
   const hasUnknown = statuses.some((s) => s.status === "unknown");
 
   return (
     <div className="mx-auto max-w-6xl px-4 pb-16">
       {/* ---------------------------------------------------------------- */}
-      {/* Hero — headline against an instrument readout of the event        */}
+      {/* Masthead — deliberately short                                      */}
       {/* ---------------------------------------------------------------- */}
-      <section className="relative -mx-4 border-b border-foreground/25 px-4 py-10 sm:py-14">
+      {/*
+       * This used to be a full-height hero: a 7xl headline, a lede, two CTAs,
+       * and the event readout as a 20rem sidebar. It cost the entire fold to
+       * say something the reader already knows — there was an earthquake — and
+       * pushed every actionable route below it.
+       *
+       * So it is now a masthead: the same identity (chart paper, the pulsing
+       * epicentre mark, the instrument readout) in roughly half the height,
+       * with the fold handed to the action board. The two hero buttons are
+       * gone because the board carries both of those routes as full plates.
+       */}
+      <section className="relative -mx-4 border-b border-foreground/25 px-4 py-6 sm:py-8">
         {/* Seismograph chart paper, faded on both axes so it never competes
             with the headline or the readout sitting on top of it. */}
         <div
@@ -42,59 +62,41 @@ export default async function HomePage() {
           aria-hidden
         />
 
-        <div className="relative grid gap-10 lg:grid-cols-[minmax(0,1fr)_20rem] lg:items-end">
-          <div>
-            <p className="label-signage inline-flex items-center gap-2 text-down-foreground">
-              <span className="relative flex size-2">
-                <span className="absolute inline-flex size-full animate-ping rounded-full bg-down opacity-60" />
-                <span className="relative inline-flex size-2 rounded-full bg-down" />
-              </span>
-              {t.hero.eyebrow}
-            </p>
+        <div className="relative">
+          <p className="label-signage inline-flex items-center gap-2 text-down-foreground">
+            <span className="relative flex size-2">
+              <span className="absolute inline-flex size-full animate-ping rounded-full bg-down opacity-60" />
+              <span className="relative inline-flex size-2 rounded-full bg-down" />
+            </span>
+            {t.hero.eyebrow}
+          </p>
 
-            <h1 className="display-condensed mt-5 text-5xl font-extrabold text-balance uppercase sm:text-6xl lg:text-7xl">
-              {t.hero.title}
-            </h1>
+          <h1 className="display-condensed mt-3 text-3xl font-extrabold text-balance uppercase sm:text-4xl lg:text-5xl">
+            {t.hero.title}
+          </h1>
 
-            <p className="mt-5 max-w-xl text-lg leading-relaxed text-pretty text-muted-foreground">
-              {t.hero.subtitle}
-            </p>
+          <p className="mt-2.5 max-w-2xl text-sm leading-relaxed text-pretty text-muted-foreground">
+            {t.hero.subtitle}
+          </p>
 
-            <div className="mt-7 flex flex-wrap gap-2">
-              <Button
-                size="lg"
-                render={<Link href="/reportar" />}
-                className="label-signage h-11 gap-2 rounded-sm px-5"
-              >
-                <Megaphone className="size-4" aria-hidden />
-                {t.hero.reportCta}
-              </Button>
-              <Button
-                size="lg"
-                variant="outline"
-                render={<Link href="/recursos" />}
-                className="label-signage h-11 gap-2 rounded-sm px-5"
-              >
-                <Phone className="size-4" aria-hidden />
-                {t.hero.emergencyCta}
-              </Button>
-            </div>
-          </div>
-
-          {/* Event readout. A labelled field list rather than a sentence —
-              the numbers are what people come back to check. */}
-          <dl className="divide-y divide-border border-y border-border bg-card/60 text-sm">
+          {/*
+           * Event readout, turned on its side and un-boxed.
+           *
+           * As a vertical field list it needed a 20rem column; as a 2×2 grid of
+           * cells it cost ~150px on a phone, because "Chocó, ~55 km al
+           * occidente de Pereira" wraps to three lines inside a half-width
+           * cell. Set inline against a single rule it wraps as prose does,
+           * costs ~60px, and reads the way an instrument prints its channels.
+           */}
+          <dl className="mt-5 flex flex-wrap items-baseline gap-x-5 gap-y-2 border-t border-border pt-4">
             {t.hero.quakeFacts.map((fact) => (
-              <div
-                key={fact.label}
-                className="flex items-baseline justify-between gap-4 px-3 py-2"
-              >
-                <dt className="label-signage shrink-0 text-muted-foreground">
+              <div key={fact.label} className="flex items-baseline gap-2">
+                <dt className="label-signage text-muted-foreground">
                   {fact.label}
                 </dt>
                 <dd
                   data-readout
-                  className="text-right font-mono text-[0.8125rem] font-medium"
+                  className="font-mono text-[0.8125rem] leading-snug font-medium"
                 >
                   {fact.value}
                 </dd>
@@ -104,38 +106,49 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {degraded ? (
-        <div className="mt-8">
-          <DegradedNotice lang={lang} />
-        </div>
-      ) : null}
-
       {/* ---------------------------------------------------------------- */}
-      {/* Pinned / critical updates                                         */}
-      {/* ---------------------------------------------------------------- */}
-      {pinned.length > 0 ? (
-        <section className="mt-10 space-y-3">
-          {pinned.map((update) => (
-            <UpdateCard key={update.id} update={update} lang={lang} />
-          ))}
-        </section>
-      ) : null}
-
-      {/* ---------------------------------------------------------------- */}
-      {/* Donation drive                                                    */}
+      {/* The fold: life safety, then pinned notices, then the routes        */}
       {/* ---------------------------------------------------------------- */}
       {/*
-       * Deliberately below the pinned alerts and above the status board. The
-       * pinned slot carries critical, time-sensitive safety notices, and an
-       * appeal for money must never sit above "do not enter this building".
-       * Everywhere after that, it leads.
+       * This ordering is the whole argument of the page.
+       *
+       * The two red plates are standing instructions — call 123, and these
+       * four hospital doors are shut — true on every visit and rendered from
+       * hardcoded constants, so they lead. A pinned notice is curated and
+       * time-sensitive, so it comes second, and as a strap line rather than as
+       * cards: three pins as full `UpdateCard`s cost ~540px and pushed every
+       * actionable thing off the first screen on a phone. The six routes come
+       * third, because choosing where to go is what you do after you have
+       * dealt with anything on fire.
        */}
-      <DonateBlock lang={lang} className="mt-10" />
+      <EmergencyPlates lang={lang} className="mt-6" />
+
+      <PinnedAlerts updates={pinned} lang={lang} className="mt-3" />
+
+      <ActionRoutes
+        lang={lang}
+        statuses={statuses}
+        reportCount={reportsResult.data.length}
+        className="mt-10"
+      />
 
       {/* ---------------------------------------------------------------- */}
       {/* Service status grid                                               */}
       {/* ---------------------------------------------------------------- */}
       <section className="mt-14">
+        {/*
+         * The degraded banner sits here rather than under the masthead. The
+         * board's two life-safety plates render from hardcoded constants and
+         * are never degraded, so disclaiming them would be wrong; everything
+         * from this point down is a live read, and this is what the notice is
+         * actually about.
+         */}
+        {degraded ? (
+          <div className="mb-8">
+            <DegradedNotice lang={lang} />
+          </div>
+        ) : null}
+
         <SectionHeading
           index="01"
           title={t.status.heading}
@@ -174,6 +187,16 @@ export default async function HomePage() {
       </section>
 
       {/* ---------------------------------------------------------------- */}
+      {/* Donation drive                                                    */}
+      {/* ---------------------------------------------------------------- */}
+      {/*
+       * Below the pinned alerts, the action board, and the status board. An
+       * appeal for money must never sit above "do not enter this building" or
+       * above the routes to help — but it leads everything after them.
+       */}
+      <DonateBlock lang={lang} className="mt-14" />
+
+      {/* ---------------------------------------------------------------- */}
       {/* Update feed                                                       */}
       {/* ---------------------------------------------------------------- */}
       <section className="mt-14">
@@ -183,13 +206,13 @@ export default async function HomePage() {
           subtitle={t.updates.subheading}
         />
 
-        {rest.length === 0 && pinned.length === 0 ? (
+        {updates.length === 0 ? (
           <p className="mt-5 border border-dashed border-border p-10 text-center text-sm text-muted-foreground">
             {t.updates.empty}
           </p>
         ) : (
           <div className="mt-5 space-y-3">
-            {rest.map((update) => (
+            {updates.map((update) => (
               <UpdateCard key={update.id} update={update} lang={lang} />
             ))}
           </div>

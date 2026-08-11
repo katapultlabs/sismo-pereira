@@ -79,7 +79,18 @@ export default async function LinksPage() {
             if (rows.length === 0) return null;
 
             return (
-              <section key={category}>
+              <section
+                key={category}
+                /* The home page's action board sends anyone searching for a
+                   person straight to this block, so it needs a stable anchor.
+                   `scroll-mt` clears the sticky masthead. */
+                id={
+                  category === "missing_persons"
+                    ? "personas-desaparecidas"
+                    : undefined
+                }
+                className="scroll-mt-20"
+              >
                 <h2 className="label-signage border-b border-foreground/25 pb-2 text-muted-foreground">
                   {LINK_CATEGORY_LABELS[lang][category]}
                 </h2>
