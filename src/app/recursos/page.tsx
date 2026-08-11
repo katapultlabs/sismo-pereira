@@ -40,13 +40,26 @@ export default async function ResourcesPage() {
            way out to other people's directories belongs at the top of this
            page rather than only in the footer. */
         action={
-          <Link
-            href="/enlaces"
-            className="label-signage inline-flex items-center gap-1.5 text-muted-foreground underline-offset-4 hover:text-foreground hover:underline"
-          >
-            {t.resources.linksCta}
-            <ArrowRight className="size-3.5" aria-hidden />
-          </Link>
+          <div className="flex flex-col items-start gap-1.5 sm:items-end">
+            <Link
+              href="/enlaces"
+              className="label-signage inline-flex items-center gap-1.5 text-muted-foreground underline-offset-4 hover:text-foreground hover:underline"
+            >
+              {t.resources.linksCta}
+              <ArrowRight className="size-3.5" aria-hidden />
+            </Link>
+            {/* Drop-off points used to land in the grid below as a
+                `donation_point` group. They have their own page now, because
+                the question they answer is the opposite one — not "where do I
+                get help" but "where do I take what I have". */}
+            <Link
+              href="/acopio"
+              className="label-signage inline-flex items-center gap-1.5 text-muted-foreground underline-offset-4 hover:text-foreground hover:underline"
+            >
+              {t.resources.collectionCta}
+              <ArrowRight className="size-3.5" aria-hidden />
+            </Link>
+          </div>
         }
       />
 

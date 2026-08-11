@@ -167,6 +167,30 @@ Three things about it are load-bearing:
 helper degrades to seed content on failure, which is right for a public page and wrong
 for a control room: a dispatcher shown fallback data would send crews against fiction.
 
+### Collection points (`/acopio`)
+
+Donation drop-off sites. They are `resources` rows with `kind = 'donation_point'`
+— not a separate table, because a drop-off point is a place with an address, hours
+and a `verified` gate, which is what that table already models.
+
+`getResources()` **excludes** `donation_point` and `getCollectionPoints()` returns
+only it, so a point has exactly one home. Adding it back to the `/recursos` grid
+gives the same row two renderings that will drift.
+
+- **The needs list is the page, not the address.** `resources.needs` is a `text[]`
+  rendered in array order. A collection point published as a name and an opening
+  time is the standard logistics failure — it produces a car park of donated
+  clothing nobody asked for while the gauze runs out. An empty `needs` renders
+  "ask before bringing anything", never an implication that anything is welcome.
+- **`resources` now carries `source`, `source_name` and `source_url`** so a place
+  states who told us, the same as a status card (Rule 3). A non-`official` source
+  renders the same "No es un canal oficial" badge `/enlaces` uses.
+- **Rule 2 is the whole gate.** Collection-point announcements are the most
+  forwarded and least verifiable objects in circulation after a quake, and a fake
+  one is a working method for stealing donated goods. Rows arrive `verified =
+  false` and are invisible until an official channel confirms them. Unconfirmed
+  submissions wait in `supabase/pending/`, which nothing runs automatically.
+
 ### Partner ingestion
 
 `src/lib/api-auth.ts` authenticates `Authorization: Bearer sp_…` against the SHA-256
@@ -257,8 +281,8 @@ a resident is never offered it.
 - Status is always encoded three ways — colour, icon, and text — so it survives colour
   blindness, greyscale, and a cracked screen. Preserve that when adding indicators.
 - Route segments are Spanish (`/servicios`, `/reportes`, `/recursos`, `/enlaces`,
-  `/reportar`, `/luz`, `/organizaciones`, `/donar`, `/actualizaciones/[slug]`); code
-  identifiers are English. `/admin` and `/panel` are internal and **Spanish-only** —
+  `/reportar`, `/luz`, `/organizaciones`, `/donar`, `/acopio`,
+  `/actualizaciones/[slug]`); code identifiers are English. `/admin` and `/panel` are internal and **Spanish-only** —
   the bilingual machinery is for the public bulletin, not for a control room in
   Pereira.
 - The inline header nav starts at `lg`, not `md` — six items plus the 123 button and

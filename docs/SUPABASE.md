@@ -147,7 +147,7 @@ that queries `profiles` would recurse infinitely otherwise.
 | `service_status` | Append-only history of `(service, zone)` observations. Never updated in place. |
 | `updates` | The newsfeed. `publish_status` is `draft` \| `published` \| `archived`. |
 | `reports` | Community submissions plus optional contact details. Moderator-only at the base table. |
-| `resources` | Shelters, hospitals, aid and water points. `verified` defaults to `false`. |
+| `resources` | Shelters, hospitals, aid and water points, and donation drop-off points. `verified` defaults to `false`. `needs` (`text[]`) is what a drop-off point is asking for; `source` / `source_name` / `source_url` say who told us it exists. |
 | `social_mentions` | Aggregation inbox from social platforms. Never public; a moderator promotes an item into `updates`. |
 
 ### Enums

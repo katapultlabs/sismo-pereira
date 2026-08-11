@@ -368,6 +368,68 @@ const es = {
       reportedLabel: "Corte",
     },
     linksCta: "Ver enlaces útiles",
+    /* The other half of `/recursos`: this grid answers "where do I go for
+       help", `/acopio` answers "where do I take what I have". */
+    collectionCta: "Ver puntos de acopio",
+  },
+  /*
+   * Donations in kind — the physical counterpart to `/donar`.
+   *
+   * The list of needs is the load-bearing part, not the address. A collection
+   * point published as a name and an opening time produces a lorry of donated
+   * clothing nobody asked for while the gauze runs out, so `needsHeading`
+   * outranks `address` in the card and the empty-needs state says "ask" rather
+   * than implying anything is welcome.
+   */
+  collection: {
+    heading: "Puntos de acopio",
+    subheading: "Dónde llevar donaciones en especie, y qué está pidiendo cada punto",
+    lede:
+      "Estos son los puntos que recibimos confirmados por la organización que " +
+      "los opera. Llevar lo que sí están pidiendo es lo que hace útil una " +
+      "donación en especie.",
+    needsHeading: "Qué están pidiendo",
+    noNeeds:
+      "Este punto no ha publicado una lista. Pregunta antes de llevar algo.",
+    hours: "Horario",
+    address: "Dónde",
+    phone: "Teléfono",
+    sourceLabel: "Fuente",
+    updatedLabel: "Confirmado",
+    /*
+     * Rule 2, in the words of the specific failure this page invites: a
+     * forwarded WhatsApp broadcast announcing a collection point is the most
+     * shareable and least verifiable object in a disaster.
+     */
+    empty:
+      "Todavía no tenemos ningún punto de acopio confirmado por la " +
+      "organización que lo opera. Publicamos una dirección solo cuando la " +
+      "confirma un canal oficial de esa organización — los mensajes " +
+      "reenviados sobre puntos de acopio circulan más rápido que cualquier " +
+      "otra cosa después de un sismo, y no todos son ciertos.",
+    emptyCta:
+      "Mientras tanto, el fondo de emergencia recibe aportes en dinero.",
+    /* Standard logistics advice, not a claim about any particular site. */
+    beforeYouGo: {
+      heading: "Antes de salir",
+      items: [
+        "Confirma el horario con la organización. Un punto de acopio abre y " +
+          "cierra según la bodega que tenga disponible.",
+        "Lleva solo lo que está en la lista. Lo que no se pidió ocupa manos y " +
+          "espacio que hacen falta para lo que sí.",
+        "Empaca por tipo y marca las cajas. Clasificar en el punto es el " +
+          "cuello de botella, no recibir.",
+        "Revisa fechas de vencimiento y que lo textil vaya nuevo o limpio.",
+      ],
+    },
+    /* Rendered on `/donar`, not here: money and goods are two different asks,
+       and each page has to name the other one (Rule 10 — a page with exactly
+       one option is an advertisement). */
+    goodsHeading: "¿Prefieres donar en especie?",
+    goodsBody:
+      "Algunos puntos de acopio reciben agua, insumos médicos y elementos de " +
+      "aseo. Publicamos qué está pidiendo cada uno.",
+    goodsCta: "Ver puntos de acopio",
   },
   /*
    * The donation drive. Hardcoded rather than a `links` row on purpose: this
@@ -878,6 +940,47 @@ const en: typeof es = {
       reportedLabel: "As of",
     },
     linksCta: "See useful links",
+    collectionCta: "See collection points",
+  },
+  collection: {
+    heading: "Collection points",
+    subheading: "Where to take donated goods, and what each point is asking for",
+    lede:
+      "These are the points confirmed to us by the organization that runs " +
+      "them. Bringing what they actually asked for is what makes a donation " +
+      "in kind useful.",
+    needsHeading: "What they are asking for",
+    noNeeds:
+      "This point has not published a list. Ask before bringing anything.",
+    hours: "Hours",
+    address: "Where",
+    phone: "Phone",
+    sourceLabel: "Source",
+    updatedLabel: "Confirmed",
+    empty:
+      "We have no collection point confirmed by the organization that runs " +
+      "it yet. We publish an address only once an official channel of that " +
+      "organization confirms it — forwarded messages announcing collection " +
+      "points travel faster than anything else after an earthquake, and not " +
+      "all of them are true.",
+    emptyCta: "In the meantime, the emergency fund accepts money donations.",
+    beforeYouGo: {
+      heading: "Before you go",
+      items: [
+        "Confirm the hours with the organization. A collection point opens " +
+          "and closes according to the storage space it has.",
+        "Bring only what is on the list. What was not asked for takes up " +
+          "hands and space needed for what was.",
+        "Pack by type and label the boxes. Sorting at the point is the " +
+          "bottleneck, not receiving.",
+        "Check expiry dates, and send textiles new or clean.",
+      ],
+    },
+    goodsHeading: "Would you rather donate goods?",
+    goodsBody:
+      "Some collection points accept water, medical supplies, and hygiene " +
+      "items. We publish what each one is asking for.",
+    goodsCta: "See collection points",
   },
   donate: {
     eyebrow: "Donations",

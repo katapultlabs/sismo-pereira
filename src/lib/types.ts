@@ -222,5 +222,16 @@ export interface Resource {
   capacity: number | null;
   occupancy: number | null;
   status: StatusLevel;
+  /**
+   * What to bring. Only a `donation_point` normally carries one, and an empty
+   * array is the honest state — it means the operator has not published a
+   * list, not that anything is welcome. Display order is array order.
+   */
+  needs: string[];
+  /** Rule 3: a place carries its source exactly as a status card does. */
+  source: SourceKind;
+  source_name: string | null;
+  source_url: string | null;
   verified: boolean;
+  updated_at: string;
 }

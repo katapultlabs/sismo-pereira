@@ -168,6 +168,51 @@ space does not grow with the viewport; `Donar` appears from `sm`, `Reportar` mov
 from the wordmark (it survives in the footer). Measured, not guessed: with the tagline
 present the wordmark truncated to "SISMO PER…" at every width where it rendered.
 
+### Donations in kind get their own page, and it is a needs list
+
+**Decision:** drop-off points live at [`/acopio`](../src/app/acopio/page.tsx), a page
+separate from both `/recursos` and `/donar`, and the thing it publishes most
+prominently is **what each point is asking for** — not where it is.
+
+**Why a separate page from `/recursos`.** Same table, opposite question. The resource
+grid answers "where do I go for help"; a collection point answers "where do I take
+what I have". Putting a drop-off site in a grid between shelters and water points
+invites someone who needs help to drive to a place that only receives it. So
+`getResources()` excludes `donation_point` and `getCollectionPoints()` returns only
+it — one row, one home. The alternative, rendering it in both, gives the same row two
+renderings that drift.
+
+**Why a separate page from `/donar`.** Money and goods are different asks with
+different failure modes. `/donar` is one recommended campaign carrying a declared
+conflict of interest (Rule 10); `/acopio` is a list of places, gated by Rule 2. Each
+page names the other, because a give page with exactly one option is an
+advertisement.
+
+**Why the needs list outranks the address.** This is the part that is easy to get
+backwards. Publishing "Viva Cerritos, 8 am–4 pm" and stopping there is the classic
+disaster-logistics failure: it produces a car park of donated clothing nobody asked
+for while the gauze runs out. Sorting unsolicited goods, not receiving them, is the
+bottleneck at a collection point. So `needs` is a `text[]` rendered as a checklist at
+body size above the metadata, in the operator's own ordering, and an empty list
+renders "pregunta antes de llevar algo" rather than a silence that reads as "anything
+welcome".
+
+**What we deliberately did not build.** No structured categories for `needs` — the
+two real appeals arrived grouped ("aseo personal", "primeros auxilios", "alimentos"),
+and flattening them lost nothing a reader standing in a supermarket needs. A `jsonb`
+shape with group labels is more schema to keep in sync with two dictionaries for a
+gain nobody could name. No home-page tile either: the route board is full at six and a
+seventh breaks the grid, so `/acopio` is reached from `/donar` and `/recursos`. If the
+drive turns out to matter more than one of the six, swap it in — don't widen the row.
+
+**The gate is stricter here than it looks.** Rule 2 already forbids an unverified
+address, and collection points are the worst case for it: the announcements are the
+most-forwarded objects in circulation after a quake, they arrive stripped of origin,
+and a fabricated one is a working method for stealing donated goods. Rows arrive
+`verified = false`. Announcements that cannot be checked yet wait in
+`supabase/pending/`, which nothing runs automatically — the wording is preserved
+without being published.
+
 ### The home page is a hub, not a bulletin
 
 **Decision:** `/` opens with actions, in a fixed order — two life-safety plates, then

@@ -164,6 +164,32 @@ export default async function DonatePage() {
       </section>
 
       {/* ------------------------------------------------------------------ */}
+      {/* Donations in kind                                                   */}
+      {/* ------------------------------------------------------------------ */}
+      {/* Money is not the only way to give, and this is the page where a
+          reader has already decided to give something. `/acopio` carries the
+          drop-off points and, more usefully, what each one asked for. */}
+      <section className="mt-8 border border-border p-6 sm:p-8">
+        <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <h2 className="display-condensed text-xl font-extrabold uppercase">
+              {t.collection.goodsHeading}
+            </h2>
+            <p className="mt-1.5 max-w-xl text-sm leading-relaxed text-muted-foreground">
+              {t.collection.goodsBody}
+            </p>
+          </div>
+          <Link
+            href="/acopio"
+            className="label-signage inline-flex shrink-0 items-center gap-1.5 text-muted-foreground underline-offset-4 hover:text-foreground hover:underline"
+          >
+            {t.collection.goodsCta}
+            <ArrowRight className="size-3.5" aria-hidden />
+          </Link>
+        </div>
+      </section>
+
+      {/* ------------------------------------------------------------------ */}
       {/* Alternatives                                                        */}
       {/* ------------------------------------------------------------------ */}
       {/* A donation page with exactly one option is an advertisement. */}

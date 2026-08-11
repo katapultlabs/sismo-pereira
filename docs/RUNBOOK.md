@@ -245,6 +245,64 @@ regulator attached.
 
 ---
 
+## Publishing a collection point (`/acopio`)
+
+A drop-off site is a `resources` row with `kind = 'donation_point'`. It is invisible
+until `verified = true`, and **the confirmation bar is Rule 2's, not a lower one**:
+a named person at the operating organization, or that organization's own channel.
+
+This matters more here than on any other address the site publishes. Collection-point
+appeals are the most forwarded messages in circulation after a quake — they arrive
+already stripped of their origin — and a fabricated one is a working method for
+stealing donated goods. **A forwarded broadcast is a lead, not a source.**
+
+Announcements that arrive before anyone can check them go into
+`supabase/pending/` as `verified = false` inserts, so the wording is preserved
+without being published. Nothing in that directory runs automatically — not on
+`supabase db reset`, not on deploy.
+
+```sql
+insert into resources
+  (kind, name, description, address, hours, phone, status, needs,
+   source, source_name, source_url, verified)
+values
+  ('donation_point',
+   'Nombre del punto',
+   'Una línea sobre quién lo opera.',
+   'Dónde exactamente — la entrada, no sólo el edificio',
+   '8:00 a. m. – 4:00 p. m.',
+   null,
+   'operational',
+   array['Agua', 'Gasas', 'Pañales'],
+   'official', 'Canal o persona que lo confirmó', 'https://…',
+   true);
+```
+
+- **`needs` is the reason the page exists.** Array order is display order, so keep
+  the operator's own ordering. A point with an empty `needs` renders "pregunta
+  antes de llevar algo" — which is honest, and much less useful. Chase the list.
+- **`address` should be the drop-off point, not the site.** "Viva Cerritos" tells
+  someone which building; "parqueadero de la Clínica Comfamiliar" tells them where
+  to stop the car. If you only have the building, leave `address` null rather than
+  guessing an entrance.
+- **`hours` are not optional in practice.** A collection point opens and closes
+  according to the storage space it has, and a wasted trip with a boot full of
+  water is the failure this page is trying to prevent.
+- **`source` gates a visible badge.** Anything other than `official` renders "No es
+  un canal oficial" on the card, the same as `/enlaces`.
+
+**Take a point down the moment it stops receiving.** Set `verified = false`; it
+vanishes on the next request. A collection point that closed this morning is the
+same failure as a shelter that closed this morning, and it is more likely, because
+these fill up and shut in hours.
+
+```sql
+select name, address, hours, verified, source, source_name
+from resources where kind = 'donation_point' order by name;
+```
+
+---
+
 ## Keeping `/donar` honest
 
 The donation page is **hardcoded**, so every change to it is a deploy — there is no

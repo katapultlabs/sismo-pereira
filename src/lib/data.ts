@@ -169,16 +169,49 @@ export async function getLinks() {
   });
 }
 
+const RESOURCE_COLUMNS =
+  "id, kind, name, description, zone_slug, address, phone, hours, " +
+  "capacity, occupancy, status, needs, source, source_name, source_url, " +
+  "verified, updated_at";
+
+/**
+ * The resource grid on `/recursos` — shelters, hospitals, aid and water
+ * points.
+ *
+ * `donation_point` is deliberately excluded. Drop-off sites have their own
+ * page (`/acopio`) because they answer a different question: not "where do I
+ * go for help" but "where do I take what I have, and what do they need".
+ * Rendering them in both places would give the same row two homes, and the
+ * needs checklist has nowhere to live in this grid.
+ */
 export async function getResources() {
   return query<Resource[]>("getResources", FALLBACK_RESOURCES, async (sb) => {
     const res = await sb
       .from("resources")
-      .select(
-        "id, kind, name, description, zone_slug, address, phone, hours, " +
-          "capacity, occupancy, status, verified",
-      )
+      .select(RESOURCE_COLUMNS)
       .eq("verified", true)
+      .neq("kind", "donation_point")
       .order("kind", { ascending: true })
+      .order("name", { ascending: true });
+    return res as { data: Resource[] | null; error: { message: string } | null };
+  });
+}
+
+/**
+ * Verified donation drop-off points, for `/acopio`.
+ *
+ * Same `verified` gate as every other address on this site (Rule 2). A
+ * collection point is a place we send someone with a car full of water, and
+ * a fake one is how donated goods get stolen after a disaster — the gate is
+ * not a formality here.
+ */
+export async function getCollectionPoints() {
+  return query<Resource[]>("getCollectionPoints", FALLBACK_RESOURCES, async (sb) => {
+    const res = await sb
+      .from("resources")
+      .select(RESOURCE_COLUMNS)
+      .eq("verified", true)
+      .eq("kind", "donation_point")
       .order("name", { ascending: true });
     return res as { data: Resource[] | null; error: { message: string } | null };
   });
