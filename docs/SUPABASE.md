@@ -2,9 +2,18 @@
 
 **Audience:** anyone working on the database, auth, or who-can-see-what.
 
-> **Status: provisioned in production.** `sismopereira.org` reads a live Supabase —
-> the "mostrando información de respaldo" banner does not appear there, and the
-> organization directory serves rows that exist only in the database.
+> **Status: provisioned in production, with one migration outstanding.**
+> `sismopereira.org` reads a live Supabase, and the organization directory, the
+> status board and the collection points on `/donar` all serve rows that exist only
+> in the database.
+>
+> **`links` is the exception: that table does not exist in production.**
+> `20260810230000_links.sql` has never been applied there — verified against
+> `supabase migration list --linked` on 2026-08-12 — so `/enlaces` runs on
+> `FALLBACK_LINKS` and shows the "información de respaldo" banner. The page works;
+> the fallback carries the Cruz Roja and citizen registries. **Do not fix this with
+> a bare `supabase db push`** — see the trap in
+> [CLAUDE.md](../CLAUDE.md#things-that-will-bite).
 >
 > **Local development is the opposite, and that difference is the trap.** The site
 > runs with no `.env.local` at all, so every read falls back to `fallback-data.ts`.

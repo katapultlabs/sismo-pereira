@@ -260,7 +260,9 @@ stealing donated goods. **A forwarded broadcast is a lead, not a source.**
 Announcements that arrive before anyone can check them go into
 `supabase/pending/` as `verified = false` inserts, so the wording is preserved
 without being published. Nothing in that directory runs automatically — not on
-`supabase db reset`, not on deploy.
+`supabase db reset`, not on deploy. Create it when you need it and delete each
+file once its rows are live; the directory is empty most of the time, and a
+spent script that still says "run this against production" is worse than none.
 
 ```sql
 insert into resources

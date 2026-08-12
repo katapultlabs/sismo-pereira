@@ -391,6 +391,25 @@ a resident is never offered it.
   or it starts shipping phone numbers to an analytics server. Nothing type-checks
   this. (Typed input values are never autocaptured, so the public forms are fine;
   it is rendered `href`s and link text that leak.)
+- **`supabase db push` against production will currently break `/enlaces`.**
+  `20260810230000_links.sql` is not applied in production — the `links` table does
+  not exist there — so the page degrades to `FALLBACK_LINKS`, which is why Cruz Roja
+  and the citizen registry still render. That migration **creates the table and
+  inserts nothing.** Applying it therefore makes the query *succeed with zero rows*,
+  which stops it degrading, which swaps the fallback list for "Todavía no hay
+  enlaces publicados" — silently deleting the missing-persons links from the live
+  site. A build passes and nothing errors. Before pushing, run
+  `supabase migration list --linked`; if `20260810230000` shows a blank `remote`,
+  either hold the file back (move it out of `supabase/migrations/`, push, move it
+  back — this is how `20260811150000` was applied on 2026-08-12) or seed the table
+  in the same transaction.
+- **Exported `SUPABASE_*` variables silently override the CLI's keychain login.**
+  A shell with `SUPABASE_ACCESS_TOKEN`, `SUPABASE_DB_PASSWORD` or
+  `SUPABASE_PROJECT_ID` set will authenticate as whatever account that token belongs
+  to. The symptom is not an error: `supabase projects list` simply returns *a
+  different account's projects*, and `sismo-pereira` is absent, which reads as "no
+  access to production" rather than "wrong identity". `unset` all three before any
+  `supabase` command that touches production.
 - **Seed content exists twice** — `supabase/seed.sql` and `src/lib/fallback-data.ts` —
   and they are kept in sync by hand. Change one, change the other.
 - **React Compiler lint rules are enforced.** Mutating anything outside a component
