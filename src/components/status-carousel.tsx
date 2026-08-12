@@ -79,32 +79,34 @@ export function StatusCarousel({
         ))}
       </div>
 
-      {/* Controls, one at each extremity below the track, with the caption
-          (if any) centered between them. */}
-      <div
-        role="group"
-        aria-label={label}
-        className="mt-5 flex items-center gap-4"
-      >
-        <button
-          type="button"
-          onClick={() => page(-1)}
-          disabled={atStart}
-          aria-label={`${label} — ←`}
-          className={cn(arrow)}
-        >
-          <ArrowLeft className="size-4" aria-hidden />
-        </button>
-        {note ? <div className="min-w-0 flex-1">{note}</div> : <div className="flex-1" />}
-        <button
-          type="button"
-          onClick={() => page(1)}
-          disabled={atEnd}
-          aria-label={`${label} — →`}
-          className={cn(arrow)}
-        >
-          <ArrowRight className="size-4" aria-hidden />
-        </button>
+      {/* Controls, one at each extremity below the track. The caption sits
+          between them from `sm`, but stacks above the arrow row on phones
+          where there is no room between two buttons. */}
+      <div role="group" aria-label={label} className="mt-5">
+        {note ? <div className="mb-4 sm:hidden">{note}</div> : null}
+        <div className="flex items-center gap-4">
+          <button
+            type="button"
+            onClick={() => page(-1)}
+            disabled={atStart}
+            aria-label={`${label} — ←`}
+            className={cn(arrow)}
+          >
+            <ArrowLeft className="size-4" aria-hidden />
+          </button>
+          <div className="min-w-0 flex-1">
+            {note ? <div className="hidden sm:block">{note}</div> : null}
+          </div>
+          <button
+            type="button"
+            onClick={() => page(1)}
+            disabled={atEnd}
+            aria-label={`${label} — →`}
+            className={cn(arrow)}
+          >
+            <ArrowRight className="size-4" aria-hidden />
+          </button>
+        </div>
       </div>
     </div>
   );

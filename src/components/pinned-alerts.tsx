@@ -42,11 +42,13 @@ export function PinnedAlerts({
     const label = (
       <>
         {/* The one alarm accent — the severity, in the status red on the
-            otherwise neutral band. */}
-        <span className="label-signage shrink-0 text-[0.5625rem] text-down">
+            otherwise neutral band. A touch larger on phones. */}
+        <span className="label-signage shrink-0 text-[0.625rem] text-down sm:text-[0.5625rem]">
           {SEVERITY_LABELS[lang][update.severity]}
         </span>
-        <span className="text-xs leading-none font-medium">{update.title}</span>
+        <span className="text-sm leading-none font-medium sm:text-xs">
+          {update.title}
+        </span>
       </>
     );
     return { id: update.id, href, label };

@@ -7,9 +7,9 @@ import {
   Megaphone,
 } from "lucide-react";
 
-import { ActionRoutes, EmergencyPlates } from "@/components/action-board";
+import { ActionRoutes } from "@/components/action-board";
 import { DONATE_OPERATOR } from "@/components/donate-banner";
-import { HeroSafety } from "@/components/hero-safety";
+import { HeroSafety, HeroSafetyMobile } from "@/components/hero-safety";
 import { LanguageToggle } from "@/components/language-toggle";
 import { PinnedAlerts } from "@/components/pinned-alerts";
 import { SectionHeading } from "@/components/section-heading";
@@ -44,21 +44,25 @@ function RailRoutes({ lang }: { lang: Lang }) {
     <>
       {(
         [
-          { index: "01", label: t.nav.services, href: "/servicios" },
-          { index: "02", label: t.nav.reports, href: "/reportes" },
-          { index: "03", label: t.nav.resources, href: "/recursos" },
-          { index: "04", label: t.nav.links, href: "/enlaces" },
-          { index: "05", label: t.nav.partners, href: "/organizaciones" },
+          { index: "01", label: t.nav.services, href: "/servicios", wide: false },
+          { index: "02", label: t.nav.reports, href: "/reportes", wide: false },
+          { index: "03", label: t.nav.resources, href: "/recursos", wide: false },
+          { index: "04", label: t.nav.links, href: "/enlaces", wide: false },
+          { index: "05", label: t.nav.partners, href: "/organizaciones", wide: true },
         ] as const
       ).map((item) => (
         /* One row per route: index, title, arrow. A single line can never
            spill out of its plate, whatever the viewport height. Achromatic
            on purpose — a coloured nav plate would trespass on the four
-           status hues. */
+           status hues. `col-span-2` fills the row in the mobile 2-up grid
+           (ignored in the desktop flex rail). */
         <Link
           key={item.href}
           href={item.href}
-          className="group flex items-center gap-3 rounded-sm bg-secondary px-3.5 py-3 transition-colors outline-none hover:bg-accent focus-visible:ring-2 focus-visible:ring-ring"
+          className={cn(
+            "group flex items-center gap-3 rounded-sm bg-secondary px-3.5 py-3 transition-colors outline-none hover:bg-accent focus-visible:ring-2 focus-visible:ring-ring",
+            item.wide && "col-span-2",
+          )}
         >
           <span
             data-readout
@@ -88,7 +92,9 @@ function RailActions({ lang }: { lang: Lang }) {
     <>
       <Link
         href="/reportar"
-        className="group flex items-center gap-3 rounded-sm bg-down px-3.5 py-3 text-down-contrast transition-opacity outline-none hover:opacity-95 focus-visible:ring-2 focus-visible:ring-ring"
+        /* `col-span-2` fills the row in the mobile 2-up grid; ignored in the
+           desktop flex rail. */
+        className="group col-span-2 flex items-center gap-3 rounded-sm bg-down px-3.5 py-3 text-down-contrast transition-opacity outline-none hover:opacity-95 focus-visible:ring-2 focus-visible:ring-ring"
       >
         <Megaphone className="size-4 shrink-0" aria-hidden />
         <span className="display-condensed flex-1 text-base leading-tight font-extrabold uppercase lg:text-sm">
@@ -403,11 +409,9 @@ export default async function HomePage() {
             <RailActions lang={lang} />
           </nav>
 
-          {/* Life safety in full, below `lg` — the hero carries the compact
-              cards from there up. */}
-          <div className="lg:hidden">
-            <EmergencyPlates lang={lang} />
-          </div>
+          {/* Life safety in full, below `lg` — the desktop keeps only the
+              fixed closures card, so here the 123 plate joins it. */}
+          <HeroSafetyMobile lang={lang} />
           </div>
 
           {/* ---------------------------------------------------------- */}
@@ -485,9 +489,9 @@ export default async function HomePage() {
               className="mt-8"
               note={
                 hasUnknown ? (
-                  <p className="flex items-center justify-center gap-2 text-center text-xs leading-snug text-pretty text-muted-foreground">
-                    <Info className="size-3.5 shrink-0" aria-hidden />
-                    {t.status.unknownNotice}
+                  <p className="flex items-start gap-2.5 rounded-sm border border-border bg-muted/40 px-3.5 py-2.5 text-xs leading-snug text-pretty text-muted-foreground">
+                    <Info className="mt-px size-3.5 shrink-0" aria-hidden />
+                    <span>{t.status.unknownNotice}</span>
                   </p>
                 ) : null
               }

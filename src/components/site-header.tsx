@@ -52,8 +52,12 @@ export function SiteHeader({ lang }: { lang: Lang }) {
           className="flex min-w-0 items-baseline gap-2 outline-none focus-visible:ring-2 focus-visible:ring-ring"
         >
           {/* Epicentre mark. The only non-status use of the alert hue, and it
-              is a shape rather than a signal, so it cannot be misread. */}
-          <span className="size-2 shrink-0 translate-y-px bg-down" aria-hidden />
+              is a shape rather than a signal, so it cannot be misread. Hidden
+              on phones, where the masthead is already tight. */}
+          <span
+            className="hidden size-2 shrink-0 translate-y-px bg-down sm:block"
+            aria-hidden
+          />
           <span className="display-condensed truncate text-lg leading-none uppercase">
             <span className="font-extrabold">Sismo</span>
             <span className="ml-1.5 font-normal text-muted-foreground">
@@ -190,21 +194,25 @@ export function SiteHeader({ lang }: { lang: Lang }) {
                   {t.nav.submit}
                 </Button>
                 {/* Mobile is where night reading actually happens, so the
-                    switch has to be reachable without a desktop viewport. */}
-                <div className="mt-4 flex items-center justify-between border-t border-border pt-4">
-                  <span className="label-signage text-muted-foreground">
-                    {t.theme.label}
-                  </span>
-                  <ThemeToggle lang={lang} />
-                </div>
+                    switch stays reachable — except on the landing, which is
+                    charcoal in both themes and so has nothing to toggle. */}
+                {pathname !== "/" ? (
+                  <div className="mt-4 flex items-center justify-between border-t border-border pt-4">
+                    <span className="label-signage text-muted-foreground">
+                      {t.theme.label}
+                    </span>
+                    <ThemeToggle lang={lang} />
+                  </div>
+                ) : null}
               </nav>
             </SheetContent>
           </Sheet>
         </div>
       </div>
 
-      {/* The masthead's bottom edge is a seismograph trace rather than a rule. */}
-      <Seismograph className="-mb-px" />
+      {/* The masthead's bottom edge is a seismograph trace rather than a rule.
+          Hidden on phones, where it read as a stray red line. */}
+      <Seismograph className="-mb-px hidden sm:block" />
     </header>
   );
 }
