@@ -102,7 +102,9 @@ function RailActions({ lang }: { lang: Lang }) {
 
       <Link
         href="/donar"
-        className="group flex items-center gap-3 rounded-sm bg-primary px-3.5 py-3 text-primary-foreground transition-opacity outline-none hover:opacity-90 focus-visible:ring-2 focus-visible:ring-ring"
+        /* `col-span-2` fills the row in the mobile 2-up grid; ignored in the
+           desktop flex rail. */
+        className="group col-span-2 flex items-center gap-3 rounded-sm bg-primary px-3.5 py-3 text-primary-foreground transition-opacity outline-none hover:opacity-90 focus-visible:ring-2 focus-visible:ring-ring"
       >
         <HeartHandshake className="size-4 shrink-0" aria-hidden />
         <span className="display-condensed flex-1 text-base leading-tight font-extrabold uppercase lg:text-sm">
@@ -273,7 +275,11 @@ export default async function HomePage() {
             <div className="min-w-0 flex-1">
               <PinnedAlerts updates={pinned} lang={lang} />
             </div>
-            <LanguageToggle current={lang} />
+            {/* Only from `lg`, where the horizontal header (and its own
+                language toggle) is hidden — otherwise it doubles up. */}
+            <div className="hidden lg:block">
+              <LanguageToggle current={lang} />
+            </div>
           </div>
 
           {/* Hero panel: contour terrain and chart paper behind a centered
@@ -335,12 +341,15 @@ export default async function HomePage() {
               {/* One sentence, two voices: the record in ink, the call to
                   act in the alarm red (the Report plate's colour). Explicit
                   breaks — never wrapping. */}
-              <h1 className="display-condensed mt-6 text-4xl leading-[1.06] font-extrabold uppercase sm:text-5xl">
+              <h1 className="display-condensed mt-6 text-3xl leading-[1.06] font-extrabold text-balance uppercase min-[420px]:text-4xl sm:text-5xl">
                 {l.hero.titleLines.map((line, i) => (
                   <span
                     key={line}
+                    /* Wraps freely on phones (no pinned cards there); only
+                       from `lg`, where the cards sit at the corner, are the
+                       authored line breaks locked with `nowrap`. */
                     className={cn(
-                      "block whitespace-nowrap",
+                      "block lg:whitespace-nowrap",
                       i === l.hero.titleLines.length - 1 && "text-down",
                     )}
                   >
