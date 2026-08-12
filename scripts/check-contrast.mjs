@@ -145,6 +145,12 @@ for (const status of ["ok", "warn", "down", "fixing"]) {
   ]);
 }
 
+// The landing accent is decorative, but it carries text (eyebrows, the donate
+// CTA), so it is held to the same bar as everything else.
+PAIRS.push(["ember", "background", "ember accent text on the page"]);
+PAIRS.push(["ember", "card", "ember accent text on a card"]);
+PAIRS.push(["ember-contrast", "ember", "text on the ember fill"]);
+
 // ── run ────────────────────────────────────────────────────────────────────
 
 const css = readFileSync(CSS, "utf8");

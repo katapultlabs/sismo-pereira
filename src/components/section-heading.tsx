@@ -11,6 +11,7 @@ export function SectionHeading({
   title,
   subtitle,
   action,
+  centered = false,
   className,
   as: Heading = "h2",
 }: {
@@ -19,9 +20,32 @@ export function SectionHeading({
   title: string;
   subtitle?: string;
   action?: React.ReactNode;
+  /** Centered variant: no rule, no index, title and subtitle centered — for
+   *  sections that open like a statement rather than a bulletin record. */
+  centered?: boolean;
   className?: string;
   as?: "h1" | "h2";
 }) {
+  if (centered) {
+    return (
+      <header className={cn("flex flex-col items-center text-center", className)}>
+        <Heading
+          className={cn(
+            "display-condensed font-extrabold uppercase",
+            Heading === "h1" ? "text-3xl sm:text-4xl" : "text-2xl sm:text-3xl",
+          )}
+        >
+          {title}
+        </Heading>
+        {subtitle ? (
+          <p className="mt-3 max-w-xl text-sm leading-relaxed text-pretty text-muted-foreground">
+            {subtitle}
+          </p>
+        ) : null}
+      </header>
+    );
+  }
+
   return (
     <header className={cn("border-t border-foreground/25 pt-3", className)}>
       {/* Title and subtitle share a column so that when `action` wraps on a

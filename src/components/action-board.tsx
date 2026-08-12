@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 
 import { SectionHeading } from "@/components/section-heading";
+import { StatusCarousel } from "@/components/status-carousel";
 import { STATUS_ACCENT } from "@/components/status-badge";
 import {
   EMERGENCY_LINES,
@@ -83,7 +84,10 @@ function ActionTile({
   return (
     <Link
       href={href}
-      className="animate-rise group flex flex-col gap-2 border border-border bg-card p-4 transition-colors outline-none hover:border-foreground/30 hover:bg-muted focus-visible:ring-2 focus-visible:ring-ring"
+      /* No idle fill — the tile is just a bordered field until hover, when
+         it lifts onto a muted surface. `h-full w-full` so it fills a
+         carousel slide and every card in the row matches height. */
+      className="animate-rise group flex h-full w-full flex-col gap-2 rounded-sm border border-border p-4 transition-colors outline-none hover:border-foreground/30 hover:bg-muted focus-visible:ring-2 focus-visible:ring-ring"
       style={{ animationDelay: `${delay}ms` }}
     >
       <span className="label-signage flex items-center gap-2 text-muted-foreground">
@@ -275,9 +279,9 @@ export function ActionRoutes({
        * status board and the update feed — and numbering a set of routes would
        * claim an order nobody follows.
        */}
-      <SectionHeading title={a.heading} subtitle={a.subheading} />
+      <SectionHeading centered title={a.heading} subtitle={a.subheading} />
 
-      <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+      <StatusCarousel label={a.heading} className="mt-8">
         <ActionTile
           href="/servicios"
           eyebrow={a.services.eyebrow}
@@ -356,7 +360,7 @@ export function ActionRoutes({
           Icon={Building2}
           delay={320}
         />
-      </div>
+      </StatusCarousel>
     </section>
   );
 }

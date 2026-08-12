@@ -1,42 +1,26 @@
 import Link from "next/link";
-import { ChevronRight } from "lucide-react";
 
 import {
   SEVERITY_LABELS,
-  formatDateTime,
-  formatRelative,
   getDictionary,
   type Lang,
 } from "@/lib/i18n";
-import type { SeverityLevel, Update } from "@/lib/types";
+import type { Update } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
 /**
- * Pinned notices, set as a strap line rather than as cards.
+ * Pinned notices, set as a ticker band on the alarm-tinted surface.
  *
- * On the home page these sit between the masthead and the action board, which
- * makes their height a direct tax on the fold: as full `UpdateCard`s, two pins
- * cost ~360px and pushed every actionable route off the first screen. As
- * single ruled rows they cost ~50px each and still carry the severity, the
- * headline and the time — everything a reader needs to decide whether to open
- * it. The full record, with its source and body, is one tap away.
+ * A moving critical notice is a usability hazard, so the band earns its
+ * motion back three ways: it pauses the moment a pointer or keyboard focus
+ * enters (so any notice can be read and its link followed), it holds
+ * completely still under `prefers-reduced-motion`, and the same notices are
+ * present as a plain, static, screen-reader list. The band is chrome; the
+ * list is the record.
  *
- * The feed below renders the same updates as cards, so nothing is lost by
- * compressing them here.
+ * The visible track holds two identical copies of the notices so a -50%
+ * translate lands on an exact period and the loop is seamless.
  */
-
-const SEVERITY_STYLES: Record<SeverityLevel, string> = {
-  info: "bg-muted text-muted-foreground border-border",
-  warning: "bg-warn-muted text-warn-foreground border-warn/40",
-  critical: "bg-down-muted text-down-foreground border-down/40",
-};
-
-const SEVERITY_RAIL: Record<SeverityLevel, string> = {
-  info: "bg-border",
-  warning: "bg-warn",
-  critical: "bg-down",
-};
-
 export function PinnedAlerts({
   updates,
   lang,
@@ -49,86 +33,72 @@ export function PinnedAlerts({
   const t = getDictionary(lang);
   if (updates.length === 0) return null;
 
+  // Longer content scrolls proportionally slower, so reading speed stays even
+  // regardless of how many notices are pinned.
+  const duration = `${Math.max(24, updates.length * 12)}s`;
+
+  const items = updates.map((update) => {
+    const href = update.slug ? `/actualizaciones/${update.slug}` : null;
+    const label = (
+      <>
+        {/* The one alarm accent — the severity, in the status red on the
+            otherwise neutral band. */}
+        <span className="label-signage shrink-0 text-[0.5625rem] text-down">
+          {SEVERITY_LABELS[lang][update.severity]}
+        </span>
+        <span className="text-xs leading-none font-medium">{update.title}</span>
+      </>
+    );
+    return { id: update.id, href, label };
+  });
+
+  const track = (
+    <div className="marquee-track flex w-max shrink-0" aria-hidden>
+      {[0, 1].map((copy) => (
+        <div key={copy} className="flex shrink-0 items-center">
+          {items.map((item) => (
+            <span key={`${copy}-${item.id}`} className="flex items-center">
+              <span className="mx-5 size-1 shrink-0 bg-border" />
+              {item.href ? (
+                <Link
+                  href={item.href}
+                  tabIndex={copy === 0 ? undefined : -1}
+                  className="flex items-center gap-2.5 whitespace-nowrap underline-offset-4 outline-none hover:underline focus-visible:underline"
+                >
+                  {item.label}
+                </Link>
+              ) : (
+                <span className="flex items-center gap-2.5 whitespace-nowrap">
+                  {item.label}
+                </span>
+              )}
+            </span>
+          ))}
+        </div>
+      ))}
+    </div>
+  );
+
   return (
     <section
       aria-label={t.updates.pinnedHeading}
-      className={cn("border border-border bg-card", className)}
+      className={cn(
+        "marquee-group overflow-hidden bg-background py-2 text-foreground",
+        className,
+      )}
+      style={{ "--marquee-duration": duration } as React.CSSProperties}
     >
-      <h2 className="label-signage border-b border-border px-4 py-2 text-muted-foreground">
-        {t.updates.pinnedHeading}
-      </h2>
-
-      <ul className="divide-y divide-border">
-        {updates.map((update) => {
-          const href = update.slug ? `/actualizaciones/${update.slug}` : null;
-
-          const row = (
-            <>
-              <span
-                className={cn(
-                  "absolute inset-y-0 left-0 w-1",
-                  SEVERITY_RAIL[update.severity],
-                )}
-                aria-hidden
-              />
-              {/*
-               * The row reflows rather than dropping anything. On a phone the
-               * chip, the time and the chevron sit on one line and the headline
-               * takes the full width below (`basis-full`); from `sm` the CSS
-               * `order`s swap back to chip · headline · time · chevron on a
-               * single line. Letting the headline share a line with the chip at
-               * 390px wrapped it to four lines and cost 100px a row — and the
-               * age of a critical notice is exactly the thing a reader triages
-               * on, so hiding the time on mobile was not an option.
-               */}
-              <span
-                className={cn(
-                  "label-signage order-1 inline-flex shrink-0 items-center rounded-sm border px-1.5 py-1",
-                  SEVERITY_STYLES[update.severity],
-                )}
-              >
-                {SEVERITY_LABELS[lang][update.severity]}
-              </span>
-
-              <span className="order-4 min-w-0 basis-full text-sm leading-snug font-semibold text-pretty sm:order-2 sm:flex-1 sm:basis-auto">
-                {update.title}
-              </span>
-
-              {update.published_at ? (
-                <time
-                  dateTime={update.published_at}
-                  title={formatDateTime(update.published_at, lang)}
-                  className="order-2 ml-auto shrink-0 font-mono text-[0.6875rem] text-muted-foreground sm:order-3 sm:ml-0"
-                >
-                  {formatRelative(update.published_at, lang)}
-                </time>
-              ) : null}
-
-              {href ? (
-                <ChevronRight
-                  className="order-3 size-4 shrink-0 text-muted-foreground transition-transform group-hover:translate-x-0.5 group-hover:text-foreground sm:order-4"
-                  aria-hidden
-                />
-              ) : null}
-            </>
-          );
-
-          return (
-            <li key={update.id} className="relative">
-              {href ? (
-                <Link
-                  href={href}
-                  className="group flex flex-wrap items-center gap-x-3 gap-y-1.5 py-3 pr-4 pl-5 transition-colors outline-none hover:bg-muted focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset"
-                >
-                  {row}
-                </Link>
-              ) : (
-                <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5 py-3 pr-4 pl-5">{row}</div>
-              )}
-            </li>
-          );
-        })}
+      {/* The static, ordered record — the source of truth for assistive tech,
+          hidden from the visual ticker to avoid a double read. */}
+      <ul className="sr-only">
+        {items.map((item) => (
+          <li key={item.id}>
+            {item.href ? <Link href={item.href}>{item.label}</Link> : item.label}
+          </li>
+        ))}
       </ul>
+
+      {track}
     </section>
   );
 }

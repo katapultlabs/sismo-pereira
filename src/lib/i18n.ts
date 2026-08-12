@@ -64,6 +64,119 @@ const es = {
     ],
   },
   /*
+   * The editorial landing. Everything here is chrome around data the site
+   * already publishes — no section may introduce a figure that does not have
+   * a source elsewhere on the site.
+   */
+  landing: {
+    hero: {
+      /* Two authored lines — the second, the call to act, set in ember.
+         Explicit lines (not wrapping) so no line runs under the life-safety
+         cards pinned to the hero's corner. */
+      titleLines: ["Lo que sabemos, lo que falta", "y cómo ayudar."],
+      lede:
+        "Boletín ciudadano de la emergencia en Pereira: estado de los " +
+        "servicios, reportes verificados y rutas claras para actuar. Cada " +
+        "dato que publicamos indica su fuente y su hora.",
+      railLabel: "En esta página",
+      /* Under the 123 numeral on the rail plate — the numeral is the verb. */
+      lineNote: "Línea única nacional, gratuita",
+    },
+    impact: {
+      heading: "La emergencia en cifras",
+      subheading:
+        "Solo publicamos cifras que podemos sostener con una fuente. Lo que " +
+        "no está confirmado se marca como tal.",
+      event: [
+        { value: "7.4", label: "Magnitud" },
+        { value: "7:34 a. m.", label: "Hora local, 10 de agosto" },
+        { value: "~107 km", label: "Profundidad" },
+        { value: "~55 km", label: "Epicentro en Chocó, al occidente" },
+      ],
+      medicalLabel: "centros médicos sin recibir pacientes",
+      linesLabel: "líneas de emergencia publicadas",
+      unknownLabel: (total: number) =>
+        `de ${total} servicios sin confirmación oficial`,
+      reportsLabel: "reportes de vecinos verificados",
+      note:
+        "No publicamos personas afectadas, viviendas dañadas ni damnificados " +
+        "mientras no exista un consolidado oficial que se pueda verificar. " +
+        "Un vacío honesto informa mejor que una cifra inventada.",
+    },
+    situation: {
+      heading: "Situación actual",
+      subheading: "Lo último que pudimos confirmar, con su fuente y su hora.",
+      timelineHeading: "Cronología",
+      viewFeed: "Ver todas las actualizaciones",
+      mapHeading: "Ubicación del epicentro",
+      mapCaption: "Esquema de referencia — no es un mapa a escala.",
+      mapAlt:
+        "Esquema de la posición del epicentro en Chocó respecto a Pereira, " +
+        "a unos 55 kilómetros al occidente.",
+      epicentreLabel: "Epicentro",
+      cityLabel: "Pereira",
+      distanceLabel: "~55 km",
+      depthLine: "Profundidad estimada: ~107 km",
+    },
+    help: {
+      heading: "Cómo puedes ayudar",
+      subheading:
+        "Tres rutas concretas. Ninguna pide datos que no hagan falta.",
+      offer: {
+        title: "Ofrece ayuda o reporta lo que ves",
+        body:
+          "Un moderador revisa cada envío antes de publicarlo. Nunca " +
+          "publicamos tus datos de contacto.",
+        cta: "Ir al formulario",
+      },
+      orgs: {
+        title: "¿Representas a una organización?",
+        body:
+          "Entidades, empresas de servicios y organismos de socorro " +
+          "publican aquí con su nombre y marca de tiempo.",
+        cta: "Solicitar acceso",
+      },
+      lines: {
+        title: "Comparte las líneas oficiales",
+        body:
+          "Los números de emergencia verificados, listos para guardar y " +
+          "compartir.",
+        cta: "Ver recursos",
+      },
+    },
+    transparency: {
+      heading: "Transparencia",
+      subheading: "Cómo se sostiene lo que este sitio publica y recomienda.",
+      items: [
+        {
+          title: "Qué verificamos antes de recomendar",
+          body:
+            "La única campaña de donación que amplificamos pasó por una " +
+            "verificación pública: qué comprobamos, qué afirma la campaña y " +
+            "qué no es público todavía — incluida nuestra declaración de " +
+            "interés.",
+          cta: "Leer la verificación",
+        },
+        {
+          title: "Quién publica aquí",
+          body:
+            "Todo lo publicado queda atribuido a su organización y con marca " +
+            "de tiempo. Los reportes anónimos pasan por moderación antes de " +
+            "aparecer.",
+          cta: "Ver organizaciones",
+        },
+        {
+          title: "Código y correcciones a la vista",
+          body:
+            "El sitio es de código abierto: cualquiera puede revisar cómo " +
+            "funciona y su historial de cambios. Los errores se corrigen de " +
+            "forma visible, nunca en silencio.",
+          cta: "Ver el repositorio",
+        },
+      ],
+    },
+  },
+  /*
    * The action board — the hub that occupies the fold.
    *
    * Every tile names an action the reader takes ("Llama al 123", "Busca a una
@@ -85,6 +198,7 @@ const es = {
       eyebrow: "Salud",
       title: "No acudas a estos centros médicos",
       body: "No están recibiendo pacientes. Llama al 123 antes de desplazarte.",
+      short: "No están recibiendo pacientes.",
       count: (n: number) => `${n} centros`,
       cta: "Ver el detalle y la fuente",
     },
@@ -436,6 +550,10 @@ const es = {
       "oficiales ni los servicios de emergencia. Ante una emergencia, llama al 123.",
     sourceCode: "Código abierto",
     lastBuilt: "Actualizado",
+    sections: "Navegación",
+    act: "Actuar",
+    site: "El sitio",
+    callCta: "¿Es una emergencia? Llama al 123",
   },
   degraded: {
     title: "Mostrando información de respaldo",
@@ -488,6 +606,108 @@ const en: typeof es = {
       { label: "Depth", value: "~107 km" },
     ],
   },
+  landing: {
+    hero: {
+      titleLines: ["What we know, what we don't", "and how to help."],
+      lede:
+        "A citizen bulletin for the Pereira emergency: utility status, " +
+        "verified reports, and clear routes to act. Every item we publish " +
+        "shows its source and its time.",
+      railLabel: "On this page",
+      lineNote: "Single national line, toll-free",
+    },
+    impact: {
+      heading: "The emergency in figures",
+      subheading:
+        "We only publish figures we can back with a source. Anything " +
+        "unconfirmed is marked as such.",
+      event: [
+        { value: "7.4", label: "Magnitude" },
+        { value: "7:34 a.m.", label: "Local time, August 10" },
+        { value: "~107 km", label: "Depth" },
+        { value: "~55 km", label: "Epicenter in Chocó, to the west" },
+      ],
+      medicalLabel: "medical centres not receiving patients",
+      linesLabel: "emergency lines published",
+      unknownLabel: (total: number) =>
+        `of ${total} services without official confirmation`,
+      reportsLabel: "verified reports from neighbours",
+      note:
+        "We do not publish counts of people affected, homes damaged, or " +
+        "displaced families until an official, verifiable consolidated " +
+        "figure exists. An honest gap informs better than an invented number.",
+    },
+    situation: {
+      heading: "Current situation",
+      subheading:
+        "The latest we have been able to confirm, with its source and time.",
+      timelineHeading: "Timeline",
+      viewFeed: "See all updates",
+      mapHeading: "Epicenter location",
+      mapCaption: "Reference diagram — not a map to scale.",
+      mapAlt:
+        "Diagram of the epicenter's position in Chocó relative to Pereira, " +
+        "about 55 kilometres to the west.",
+      epicentreLabel: "Epicenter",
+      cityLabel: "Pereira",
+      distanceLabel: "~55 km",
+      depthLine: "Estimated depth: ~107 km",
+    },
+    help: {
+      heading: "How you can help",
+      subheading: "Three concrete routes. None asks for data it doesn't need.",
+      offer: {
+        title: "Offer help or report what you see",
+        body:
+          "A moderator reviews every submission before it is published. We " +
+          "never publish your contact details.",
+        cta: "Go to the form",
+      },
+      orgs: {
+        title: "Do you represent an organization?",
+        body:
+          "Public agencies, utilities, and relief organizations publish " +
+          "here under their own name, timestamped.",
+        cta: "Request access",
+      },
+      lines: {
+        title: "Share the official lines",
+        body:
+          "The verified emergency numbers, ready to save and pass on.",
+        cta: "See resources",
+      },
+    },
+    transparency: {
+      heading: "Transparency",
+      subheading: "What holds up what this site publishes and recommends.",
+      items: [
+        {
+          title: "What we verify before recommending",
+          body:
+            "The one donation campaign we amplify went through a public " +
+            "verification: what we checked, what the campaign claims, and " +
+            "what is not public yet — including our declaration of interest.",
+          cta: "Read the verification",
+        },
+        {
+          title: "Who publishes here",
+          body:
+            "Everything published is attributed to its organization and " +
+            "timestamped. Anonymous reports go through moderation before " +
+            "they appear.",
+          cta: "See organizations",
+        },
+        {
+          title: "Code and corrections in the open",
+          body:
+            "The site is open source: anyone can review how it works and " +
+            "its change history. Errors are corrected visibly, never " +
+            "silently.",
+          cta: "View the repository",
+        },
+      ],
+    },
+  },
   actions: {
     heading: "What do you need right now",
     subheading: "The most-used routes, each showing the latest we know.",
@@ -502,6 +722,7 @@ const en: typeof es = {
       eyebrow: "Health",
       title: "Do not go to these medical centres",
       body: "They are not receiving patients. Call 123 before travelling.",
+      short: "They are not receiving patients.",
       count: (n: number) => `${n} centres`,
       cta: "See the detail and the source",
     },
@@ -821,6 +1042,10 @@ const en: typeof es = {
       "channels or emergency services. In an emergency, call 123.",
     sourceCode: "Open source",
     lastBuilt: "Updated",
+    sections: "Navigation",
+    act: "Take action",
+    site: "The site",
+    callCta: "Is it an emergency? Call 123",
   },
   degraded: {
     title: "Showing fallback information",

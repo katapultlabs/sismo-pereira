@@ -6,6 +6,7 @@ import { ArrowRight, HeartHandshake } from "lucide-react";
 
 import { DONATE_PATH } from "@/components/donate-banner";
 import { getDictionary, type Lang } from "@/lib/i18n";
+import { cn } from "@/lib/utils";
 
 /**
  * The slim, site-wide strip, directly under the masthead on every page.
@@ -33,7 +34,12 @@ export function DonateBar({ lang }: { lang: Lang }) {
   return (
     <aside
       aria-label={t.donate.eyebrow}
-      className="border-b border-foreground/25 bg-foreground text-background"
+      className={cn(
+        "border-b border-foreground/25 bg-foreground text-background",
+        /* The landing's rail ends in a donate plate and its hero carries the
+           donate CTA — a third appeal in the chrome would read as pressure. */
+        pathname === "/" && "lg:hidden",
+      )}
     >
       <Link
         href={DONATE_PATH}

@@ -75,6 +75,10 @@
   --color-fixing-foreground: var(--fixing-foreground);
   --color-fixing-muted: var(--fixing-muted);
 
+  /* Landing accent — see the --ember note in `:root`. */
+  --color-ember: var(--ember);
+  --color-ember-contrast: var(--ember-contrast);
+
   /* Stamped, not pill-shaped. The tight radius is load-bearing for the
    * bulletin aesthetic — raising it reads as a generic card UI again. */
   --radius-sm: calc(var(--radius) * 0.5);
@@ -159,13 +163,35 @@
   /* Seismograph chart-paper ruling behind the hero. */
   --rule-ink: oklch(0.185 0.014 65 / 5%);
   --rule-tick: oklch(0.185 0.014 65 / 9%);
+
+  /*
+   * Ember — the landing page's one deliberate exception to "chroma is signal".
+   * A desaturated humanitarian amber, used only on the home page for the
+   * donate CTA, section eyebrows, and the epicentre mark in the diagram. It
+   * sits between --down (h27) and --warn (h70) in hue but far below both in
+   * chroma, so it reads as tone rather than as a fifth status. Never use it
+   * to encode a service state. Both pairings below are gated by
+   * `pnpm check:contrast`.
+   */
+  --ember: oklch(0.5 0.125 48);
+  --ember-contrast: oklch(0.985 0.006 48);
 }
 
 /* ── Dark: "noche" ───────────────────────────────────────────────────────────
  * Not a tinted copy of the light theme. Day is warm paper; night is a cold
  * instrument face. People read this during a blackout, on battery, in the
  * dark — the background is genuinely dark rather than mid-grey.
+ *
+ * The `body:has(...)` selector scopes the same tokens onto the whole page
+ * when it is the landing (`[data-landing]`), which is charcoal in both
+ * themes — custom properties cascade from body, so the header, footer, and
+ * every other piece of chrome adopt "noche" with it. Without this, light
+ * mode frames the dark landing in bone paper and the seam reads as a bug.
+ * Keep the .dark selector LAST in this list, immediately before the opening
+ * brace: scripts/check-contrast.mjs locates this block by that exact
+ * sequence, and the sequence must not appear in any comment either.
  * ────────────────────────────────────────────────────────────────────────── */
+body:has([data-landing]),
 .dark {
   --background: oklch(0.152 0.01 255);
   --foreground: oklch(0.955 0.004 85);
@@ -219,6 +245,9 @@
 
   --rule-ink: oklch(0.955 0.004 85 / 6%);
   --rule-tick: oklch(0.955 0.004 85 / 10%);
+
+  --ember: oklch(0.75 0.115 55);
+  --ember-contrast: oklch(0.17 0.025 55);
 }
 
 @layer base {
@@ -318,6 +347,101 @@
   animation: trace 1.6s cubic-bezier(0.4, 0, 0.2, 1) both;
 }
 
+/* ── Landing scale ──────────────────────────────────────────────────────────
+ * The landing is composed at 1280px and scales proportionally above it: past
+ * that width the root em grows linearly (16px × vw⁄1280 = 1.25vw), so every
+ * rem-derived size — type, spacing, radii, the rail — enlarges as one
+ * drawing and the page stays full-bleed on any monitor. Media queries are
+ * unaffected (rem inside @media ignores the root font-size), and pages
+ * without a `[data-landing]` element keep the browser default.
+ * ────────────────────────────────────────────────────────────────────────── */
+@media (min-width: 80rem) {
+  html:has([data-landing]) {
+    font-size: 1.25vw;
+  }
+}
+
+/* Rail anchors glide rather than jump. Landing only; the reduced-motion
+ * block below restores instant jumps. */
+html:has([data-landing]) {
+  scroll-behavior: smooth;
+}
+
+/* The landing carries a softer, Linear-like corner than the tight bulletin
+ * radius the rest of the site keeps. Scoped to `[data-landing]` so cards,
+ * buttons, nav plates, and the hero panel all round to ~8px here while the
+ * inner pages stay stamped. Values are rem, so they scale with the page. */
+[data-landing] {
+  --radius-sm: 0.5rem; /* 8px at the 1280 base */
+  --radius-md: 0.625rem;
+  --radius-lg: 0.75rem;
+}
+
+/* ── Landing (editorial) motion ─────────────────────────────────────────────
+ * Scroll-driven, CSS-only, and fail-open: where `animation-timeline: view()`
+ * is unsupported the elements are simply visible. Slow fades and one gentle
+ * drift — nothing springs, nothing bounces.
+ * ────────────────────────────────────────────────────────────────────────── */
+
+@keyframes drift-slow {
+  to {
+    transform: translateY(-3.5rem);
+  }
+}
+
+/* The clock's carrier light: a slow opacity breath on the dot beside the
+ * running time. Purposeful — it says "this is live". */
+@keyframes blink-soft {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.3;
+  }
+}
+
+/* The pinned-notices ticker. Two identical groups in the track, so -50%
+ * lands on an exact period and the loop is seamless. */
+@keyframes marquee-slide {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+/*
+ * No scroll-triggered reveals, deliberately. A reveal that starts at
+ * `opacity: 0` gates content behind animation support — in any renderer
+ * where the timeline never ticks (headless, some readers), the section
+ * ships blank. On a site people open during a blackout, content is visible
+ * by default, always; motion is reserved for ornament and load.
+ */
+@layer utilities {
+  @supports (animation-timeline: scroll()) {
+    /* Background art in the landing hero eases upward as the page scrolls.
+       Ornament only — if the timeline never ticks, the art simply holds. */
+    .parallax-drift {
+      animation: drift-slow 1ms linear both;
+      animation-timeline: scroll(root);
+      animation-range: 0 120svh;
+    }
+  }
+
+  .animate-blink {
+    animation: blink-soft 2.4s ease-in-out infinite;
+  }
+
+  /* Paused on hover/focus so a moving critical notice can still be read and
+     clicked. Speed scales with content via the inline --marquee-duration. */
+  .marquee-track {
+    animation: marquee-slide var(--marquee-duration, 40s) linear infinite;
+  }
+  .marquee-group:hover .marquee-track,
+  .marquee-group:focus-within .marquee-track {
+    animation-play-state: paused;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -326,5 +450,12 @@
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
+  }
+  /* Scroll-driven animations ignore duration, so they need an explicit off;
+     these would otherwise loop at 0.01ms, worse than motion. */
+  .parallax-drift,
+  .animate-blink,
+  .marquee-track {
+    animation: none !important;
   }
 }

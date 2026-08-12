@@ -1,106 +1,145 @@
-// lucide-react v1 removed brand icons, so this uses a generic code glyph.
-import { Code } from "lucide-react";
+import { ArrowUpRight, Code, Phone } from "lucide-react";
 import Link from "next/link";
 
-import { DonateFooterLink } from "@/components/donate-banner";
 import { EMERGENCY_LINES } from "@/lib/fallback-data";
 import { getDictionary, type Lang } from "@/lib/i18n";
 
 const REPO_URL = "https://github.com/katapultlabs/sismo-pereira";
 
+const LINK =
+  "text-sm text-muted-foreground underline-offset-4 transition-colors hover:text-foreground hover:underline";
+
+/**
+ * The footer as a bordered directory: four ruled columns of links closed by a
+ * single life-safety CTA row, with the wordmark set above it. Shared by every
+ * page.
+ */
 export function SiteFooter({ lang }: { lang: Lang }) {
   const t = getDictionary(lang);
 
+  const columns = [
+    {
+      heading: t.footer.sections,
+      links: [
+        { label: t.nav.services, href: "/servicios" as const },
+        { label: t.nav.reports, href: "/reportes" as const },
+        { label: t.nav.resources, href: "/recursos" as const },
+        { label: t.nav.links, href: "/enlaces" as const },
+        { label: t.nav.partners, href: "/organizaciones" as const },
+      ],
+    },
+    {
+      heading: t.footer.act,
+      links: [
+        { label: t.reports.submitCta, href: "/reportar" as const },
+        { label: t.donate.title, href: "/donar" as const },
+        { label: t.partners.contactHeading, href: "/organizaciones" as const },
+      ],
+    },
+  ];
+
   return (
-    <footer className="mt-auto border-t-2 border-foreground/25 bg-muted/30">
-      <div className="mx-auto max-w-6xl px-4 py-10">
-        {/* Above the columns, not inside one: none of the three headings
-            ("Líneas de emergencia", "Organizaciones") would be honest over it. */}
-        <DonateFooterLink lang={lang} />
-
-        <div className="mt-8 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-          <div>
-            <p className="display-condensed flex items-baseline gap-2 text-base uppercase">
-              <span className="size-2 translate-y-px bg-down" aria-hidden />
+    <footer className="mt-auto border-t border-border bg-background">
+      <div className="px-3 py-3">
+        {/* Wordmark, centred. */}
+        <div className="flex justify-center pt-1 pb-3">
+          <Link
+            href="/"
+            className="inline-flex items-baseline outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          >
+            <span className="display-condensed text-lg leading-none uppercase">
               <span className="font-extrabold">Sismo</span>
-              <span className="font-normal text-muted-foreground">Pereira</span>
-            </p>
-            <p className="label-signage mt-2 text-muted-foreground/70">
-              {t.nav.tagline}
-            </p>
-            <p className="mt-3 max-w-sm text-sm leading-relaxed text-muted-foreground">
-              {t.footer.disclaimer}
-            </p>
-          </div>
+              <span className="ml-1.5 font-normal text-muted-foreground">
+                Pereira
+              </span>
+            </span>
+          </Link>
+        </div>
 
-          <div>
-            <p className="label-signage border-b border-border pb-2 text-muted-foreground">
-              {t.resources.linesHeading}
-            </p>
-            <ul className="mt-2">
-              {EMERGENCY_LINES.map((line) => (
-                <li key={line.number}>
-                  <a
-                    href={`tel:${line.number}`}
-                    className="flex items-baseline gap-3 border-b border-border/60 py-1.5 hover:bg-down-muted"
-                  >
-                    <span
-                      data-readout
-                      className="w-9 shrink-0 font-mono text-sm font-semibold"
+        {/* The directory box: four ruled columns, then the CTA row. Spans the
+            full width of the footer, matching the full-bleed page. */}
+        <div className="overflow-hidden rounded-sm border border-border">
+          <div className="grid grid-cols-2 gap-px bg-border lg:grid-cols-4">
+            {columns.map((col) => (
+              <div key={col.heading} className="bg-background p-5 sm:p-6">
+                <h2 className="display-condensed text-sm font-bold uppercase">
+                  {col.heading}
+                </h2>
+                <ul className="mt-4 space-y-2.5">
+                  {col.links.map((link) => (
+                    <li key={link.href + link.label}>
+                      <Link href={link.href} className={LINK}>
+                        {link.label}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+
+            {/* Emergency lines — a fixed numeral column. */}
+            <div className="bg-background p-5 sm:p-6">
+              <h2 className="display-condensed text-sm font-bold uppercase">
+                {t.resources.linesHeading}
+              </h2>
+              <ul className="mt-4 space-y-2.5">
+                {EMERGENCY_LINES.map((line) => (
+                  <li key={line.number}>
+                    <a
+                      href={`tel:${line.number}`}
+                      className="flex items-baseline gap-3 text-sm text-muted-foreground transition-colors hover:text-foreground"
                     >
-                      {line.number}
-                    </span>
-                    <span className="text-sm text-muted-foreground">
+                      <span
+                        data-readout
+                        className="w-8 shrink-0 font-mono font-semibold text-foreground"
+                      >
+                        {line.number}
+                      </span>
                       {line.label}
-                    </span>
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            {/* The site. */}
+            <div className="bg-background p-5 sm:p-6">
+              <h2 className="display-condensed text-sm font-bold uppercase">
+                {t.footer.site}
+              </h2>
+              <ul className="mt-4 space-y-2.5">
+                <li>
+                  <a
+                    href={REPO_URL}
+                    target="_blank"
+                    rel="noreferrer noopener"
+                    className="inline-flex items-center gap-1.5 text-sm text-muted-foreground underline-offset-4 transition-colors hover:text-foreground hover:underline"
+                  >
+                    <Code className="size-3.5" aria-hidden />
+                    {t.footer.sourceCode}
                   </a>
                 </li>
-              ))}
-            </ul>
+              </ul>
+              <p className="mt-4 text-xs leading-relaxed text-pretty text-muted-foreground">
+                {t.footer.disclaimer}
+              </p>
+            </div>
           </div>
 
-          <div>
-            <p className="label-signage border-b border-border pb-2 text-muted-foreground">
-              {t.nav.partners}
-            </p>
-            <ul className="mt-2 space-y-1.5 text-sm text-muted-foreground">
-              <li>
-                <Link
-                  href="/organizaciones"
-                  className="underline-offset-4 hover:text-foreground hover:underline"
-                >
-                  {t.partners.contactHeading}
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/reportar"
-                  className="underline-offset-4 hover:text-foreground hover:underline"
-                >
-                  {t.reports.submitCta}
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/enlaces"
-                  className="underline-offset-4 hover:text-foreground hover:underline"
-                >
-                  {t.links.heading}
-                </Link>
-              </li>
-              <li>
-                <a
-                  href={REPO_URL}
-                  target="_blank"
-                  rel="noreferrer noopener"
-                  className="inline-flex items-center gap-1.5 underline-offset-4 hover:text-foreground hover:underline"
-                >
-                  <Code className="size-3.5" aria-hidden />
-                  {t.footer.sourceCode}
-                </a>
-              </li>
-            </ul>
-          </div>
+          {/* Life-safety CTA row — the footer's one prominent action. */}
+          <a
+            href="tel:123"
+            className="group flex items-center justify-between gap-4 border-t border-border bg-muted/40 px-5 py-4 transition-colors hover:bg-muted sm:px-6"
+          >
+            <span className="display-condensed flex items-center gap-2.5 text-base font-extrabold uppercase">
+              <Phone className="size-4 shrink-0 text-down" aria-hidden />
+              {t.footer.callCta}
+            </span>
+            <ArrowUpRight
+              className="size-4 shrink-0 text-muted-foreground transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:text-foreground"
+              aria-hidden
+            />
+          </a>
         </div>
       </div>
     </footer>
