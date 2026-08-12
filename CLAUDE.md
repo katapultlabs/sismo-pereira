@@ -281,7 +281,18 @@ a resident is never offered it.
   day, cold instrument "ink" by night — so the only saturated colour anywhere is a
   service status. Do not add a saturated brand colour: it would compete with the four
   status hues for the same attention. The one exception is the small square epicentre
-  mark in the masthead and footer, which is a shape rather than a state.
+  mark in the masthead, the footer, and the site icon, which is a shape rather than a
+  state.
+- **The site icon is that same mark, and it is generated.** `src/app/icon.svg` is the
+  source of truth; `pnpm icons` redraws `favicon.ico` (16/32/48) and `apple-icon.png`
+  from geometry duplicated in `scripts/render-icons.mjs` — change the SVG and you must
+  change the script, the way `seed.sql` and `fallback-data.ts` are paired. Two things
+  are deliberate. The plate is **ink in both themes** (a bone plate vanishes against a
+  light browser tab strip; only *which* ink follows the theme), and the **16px entry is
+  a separate, simpler cut** — the outer ring's 12 ticks get ~1.3px of ink each at that
+  size and turn to grey noise, so the small variant drops them. Judge any change with
+  `pnpm icons src/app <preview-dir>`, which writes nearest-neighbour blow-ups; a
+  favicon inspected at 256px is not inspected.
 - Status colours are semantic tokens: `ok` / `warn` / `down` / `fixing`. Each has
   `-muted` (tinted surface), `-foreground` (text **on** that tint), and `-contrast`
   (text **on** the solid fill). Mixing those two roles up is what caused the
