@@ -164,9 +164,20 @@ What the code contributes on top of that is in
 [`src/lib/analytics.ts`](../src/lib/analytics.ts): `/panel` and `/admin` are dropped
 entirely, and query strings are stripped from captured URLs.
 
----
+**Ignore the events before 2026-08-12.** The project's first few dozen events are
+setup verification — one person id clicking through every public route, plus a
+`diagnostic_ingestion_check` event posted straight to the ingestion API to prove the
+token worked. Organic traffic starts after that. Do not read a first-day baseline
+off them.
 
-## Known gaps
+**If pageviews ever go missing, check this first.** `$pageview` is captured by hand
+in [`src/instrumentation-client.ts`](../src/instrumentation-client.ts) — once when
+the module runs, and once per Next router transition. The SDK's own
+`capture_pageview: 'history_change'` was tried and silently produced `$pageleave`
+events with no matching `$pageview`, which looks like working analytics right up
+until you count anything. Verify a change by loading a page, waiting, and reading
+the **Events** tab; the **Live** tab did not update at all during that debugging
+even while the ingestion API was returning `200`, so it is not a reliable check.
 
 ### Email authentication
 
