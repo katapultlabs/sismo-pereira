@@ -357,28 +357,27 @@ compelled to hand over.
 
 ---
 
-### Analytics: a PostHog project inside Katapult, not its own organisation
+### Analytics lives in its own PostHog organisation
 
-**Decision:** the site reports to the **Sismo Pereira** project (ID `513780`) in the
-existing **Katapult** PostHog organisation, rather than to a PostHog organisation of
-its own.
+**Decision:** the site reports to the **Sismo Pereira** project (ID `553635`) in a
+**Sismo Pereira** PostHog organisation of its own — not to Katapult's.
 
-**Why:** the Vercel project already lives in the Katapult team, so this keeps one
-owner, one member list, and one login for the person who has to look something up
-during an aftershock. PostHog's isolation boundary is the *project*, not the
-organisation — separate token, separate event stream, separate dashboards — so
-nothing is gained on that front by splitting.
+**Why:** **PostHog's free plan allows one project per organisation.** Katapult's
+single slot belongs to the Katapult website and platform. Putting this site there
+would have consumed it, and a second project would then have required a card on file
+(which unlocks six). A separate organisation costs nothing, carries its own free
+event allowance, and — because moving a project between organisations is not
+self-serve — is the form that can actually be handed over if stewardship of
+sismopereira.org ever passes to a Colombian partner.
 
-The counter-argument was real and is worth recording, because the constraint that
-settled it will resurface: **PostHog's free plan allows one project per
-organisation.** Katapult now spends that slot on this site. A second project needs a
-card on file (which unlocks six); a second organisation would have kept both free.
-That was judged the cheaper problem — adding a card costs nothing in usage, whereas
-splitting the org would have meant switching accounts to read the numbers.
+The cost is a second organisation to switch between in the PostHog UI, and a member
+list that has to be maintained separately from the Vercel team. That was judged the
+cheaper of the two problems.
 
-Moving a project between organisations is not self-serve, so if stewardship of
-sismopereira.org is ever handed to a Colombian partner this is the piece that has to
-be rebuilt rather than transferred.
+**Note for whoever reads this next:** an organisation's *first* project arrives named
+"Default project" and looks disposable. It is not necessarily unclaimed — an empty
+project is often one somebody has created and not yet pointed anything at. Renaming
+it is how you take someone else's slot without noticing.
 
 ---
 

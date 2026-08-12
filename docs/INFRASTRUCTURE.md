@@ -139,9 +139,15 @@ production dataset instead of quietly inflating it.
 
 | | |
 |---|---|
-| Organisation | **Katapult** (`tomas@katapultlabs.ai`) — the same owner as the Vercel team |
-| Project | **Sismo Pereira**, project ID `513780`, US Cloud |
-| Dashboard | <https://us.posthog.com/project/513780> |
+| Organisation | **Sismo Pereira** — its own PostHog organisation, separate from Katapult |
+| Project | **Sismo Pereira**, project ID `553635`, US Cloud |
+| Dashboard | <https://us.posthog.com/project/553635> |
+
+It is **not** in Katapult's PostHog organisation, and that is deliberate: PostHog's
+free plan allows one project per organisation, and Katapult's single slot belongs to
+the Katapult website and platform. Its own organisation gives this site its own free
+allowance and, if stewardship is ever handed to a Colombian partner, something that
+can be handed over rather than disentangled.
 
 Settings that are part of the privacy posture and are **not** in the repository, so
 they have to be re-checked in the PostHog UI rather than read off a diff:

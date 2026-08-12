@@ -20,21 +20,36 @@ import { beforeSend } from "@/lib/analytics";
  */
 const token = process.env.NEXT_PUBLIC_POSTHOG_KEY;
 
-if (token) {
+/**
+ * This module can be evaluated more than once in a single page — it was
+ * observed initialising PostHog twice per load in production — and a second
+ * `init()` on an already-started SDK re-runs its startup path. Guard it, so
+ * "has this page been counted?" has exactly one answer.
+ */
+let started = false;
+
+if (token && !started) {
+  started = true;
+
   import("posthog-js")
     .then(({ default: posthog }) => {
       posthog.init(token, {
         api_host:
           process.env.NEXT_PUBLIC_POSTHOG_HOST ?? "https://us.i.posthog.com",
 
-        /* Opts into the SDK's current defaults rather than its 2020 ones.
-         * Among them: `capture_pageview: 'history_change'`, which is what makes
-         * the App Router's client-side navigations register as pageviews. Set
-         * explicitly below anyway — it is the single most load-bearing option
-         * here, and a future `defaults` bump should not be able to silently
-         * change it. */
+        /* Opts into the SDK's current defaults rather than its 2020 ones. */
         defaults: "2026-05-30",
-        capture_pageview: "history_change",
+
+        /* Pageviews are captured by hand, below.
+         *
+         * The SDK can do this itself with `capture_pageview: 'history_change'`,
+         * which listens to the History API. That was tried first and produced
+         * `$pageleave` events with no matching `$pageview` — the leaves arrived,
+         * the views never did. Rather than depend on the SDK's view of when an
+         * App Router navigation "happened", the two moments that matter are
+         * named explicitly here: this file running, and Next telling us a route
+         * transition started. Both are framework facts, not inferences. */
+        capture_pageview: false,
         capture_pageleave: true,
 
         /* Nobody signs in to the public bulletin, and the two routes where
@@ -56,8 +71,29 @@ if (token) {
          * and "view in PostHog" links should point. */
         ui_host: "https://us.posthog.com",
       });
+
+      // The page that was open when PostHog finished loading.
+      posthog.capture("$pageview");
     })
     .catch(() => {
       // Analytics is never allowed to take the page down with it.
     });
+}
+
+/**
+ * Next calls this when an App Router navigation begins — before the address bar
+ * has caught up, which is why the destination is passed rather than read from
+ * `location`. Getting that backwards would file every client-side pageview
+ * against the page the reader just left.
+ */
+export function onRouterTransitionStart(url: string): void {
+  if (!token) return;
+
+  import("posthog-js")
+    .then(({ default: posthog }) => {
+      posthog.capture("$pageview", {
+        $current_url: new URL(url, window.location.origin).href,
+      });
+    })
+    .catch(() => {});
 }
