@@ -6,7 +6,7 @@ import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
-import { getDictionary } from "@/lib/i18n";
+import { getDictionary, SITE_META } from "@/lib/i18n";
 import { getLang } from "@/lib/lang";
 import "./globals.css";
 
@@ -44,22 +44,40 @@ const readout = IBM_Plex_Mono({
   preload: false,
 });
 
-export async function generateMetadata(): Promise<Metadata> {
-  const lang = await getLang();
-  const t = getDictionary(lang);
-
+/**
+ * Site-level metadata. Note there is no `await getLang()` here, and that is the
+ * point: the share card and the indexed description are bilingual constants
+ * (see `SITE_META`), so they read the same whoever — or whatever — fetched the
+ * page. Per-page `<title>`s still resolve to the reader's language through the
+ * `%s` template; it is only this outermost card that is fixed.
+ *
+ * No `openGraph.images`: there is no share image, and Next would happily emit a
+ * tag pointing at one that does not exist.
+ */
+export function generateMetadata(): Metadata {
   return {
     metadataBase: new URL(
       process.env.NEXT_PUBLIC_SITE_URL ?? "https://sismopereira.org",
     ),
-    title: { default: t.meta.title, template: "%s · Sismo Pereira" },
-    description: t.meta.description,
+    title: { default: SITE_META.title, template: `%s · ${SITE_META.name}` },
+    description: SITE_META.description,
     robots: { index: true, follow: true },
     openGraph: {
-      title: t.meta.title,
-      description: t.meta.description,
-      locale: lang === "es" ? "es_CO" : "en_GB",
+      siteName: SITE_META.name,
+      title: SITE_META.title,
+      description: SITE_META.description,
+      // One URL serves both languages, so the alternate is a locale, not a
+      // second href — there is no `/en` to point an hreflang at.
+      locale: "es_CO",
+      alternateLocale: ["en_US"],
       type: "website",
+    },
+    twitter: {
+      // Declared rather than inferred: with no image, X falls back to `summary`
+      // anyway, and saying so keeps the card from changing under us.
+      card: "summary",
+      title: SITE_META.title,
+      description: SITE_META.description,
     },
   };
 }

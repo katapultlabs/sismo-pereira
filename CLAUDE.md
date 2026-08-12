@@ -253,6 +253,26 @@ with an English voice.
 `proxy.ts` 308-redirects retired `/es/*` and `/en/*` URLs and sets the cookie to the
 language the old link asked for.
 
+**The share card is the one string that is *not* language-resolved.**
+`SITE_META` in `i18n.ts` holds a bilingual title and description — Spanish, then
+English — and the root `generateMetadata()` deliberately does not call `getLang()`.
+The reason is that the card is built by a scraper and read by everyone downstream:
+resolving it per request made `og:description` depend on whichever fetcher arrived
+first, so a link forwarded into WhatsApp could be cached in English for a Spanish
+audience (`Accept-Language: en-US` is what most scrapers send). Do not "fix" it by
+threading the language back in.
+
+The budget is the constraint, not the taste: search engines truncate the description
+near **160 characters**, and the current string is 161 — Spanish 103, English 57. An
+English half that grows pushes the Spanish half out of view, which is worse than
+publishing no English at all. That is why the title carries only identity
+(`Sismo Pereira · Pereira Earthquake`) and the substance lives in the description.
+Per-page `<title>`s still translate through the `%s · Sismo Pereira` template, and
+`<html lang>` still follows the reader; only the outermost card is fixed.
+
+There is no `og:image`, so no `openGraph.images` key — adding one that points at a
+file which does not exist renders a broken card rather than a text-only one.
+
 ### Types
 
 `src/lib/types.ts` mirrors the Postgres enums **by hand**. Adding a service, status

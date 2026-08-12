@@ -24,13 +24,34 @@ export function isLang(value: string): value is Lang {
  * `src/proxy.ts`), so paths are written literally: `/servicios`, `/reportar`.
  */
 
+/**
+ * The site's own title and description — **bilingual, and deliberately outside
+ * the `es`/`en` dictionaries** so they never resolve to one language.
+ *
+ * Everything else here is written for whoever is reading it. These two strings
+ * are written for whoever is *forwarding* it, which is a different problem: a
+ * link pasted into WhatsApp is fetched by a scraper, not a reader, and the card
+ * it builds is then seen by everyone further down the chain. Resolving them
+ * through `getLang()` made that card a coin flip — a scraper sending
+ * `Accept-Language: en-US` got an English card, one sending nothing got a
+ * Spanish one, and whichever arrived first is what the platform cached.
+ *
+ * Spanish leads, because that is who this is for. English follows, because the
+ * people who pick it up — foreign press, diaspora, aid organisations — decide
+ * from the card whether to read further. Both halves stay terse: the whole
+ * description has to survive a ~160-character truncation, and an English half
+ * that pushes the Spanish one out of view is worse than no English at all.
+ */
+export const SITE_META = {
+  name: "Sismo Pereira",
+  title: "Sismo Pereira · Pereira Earthquake",
+  description:
+    "Estado de servicios, reportes verificados y recursos tras el sismo del " +
+    "10 de agosto de 2026 en Pereira. " +
+    "Utility status, verified reports and emergency resources.",
+} as const;
+
 const es = {
-  meta: {
-    title: "Sismo Pereira — Información verificada en tiempo real",
-    description:
-      "Estado de servicios, reportes verificados y recursos de emergencia tras el " +
-      "sismo del 10 de agosto de 2026 en Pereira, Risaralda.",
-  },
   nav: {
     home: "Inicio",
     services: "Servicios",
@@ -676,12 +697,6 @@ const es = {
 
 /** English mirrors the Spanish shape exactly, so a missing key is a type error. */
 const en: typeof es = {
-  meta: {
-    title: "Pereira Earthquake — Verified real-time information",
-    description:
-      "Utility status, verified reports, and emergency resources following the " +
-      "August 10, 2026 earthquake in Pereira, Risaralda.",
-  },
   nav: {
     home: "Home",
     services: "Services",
