@@ -256,6 +256,18 @@ Three things are non-negotiable on any page that recommends rather than lists:
    and `/donar` says so at full size. A reader who learns it somewhere else
    has been misled by omission, and that costs more credibility than any
    recommendation can buy back.
+
+   **This is the one thing on `/donar` that may not be collapsed.** The
+   verification dossier — findings, claims, gaps — now sits behind a
+   `<details>` labelled "¿Por qué deberías confiar en esto?", because a page
+   that argues before it acts serves nobody. That was a legitimate trade.
+   Putting the declaration of interest in there too would not be: a disclosure
+   behind a disclosure is a footnote with extra steps, which is exactly what
+   this clause forbids. It renders between the donate plate and the trust
+   panel, so someone who never expands anything has still read it.
+
+   Note that collapsing the dossier does not weaken requirement 1. Inside the
+   panel the three containers are still three containers.
 3. **It is never the only option offered.** `/donar` closes by pointing at
    `/enlaces`, where the official channels sit. A donation page with exactly
    one destination is an advertisement.

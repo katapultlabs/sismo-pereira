@@ -178,9 +178,10 @@ const RESOURCE_COLUMNS =
  * The resource grid on `/recursos` — shelters, hospitals, aid and water
  * points.
  *
- * `donation_point` is deliberately excluded. Drop-off sites have their own
- * page (`/acopio`) because they answer a different question: not "where do I
- * go for help" but "where do I take what I have, and what do they need".
+ * `donation_point` is deliberately excluded. Drop-off sites render on
+ * `/donar`, because they answer the opposite question: not "where do I go for
+ * help" but "where do I take what I have, and what do they need" — which is
+ * the same intent as giving money, and belongs on the same page as it.
  * Rendering them in both places would give the same row two homes, and the
  * needs checklist has nowhere to live in this grid.
  */
@@ -198,7 +199,7 @@ export async function getResources() {
 }
 
 /**
- * Verified donation drop-off points, for `/acopio`.
+ * Verified donation drop-off points, for the goods half of `/donar`.
  *
  * Same `verified` gate as every other address on this site (Rule 2). A
  * collection point is a place we send someone with a car full of water, and

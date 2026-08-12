@@ -6,8 +6,8 @@
 -- holding file for content that arrived before it could be verified, so the
 -- text does not rot in a chat log while somebody makes a phone call.
 --
--- Both rows below insert with `verified = false`, which means `/acopio` will
--- not show them. That is Rule 2 doing its job, not a bug:
+-- Both rows below insert with `verified = false`, which means the goods half
+-- of `/donar` will not show them. That is Rule 2 doing its job, not a bug:
 --
 --   > What counts as confirmation: a named person at the operating
 --   > organization, or an official channel of that organization. A screenshot

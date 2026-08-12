@@ -167,17 +167,41 @@ Three things about it are load-bearing:
 helper degrades to seed content on failure, which is right for a public page and wrong
 for a control room: a dispatcher shown fallback data would send crews against fiction.
 
-### Collection points (`/acopio`)
+### Giving is one page (`/donar`)
 
-Donation drop-off sites. They are `resources` rows with `kind = 'donation_point'`
-— not a separate table, because a drop-off point is a place with an address, hours
-and a `verified` gate, which is what that table already models.
+**`/donar` asks one question — "¿cómo quieres ayudar?" — and answers it with two
+doors: dinero and cosas.** Money and drop-off points are the same intent, and
+splitting them across two routes models the schema rather than the reader. There is
+no `/acopio`; `#dinero` and `#acopio` are sections of `/donar`.
+
+Its fold order is load-bearing: heading → two choice plates → nothing else. What
+sits below is money (CTA, declaration of interest, collapsed trust panel), then
+goods, then the alternatives pointer.
+
+- **The declaration of interest stays in the body, at full size, and outside the
+  expander.** Rule 10 requires it not be a footnote, and a disclosure hidden behind
+  a disclosure is a footnote with extra steps. It renders between the donate plate
+  and the trust panel, so a reader who never expands anything has still read it.
+- **The trust dossier is collapsed, not softened.** Findings, campaign claims, and
+  gaps stay three visibly different containers *inside* `<details>` — bordered
+  cards with a source line, quoted blocks, dashed boxes. Collapsing them into one
+  confident block is the Rule 3 failure; collapsing them behind one summary is not.
+- **Both expanders are native `<details>`, not the Base UI accordion.** They must
+  open with no JavaScript: someone reads this on a degraded connection during an
+  aftershock, and `accordion.tsx` is unused for this reason.
+- **The choice plates carry live readouts**, same rule as the home page's route
+  tiles. The goods door prints the number of *verified* points on the other side,
+  including "Aún sin puntos confirmados" when that is the honest answer.
+
+Drop-off sites are `resources` rows with `kind = 'donation_point'` — not a separate
+table, because a drop-off point is a place with an address, hours and a `verified`
+gate, which is what that table already models.
 
 `getResources()` **excludes** `donation_point` and `getCollectionPoints()` returns
 only it, so a point has exactly one home. Adding it back to the `/recursos` grid
 gives the same row two renderings that will drift.
 
-- **The needs list is the page, not the address.** `resources.needs` is a `text[]`
+- **The needs list is the point, not the address.** `resources.needs` is a `text[]`
   rendered in array order. A collection point published as a name and an opening
   time is the standard logistics failure — it produces a car park of donated
   clothing nobody asked for while the gauze runs out. An empty `needs` renders
@@ -281,7 +305,7 @@ a resident is never offered it.
 - Status is always encoded three ways — colour, icon, and text — so it survives colour
   blindness, greyscale, and a cracked screen. Preserve that when adding indicators.
 - Route segments are Spanish (`/servicios`, `/reportes`, `/recursos`, `/enlaces`,
-  `/reportar`, `/luz`, `/organizaciones`, `/donar`, `/acopio`,
+  `/reportar`, `/luz`, `/organizaciones`, `/donar`,
   `/actualizaciones/[slug]`); code identifiers are English. `/admin` and `/panel` are internal and **Spanish-only** —
   the bilingual machinery is for the public bulletin, not for a control room in
   Pereira.
@@ -334,12 +358,16 @@ a resident is never offered it.
   as fresh, which is the stale-green failure [EDITORIAL](./docs/EDITORIAL.md#rule-1--unknown-is-a-first-class-status)
   exists to prevent. Correct the placeholder's artifact timestamp instead, and check
   `current_service_status` — not the `insert` status code — to confirm a publish.
-- **Two anchors are load-bearing and nothing type-checks them.** The home page's
+- **Four anchors are load-bearing and nothing type-checks them.** The home page's
   route tiles link to `/recursos#centros-medicos` (the `MedicalClosures` block) and
-  `/enlaces#personas-desaparecidas` (the `missing_persons` category section). Both
-  ids carry `scroll-mt-20` to clear the sticky masthead. Rename or drop either id and
-  the link silently degrades to "top of page" — a build passes, a browser says
-  nothing, and someone looking for a missing person lands on the wrong block.
+  `/enlaces#personas-desaparecidas` (the `missing_persons` category section);
+  `/donar` carries `#dinero` and `#acopio`, which its own two choice plates target
+  and which `/recursos` links into as `/donar#acopio`. All four ids carry
+  `scroll-mt-20` to clear the sticky masthead. Rename or drop one and the link
+  silently degrades to "top of page" — a build passes, a browser says nothing, and
+  someone looking for a missing person lands on the wrong block. The `/donar` pair
+  fails more softly (you land on the right page, wrong section) but it is the same
+  bug.
 - **`supabase-js` infers row types from the `select()` string literal.** Splitting one
   across lines with `+` widens it to `string` and breaks inference. Keep select strings
   on one line.

@@ -368,8 +368,9 @@ const es = {
       reportedLabel: "Corte",
     },
     linksCta: "Ver enlaces útiles",
-    /* The other half of `/recursos`: this grid answers "where do I go for
-       help", `/acopio` answers "where do I take what I have". */
+    /* The other half of the question: this grid answers "where do I go for
+       help", the goods half of `/donar` answers "where do I take what I
+       have". */
     collectionCta: "Ver puntos de acopio",
   },
   /*
@@ -381,13 +382,17 @@ const es = {
    * outranks `address` in the card and the empty-needs state says "ask" rather
    * than implying anything is welcome.
    */
+  /*
+   * Donations in kind. Rendered as the second half of `/donar`, not as its
+   * own route — "quiero donar" is one intent, and splitting it across two
+   * URLs modelled our schema instead of the reader (see DECISIONS).
+   */
   collection: {
     heading: "Puntos de acopio",
-    subheading: "Dónde llevar donaciones en especie, y qué está pidiendo cada punto",
     lede:
-      "Estos son los puntos que recibimos confirmados por la organización que " +
-      "los opera. Llevar lo que sí están pidiendo es lo que hace útil una " +
-      "donación en especie.",
+      "Estos son los puntos confirmados por la organización que los opera. " +
+      "Llevar lo que sí están pidiendo es lo que hace útil una donación en " +
+      "especie.",
     needsHeading: "Qué están pidiendo",
     noNeeds:
       "Este punto no ha publicado una lista. Pregunta antes de llevar algo.",
@@ -407,8 +412,6 @@ const es = {
       "confirma un canal oficial de esa organización — los mensajes " +
       "reenviados sobre puntos de acopio circulan más rápido que cualquier " +
       "otra cosa después de un sismo, y no todos son ciertos.",
-    emptyCta:
-      "Mientras tanto, el fondo de emergencia recibe aportes en dinero.",
     /* Standard logistics advice, not a claim about any particular site. */
     beforeYouGo: {
       heading: "Antes de salir",
@@ -422,14 +425,6 @@ const es = {
         "Revisa fechas de vencimiento y que lo textil vaya nuevo o limpio.",
       ],
     },
-    /* Rendered on `/donar`, not here: money and goods are two different asks,
-       and each page has to name the other one (Rule 10 — a page with exactly
-       one option is an advertisement). */
-    goodsHeading: "¿Prefieres donar en especie?",
-    goodsBody:
-      "Algunos puntos de acopio reciben agua, insumos médicos y elementos de " +
-      "aseo. Publicamos qué está pidiendo cada uno.",
-    goodsCta: "Ver puntos de acopio",
   },
   /*
    * The donation drive. Hardcoded rather than a `links` row on purpose: this
@@ -466,12 +461,42 @@ const es = {
       "Antes de aportar, revisa qué verificamos, qué afirma la campaña y qué " +
       "todavía no es público.",
     page: {
-      heading: "Dona al fondo de emergencia",
-      lede:
-        "Adónde va tu aporte, quién lo administra, qué pudimos verificar y " +
-        "qué todavía no. Revisa esto antes de donar aquí o en cualquier otra " +
-        "parte.",
+      heading: "Donar",
+      /* The page asks one question and answers it with two doors. Everything
+         else on it is subordinate to that. */
+      lede: "Hay dos formas de ayudar. Elige la tuya.",
       checkedOn: "Revisado el 11 de agosto de 2026",
+
+      /* The two doors. Each carries a live readout, the same rule the home
+         page's route tiles follow — a choice card with no readout is a nav
+         link wearing a plate. */
+      moneyChoice: {
+        title: "Dinero",
+        body: "Al fondo de emergencia. Se puede aportar desde Colombia o desde el exterior.",
+        readout: "Fondo de emergencia",
+      },
+      goodsChoice: {
+        title: "Cosas",
+        body: "A un punto de acopio. Cada uno publica qué está pidiendo.",
+        readout: (n: number) =>
+          n === 1 ? "1 punto de acopio" : `${n} puntos de acopio`,
+        readoutEmpty: "Aún sin puntos confirmados",
+      },
+
+      moneyHeading: "Donar dinero",
+      goodsHeading: "Donar cosas",
+
+      /*
+       * The verification dossier is collapsed behind this. It used to be
+       * three full sections above the fold, which made the page read as an
+       * argument rather than an action — see DECISIONS. The *disclosure* is
+       * not in here: Rule 10 requires the investment stake to sit in the
+       * body at full size, and it still does.
+       */
+      trustSummary: "¿Por qué deberías confiar en esto?",
+      trustLede:
+        "Lo que comprobamos, lo que solo afirma la campaña, y lo que todavía " +
+        "no es público. Están separados a propósito.",
 
       actionTitle: "Aportar a la campaña",
       actionBody:
@@ -944,11 +969,10 @@ const en: typeof es = {
   },
   collection: {
     heading: "Collection points",
-    subheading: "Where to take donated goods, and what each point is asking for",
     lede:
-      "These are the points confirmed to us by the organization that runs " +
-      "them. Bringing what they actually asked for is what makes a donation " +
-      "in kind useful.",
+      "These are the points confirmed by the organization that runs them. " +
+      "Bringing what they actually asked for is what makes a donation in " +
+      "kind useful.",
     needsHeading: "What they are asking for",
     noNeeds:
       "This point has not published a list. Ask before bringing anything.",
@@ -963,7 +987,6 @@ const en: typeof es = {
       "organization confirms it — forwarded messages announcing collection " +
       "points travel faster than anything else after an earthquake, and not " +
       "all of them are true.",
-    emptyCta: "In the meantime, the emergency fund accepts money donations.",
     beforeYouGo: {
       heading: "Before you go",
       items: [
@@ -976,11 +999,6 @@ const en: typeof es = {
         "Check expiry dates, and send textiles new or clean.",
       ],
     },
-    goodsHeading: "Would you rather donate goods?",
-    goodsBody:
-      "Some collection points accept water, medical supplies, and hygiene " +
-      "items. We publish what each one is asking for.",
-    goodsCta: "See collection points",
   },
   donate: {
     eyebrow: "Donations",
@@ -1004,12 +1022,30 @@ const en: typeof es = {
       "Before contributing, review what we verified, what the campaign claims, " +
       "and what is not public yet.",
     page: {
-      heading: "Donate to the emergency fund",
-      lede:
-        "Where your contribution goes, who administers it, what we could " +
-        "verify and what we could not. Read this before donating here or " +
-        "anywhere else.",
+      heading: "Donate",
+      lede: "There are two ways to help. Pick yours.",
       checkedOn: "Reviewed on 11 August 2026",
+
+      moneyChoice: {
+        title: "Money",
+        body: "To the emergency fund. You can contribute from Colombia or from abroad.",
+        readout: "Emergency fund",
+      },
+      goodsChoice: {
+        title: "Goods",
+        body: "To a collection point. Each one publishes what it is asking for.",
+        readout: (n: number) =>
+          n === 1 ? "1 collection point" : `${n} collection points`,
+        readoutEmpty: "No confirmed points yet",
+      },
+
+      moneyHeading: "Donate money",
+      goodsHeading: "Donate goods",
+
+      trustSummary: "Why should you trust this?",
+      trustLede:
+        "What we checked, what the campaign only asserts, and what is still " +
+        "not public. They are kept separate on purpose.",
 
       actionTitle: "Contribute to the campaign",
       actionBody:

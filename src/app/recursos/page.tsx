@@ -49,11 +49,12 @@ export default async function ResourcesPage() {
               <ArrowRight className="size-3.5" aria-hidden />
             </Link>
             {/* Drop-off points used to land in the grid below as a
-                `donation_point` group. They have their own page now, because
-                the question they answer is the opposite one — not "where do I
-                get help" but "where do I take what I have". */}
+                `donation_point` group. They live on `/donar` now, because the
+                question they answer is the opposite one — not "where do I get
+                help" but "where do I take what I have", which is the same
+                intent as giving money. */}
             <Link
-              href="/acopio"
+              href="/donar#acopio"
               className="label-signage inline-flex items-center gap-1.5 text-muted-foreground underline-offset-4 hover:text-foreground hover:underline"
             >
               {t.resources.collectionCta}

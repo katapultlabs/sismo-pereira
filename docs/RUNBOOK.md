@@ -245,10 +245,11 @@ regulator attached.
 
 ---
 
-## Publishing a collection point (`/acopio`)
+## Publishing a collection point (`/donar#acopio`)
 
-A drop-off site is a `resources` row with `kind = 'donation_point'`. It is invisible
-until `verified = true`, and **the confirmation bar is Rule 2's, not a lower one**:
+A drop-off site is a `resources` row with `kind = 'donation_point'`, rendered in the
+goods half of `/donar`. It is invisible until `verified = true`, and **the
+confirmation bar is Rule 2's, not a lower one**:
 a named person at the operating organization, or that organization's own channel.
 
 This matters more here than on any other address the site publishes. Collection-point

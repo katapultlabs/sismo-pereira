@@ -41,7 +41,7 @@ comment on column resources.source_name is
   'Who told us this place exists. Rule 2: a forwarded screenshot is not a '
   'source, and `verified` stays false until an official channel confirms it.';
 
--- `/acopio` reads verified donation points in one query; the partial index
+-- `/donar` reads verified donation points in one query; the partial index
 -- mirrors `resources_kind_idx` and keeps that path off a sequential scan as
 -- the table grows.
 create index resources_donation_idx
