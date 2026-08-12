@@ -291,6 +291,12 @@ values
   water is the failure this page is trying to prevent.
 - **`source` gates a visible badge.** Anything other than `official` renders "No es
   un canal oficial" on the card, the same as `/enlaces`.
+- **Confirm that a stranger can get in, not just that the point exists.** Several
+  of these sit inside private venues — a members' club, a gated compound, an office
+  lobby. "We are collecting donations" in a note to members does not by itself mean
+  the public may drive through the gate. Ask explicitly, and if the answer is no,
+  don't publish it: sending someone with a boot full of nappies to a barrier is
+  Rule 2's failure with a security guard attached.
 
 **Take a point down the moment it stops receiving.** Set `verified = false`; it
 vanishes on the next request. A collection point that closed this morning is the

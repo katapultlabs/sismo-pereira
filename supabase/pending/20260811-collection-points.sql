@@ -1,12 +1,12 @@
 -- ---------------------------------------------------------------------------
--- PENDING — two collection points awaiting confirmation
+-- PENDING — three collection points awaiting confirmation
 --
 -- This is NOT a migration and NOT seed data. Nothing in `supabase/pending/`
 -- runs automatically: not on `supabase db reset`, not on deploy. It is a
 -- holding file for content that arrived before it could be verified, so the
 -- text does not rot in a chat log while somebody makes a phone call.
 --
--- Both rows below insert with `verified = false`, which means the goods half
+-- Every row below inserts with `verified = false`, which means the goods half
 -- of `/donar` will not show them. That is Rule 2 doing its job, not a bug:
 --
 --   > What counts as confirmation: a named person at the operating
@@ -14,11 +14,11 @@
 --   > forwarded through three WhatsApp groups does not count, however
 --   > plausible.
 --
--- Both of these arrived as forwarded broadcast text. Neither has been checked
--- against an official channel. Collection points are also where donation
--- fraud lands after a disaster — a fake one is a working method for stealing
--- donated goods — so the gate matters more here than almost anywhere else on
--- the site.
+-- All three arrived as forwarded text. None has been checked against an
+-- official channel. Collection points are also where donation fraud lands
+-- after a disaster — a fake one is a working method for stealing donated
+-- goods — so the gate matters more here than almost anywhere else on the
+-- site.
 --
 -- BEFORE FLIPPING `verified` TO TRUE, for each row:
 --   1. Confirm the point exists and is receiving, via an official channel of
@@ -31,6 +31,11 @@
 --      renders a visible "No es un canal oficial" badge for anything else.
 --   4. Confirm the opening hours, and the *precise* drop-off spot. Both are
 --      noted below where the source did not state them.
+--   5. **Confirm a stranger can actually get in.** A point inside a private
+--      venue — a club, a gated compound, an office lobby — is only a public
+--      drop-off if the operator says non-members may enter. "It exists" and
+--      "you may use it" are two different confirmations, and only the second
+--      one makes it publishable.
 --
 -- Then delete this file — a queue nobody drains is worse than no queue.
 -- ---------------------------------------------------------------------------
@@ -109,6 +114,69 @@ values
    ],
    'social',
    null,  -- who confirmed it, and who is receiving. Fill in before publishing.
+   null,
+   false);
+
+-- ---------------------------------------------------------------------------
+-- 3. Club Campestre Pereira
+--
+-- Source text: a letter from the Club's Administración and Junta Directiva to
+-- its members, forwarded to us. Most of it is not ours to publish and is not
+-- included below:
+--
+--   * The opening offer of support is addressed to members and their families
+--     ("cuentan con nosotros… no dude en contactarnos"). Republishing that to
+--     the general public misrepresents who was offered what, and would point
+--     strangers at a members' line. Dropped.
+--   * The closing thanks to "nuestra comunidad" is club-internal warmth with
+--     no operational content. Dropped.
+--
+-- What survives is the part addressed to anyone with something to give: the
+-- needs list, and the reason it is shaped the way it is.
+--
+-- The letter leads with a genuinely useful negative signal — several centres
+-- already have enough food, so the Club is concentrating on what is short.
+-- That is the single most valuable sentence in any collection-point appeal,
+-- and it is preserved in `description` **attributed to the Club**. We do not
+-- restate it as our own finding: it is a claim about other people's
+-- warehouses that we have not checked (Rule 3), and "no lleven alimentos" is
+-- not something this site should assert on a forwarded letter.
+--
+-- GAPS: no hours stated. "Club Campestre Pereira" names the venue but not the
+-- drop-off point, so `address` is null rather than guessed.
+--
+-- AND ONE THIS LIST HAS NOT NEEDED BEFORE: **this is a private members'
+-- club.** Whether a non-member can drive through the gate with a bag of
+-- nappies is not stated anywhere in the letter, and if the answer is no, then
+-- publishing it as a public drop-off point sends people to a barrier — the
+-- Rule 2 failure with a security guard attached. Confirm access explicitly,
+-- not just existence.
+-- ---------------------------------------------------------------------------
+insert into resources
+  (kind, name, description, address, hours, status, needs,
+   source, source_name, source_url, verified)
+values
+  ('donation_point',
+   'Club Campestre Pereira',
+   'Centro de acopio para familias, niños y adultos mayores. El Club informa '
+   'que varios centros ya cuentan con alimentos suficientes, y que por ahora '
+   'concentra su recolección en los elementos de esta lista.',
+   null,  -- drop-off point within the club not stated. Confirm.
+   null,  -- hours not stated in the source. Confirm before publishing.
+   'operational',
+   array[
+     'Pañales para bebé, etapas 0 a 6',
+     'Pañales para adulto, especialmente talla L',
+     'Pañitos húmedos',
+     'Ropa para niños, de recién nacido a 14 años',
+     'Ropa para adultos',
+     'Zapatos para niños y adultos',
+     'Cobijas y colchonetas',
+     'Jabón líquido o gel de ducha',
+     'Repelente'
+   ],
+   'social',
+   null,  -- confirm with the Club, and record who confirmed it.
    null,
    false);
 

@@ -435,45 +435,50 @@ function CollectionCard({
         </p>
       ) : null}
 
-      {/* Where and when — the two values someone re-reads in the car. */}
-      <dl className="mt-4 space-y-2">
-        {point.address ? (
-          <div className="flex items-baseline gap-2">
-            <dt className="sr-only">{c.address}</dt>
-            <MapPin
-              className="size-3.5 shrink-0 translate-y-0.5 text-muted-foreground"
-              aria-hidden
-            />
-            <dd className="text-sm leading-relaxed">{point.address}</dd>
-          </div>
-        ) : null}
-        {point.hours ? (
-          <div className="flex items-baseline gap-2">
-            <dt className="sr-only">{c.hours}</dt>
-            <Clock
-              className="size-3.5 shrink-0 translate-y-0.5 text-muted-foreground"
-              aria-hidden
-            />
-            <dd data-readout className="font-mono text-sm font-semibold">
-              {point.hours}
-            </dd>
-          </div>
-        ) : null}
-        {point.phone ? (
-          <div className="flex items-baseline gap-2">
-            <dt className="sr-only">{c.phone}</dt>
-            <Phone className="size-3.5 shrink-0 translate-y-0.5 text-down" aria-hidden />
-            <dd>
-              <a
-                href={`tel:${point.phone}`}
-                className="font-mono text-sm font-semibold underline-offset-4 hover:underline"
-              >
-                {point.phone}
-              </a>
-            </dd>
-          </div>
-        ) : null}
-      </dl>
+      {/* Where and when — the two values someone re-reads in the car.
+          Suppressed entirely when we have none of them, rather than rendering
+          an empty `dl` and its margin: an appeal that names a venue and
+          nothing else is the common case, not the exception. */}
+      {point.address || point.hours || point.phone ? (
+        <dl className="mt-4 space-y-2">
+          {point.address ? (
+            <div className="flex items-baseline gap-2">
+              <dt className="sr-only">{c.address}</dt>
+              <MapPin
+                className="size-3.5 shrink-0 translate-y-0.5 text-muted-foreground"
+                aria-hidden
+              />
+              <dd className="text-sm leading-relaxed">{point.address}</dd>
+            </div>
+          ) : null}
+          {point.hours ? (
+            <div className="flex items-baseline gap-2">
+              <dt className="sr-only">{c.hours}</dt>
+              <Clock
+                className="size-3.5 shrink-0 translate-y-0.5 text-muted-foreground"
+                aria-hidden
+              />
+              <dd data-readout className="font-mono text-sm font-semibold">
+                {point.hours}
+              </dd>
+            </div>
+          ) : null}
+          {point.phone ? (
+            <div className="flex items-baseline gap-2">
+              <dt className="sr-only">{c.phone}</dt>
+              <Phone className="size-3.5 shrink-0 translate-y-0.5 text-down" aria-hidden />
+              <dd>
+                <a
+                  href={`tel:${point.phone}`}
+                  className="font-mono text-sm font-semibold underline-offset-4 hover:underline"
+                >
+                  {point.phone}
+                </a>
+              </dd>
+            </div>
+          ) : null}
+        </dl>
+      ) : null}
 
       <div className="mt-5 border-t border-border pt-4">
         <h4 className="label-signage text-muted-foreground">{c.needsHeading}</h4>
