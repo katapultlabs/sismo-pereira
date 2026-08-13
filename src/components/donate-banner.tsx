@@ -55,12 +55,15 @@ export function DonateBlock({
   return (
     <section
       aria-label={t.donate.eyebrow}
+      /* `flex flex-col` + `my-auto` on the body: when a page stretches this
+         plate to match a neighbouring column, the appeal centres instead of
+         leaving a dead band above the note. At natural height, no change. */
       className={cn(
-        "border border-foreground/25 bg-foreground text-background",
+        "flex flex-col border border-foreground/25 bg-foreground text-background",
         className,
       )}
     >
-      <div className="flex flex-col gap-6 p-6 sm:p-8 lg:flex-row lg:items-center lg:justify-between">
+      <div className="my-auto flex flex-col gap-6 p-6 sm:p-8 lg:flex-row lg:items-center lg:justify-between">
         <div className="min-w-0">
           <p className="label-signage flex items-center gap-2 text-background/70">
             <HeartHandshake className="size-3.5" aria-hidden />

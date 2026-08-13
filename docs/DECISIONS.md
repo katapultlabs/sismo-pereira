@@ -542,6 +542,106 @@ Until then, added process is not caution — it is overhead charged to an emerge
 
 ## Reversed or superseded
 
+### The landing was locked to dark in both themes → it follows the theme
+
+The 2026-08-13 redesign shipped `/` on the night palette regardless of the theme
+setting, enforced three ways: a hardcoded `dark` class on the landing wrapper,
+`body:has([data-landing])` added to the dark token block so the header and footer
+cascaded into it, and the theme control removed from the landing (the horizontal
+masthead is `lg:hidden` on `/`, and the mobile sheet's theme row was gated out).
+
+The stated reason was that the landing is "charcoal in both themes and so has nothing
+to toggle". The real reason was the artwork: two of the three hero treatments only
+composited on a dark ground — `mix-blend-screen` at 6% opacity is invisible on a pale
+card, and the closures card leant on `shadow-black/40`. Locking the page dark was the
+cheap way to ship the art.
+
+That is the wrong trade. Dark mode on this site is a *functional* accommodation —
+people read it during a blackout, on battery, at night — and the corollary is that the
+day palette is equally functional for everyone else. Making the one page most readers
+ever see immune to the switch means the setting silently does nothing on the page it
+matters most on, and there is no way to discover that.
+
+Reversed on 2026-08-13. What it cost: the blend modes are gone (the art is drawn from
+`--down` and `--ember` strokes, which follow the theme for free), and the closures
+card's shadow is theme-split. The `--ember` light value already existed and already
+passed the contrast gate; it had simply never been rendered.
+
+**The trap this leaves behind:** `scripts/check-contrast.mjs` finds the dark token
+block by searching for the dark class selector followed by ` {` and taking the *first*
+match. Writing that sequence in a comment points the gate at prose, which extracts no
+tokens and fails all 27 dark pairings at once. This cost one red build during the
+reversal, which is why the comment above the block now describes the sequence instead
+of quoting it.
+
+### 3px "stamped" radius → 8px
+
+`--radius` was `0.1875rem` on the argument that a tight corner is load-bearing: raising
+it "reads as a generic card UI again." The redesign raised it to 8px on the landing
+only, via a `[data-landing]` override.
+
+Promoted site-wide on 2026-08-13, and the original argument does not survive contact.
+What keeps this from reading as generic card UI is the achromatic chrome, the hairline
+rules, the mono readouts and the condensed display face — the corner was not carrying
+it. A site running 8px on its landing and 3px everywhere else, with the same pill
+badges and the same footer on both, reads as two designs rather than one.
+
+`rounded-sm` is 70 of the ~110 `rounded-*` uses in the tree, so it is the token that
+sets the tone; it now takes `--radius` directly rather than half of it.
+
+### Stamped rectangular status badges → soft pills
+
+Same redesign, same reasoning, and it travels further than the landing: `StatusBadge`
+renders on `/servicios` and `/donar` too. Status is still encoded three ways — colour,
+icon and text — so the change is cosmetic in the way that matters. The pill carries
+`whitespace-nowrap`, because the status card header is a `justify-between` row and
+"sin confirmar" otherwise breaks across two lines next to a long service name.
+
+### Carousels on the landing's two boards → carousel on mobile, grid on desktop
+
+The redesign wrapped both the six route tiles and the seven service status cards in
+`StatusCarousel`, which showed three slides at a time at every width. On a desktop
+viewport that put four of the seven service statuses — and half the routes — behind a
+horizontal swipe.
+
+Reverted to a grid at `lg` and above on 2026-08-13, carousel retained below it. The
+board exists to answer "is there water, is the hospital open" at a glance; an outage a
+reader has to swipe to discover is an outage they do not see. On a phone the carousel
+genuinely beats a seven-deep stack, so it stays there. Both forms need no JavaScript:
+the grid is CSS, and the track is a plain scrollable row before hydration.
+
+### Life safety as a corner widget on desktop → a fixed 123 plate
+
+The redesign hides the horizontal masthead on `/` at `lg` in favour of the rail, which
+also removed the 123 button it carries. `HeroSafety` rendered only the medical-closures
+card, and 123 survived as a 12px mono row in the rail's phone directory — while the
+hero's one large centred call to action was **Donar**. That inverts design principle 3
+("no appeal for money or attention sits above 'call 123'").
+
+Fixed on 2026-08-13 by adding a compact alarm-red 123 plate above the closures card in
+the fixed bottom-right stack. Being fixed, it is now the one action on the page that
+never scrolls away, which the donate CTA does — so the ordering holds at every scroll
+position rather than only at the top.
+
+The accepted cost: the two-card stack occludes the bottom of the right-hand column on
+`lg`. That overlap pre-dates this change (the closures card alone did it) and life
+safety is the one thing allowed to occlude.
+
+### A 1.9MB hero image → the same drawing, computed
+
+The redesign's hero art shipped as `public/seismic-dark.svg`: a 1024×1536 PNG encoded
+base64 inside an SVG wrapper, 1.9MB on disk and **1.42MB gzipped**, referenced three
+times on the landing. Against a product principle the same branch introduced — "the
+page must be legible on a cracked screen over 2G" — that asset *was* the page.
+
+Replaced on 2026-08-13 by `SeismicField` in `src/components/landing-art.tsx`, which was
+already written, already in the branch, and entirely unimported. It draws the same
+isoseismal rings from fixed maths (not `Math.random()`, so server and client markup
+match — the same constraint `Seismograph` follows) at effectively zero transfer cost,
+and its strokes take `--down` and `--ember`, which is what let the landing follow the
+theme at all. `public/seismic-hero.svg` (131KB, unreferenced) went with it.
+
+
 ### "No map yet" → a map, because the data now exists
 
 The original entry said `lat`/`lng` were carried but unrendered, because "building the

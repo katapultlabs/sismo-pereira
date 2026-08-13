@@ -75,11 +75,21 @@
   --color-fixing-foreground: var(--fixing-foreground);
   --color-fixing-muted: var(--fixing-muted);
 
-  /* Stamped, not pill-shaped. The tight radius is load-bearing for the
-   * bulletin aesthetic — raising it reads as a generic card UI again. */
-  --radius-sm: calc(var(--radius) * 0.5);
-  --radius-md: var(--radius);
-  --radius-lg: calc(var(--radius) * 1.6);
+  /* Landing accent — see the --ember note in `:root`. */
+  --color-ember: var(--ember);
+  --color-ember-contrast: var(--ember-contrast);
+
+  /* The corner was 3px — "stamped, not pill-shaped" — on the argument that a
+   * softer radius reads as generic card UI. The 2026-08-13 redesign reversed
+   * it to 8px and the argument did not survive contact: what actually keeps
+   * this from reading as generic card UI is the achromatic chrome, the
+   * hairline rules, the mono readouts and the condensed display face, none of
+   * which the corner was carrying. `rounded-sm` is 70 of the ~110 rounded-*
+   * uses in the tree, so it is the one that sets the tone — hence sm, not md,
+   * takes `--radius` directly. See docs/DECISIONS.md. */
+  --radius-sm: var(--radius);
+  --radius-md: calc(var(--radius) * 1.25);
+  --radius-lg: calc(var(--radius) * 1.5);
   --radius-xl: calc(var(--radius) * 2.2);
   --radius-2xl: calc(var(--radius) * 3);
   --radius-3xl: calc(var(--radius) * 4);
@@ -112,7 +122,7 @@
   --chart-3: oklch(0.439 0.013 68);
   --chart-4: oklch(0.371 0.014 66);
   --chart-5: oklch(0.269 0.015 65);
-  --radius: 0.1875rem;
+  --radius: 0.5rem;
 
   /*
    * Semantic service-status palette. Hue-separated so status never depends on
@@ -159,12 +169,39 @@
   /* Seismograph chart-paper ruling behind the hero. */
   --rule-ink: oklch(0.185 0.014 65 / 5%);
   --rule-tick: oklch(0.185 0.014 65 / 9%);
+
+  /*
+   * Ember — the landing page's one deliberate exception to "chroma is signal".
+   * A desaturated humanitarian amber, used only on the home page for the
+   * donate CTA, section eyebrows, and the epicentre mark in the diagram. It
+   * sits between --down (h27) and --warn (h70) in hue but far below both in
+   * chroma, so it reads as tone rather than as a fifth status. Never use it
+   * to encode a service state. Both pairings below are gated by
+   * `pnpm check:contrast`.
+   */
+  --ember: oklch(0.5 0.125 48);
+  --ember-contrast: oklch(0.985 0.006 48);
 }
 
 /* ── Dark: "noche" ───────────────────────────────────────────────────────────
  * Not a tinted copy of the light theme. Day is warm paper; night is a cold
  * instrument face. People read this during a blackout, on battery, in the
  * dark — the background is genuinely dark rather than mid-grey.
+ *
+ * This block once also carried `body:has([data-landing])`, which forced the
+ * landing (and, cascading from body, the header and footer with it) onto the
+ * night palette in *both* themes. That made the home page — the one page most
+ * readers ever see — immune to the theme switch. The landing now follows the
+ * theme like every other route; what the artwork needed to make that work is
+ * noted at `.landing-wash` below.
+ *
+ * scripts/check-contrast.mjs finds this block by searching the stylesheet for
+ * the dark class selector followed by a space and an opening brace, and takes
+ * the FIRST match. So that sequence must appear exactly once — on the
+ * selector line below, never inside prose like this one. Writing it out in a
+ * comment silently points the gate at a comment body, which extracts no
+ * tokens and fails every dark pairing at once. (Asked and answered: this
+ * comment cost one red build.)
  * ────────────────────────────────────────────────────────────────────────── */
 .dark {
   --background: oklch(0.152 0.01 255);
@@ -219,6 +256,9 @@
 
   --rule-ink: oklch(0.955 0.004 85 / 6%);
   --rule-tick: oklch(0.955 0.004 85 / 10%);
+
+  --ember: oklch(0.75 0.115 55);
+  --ember-contrast: oklch(0.17 0.025 55);
 }
 
 @layer base {
@@ -318,6 +358,100 @@
   animation: trace 1.6s cubic-bezier(0.4, 0, 0.2, 1) both;
 }
 
+/* ── Landing scale ──────────────────────────────────────────────────────────
+ * The landing is composed at 1280px and scales proportionally above it: past
+ * that width the root em grows linearly (16px × vw⁄1280 = 1.25vw), so every
+ * rem-derived size — type, spacing, radii, the rail — enlarges as one
+ * drawing and the page stays full-bleed on any monitor. Media queries are
+ * unaffected (rem inside @media ignores the root font-size), and pages
+ * without a `[data-landing]` element keep the browser default.
+ * ────────────────────────────────────────────────────────────────────────── */
+@media (min-width: 80rem) {
+  html:has([data-landing]) {
+    /* Floor and ceiling are in `rem`, which on `html` resolves against the
+     * browser's own root size — so a reader who has set 20px text keeps a
+     * 20px floor and the page still scales from there. A bare `1.25vw` threw
+     * that preference away entirely and left zoom with nothing to do, which
+     * is a WCAG 1.4.4 (resize text) failure. The 1.25 ceiling stops a 4K
+     * monitor inflating the page past the composition it was drawn for. */
+    font-size: clamp(1rem, 1.25vw, 1.25rem);
+  }
+}
+
+/* Rail anchors glide rather than jump. Landing only; the reduced-motion
+ * block below restores instant jumps. */
+html:has([data-landing]) {
+  scroll-behavior: smooth;
+}
+
+/* The landing's 8/10/12 corner is now the whole site's corner — see the
+ * `--radius` note in the `@theme` block. Nothing to scope here any more. */
+
+/* ── Landing (editorial) motion ─────────────────────────────────────────────
+ * Scroll-driven, CSS-only, and fail-open: where `animation-timeline: view()`
+ * is unsupported the elements are simply visible. Slow fades and one gentle
+ * drift — nothing springs, nothing bounces.
+ * ────────────────────────────────────────────────────────────────────────── */
+
+@keyframes drift-slow {
+  to {
+    transform: translateY(-3.5rem);
+  }
+}
+
+/* The clock's carrier light: a slow opacity breath on the dot beside the
+ * running time. Purposeful — it says "this is live". */
+@keyframes blink-soft {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.3;
+  }
+}
+
+/* The pinned-notices ticker. Two identical groups in the track, so -50%
+ * lands on an exact period and the loop is seamless. */
+@keyframes marquee-slide {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+/*
+ * No scroll-triggered reveals, deliberately. A reveal that starts at
+ * `opacity: 0` gates content behind animation support — in any renderer
+ * where the timeline never ticks (headless, some readers), the section
+ * ships blank. On a site people open during a blackout, content is visible
+ * by default, always; motion is reserved for ornament and load.
+ */
+@layer utilities {
+  @supports (animation-timeline: scroll()) {
+    /* Background art in the landing hero eases upward as the page scrolls.
+       Ornament only — if the timeline never ticks, the art simply holds. */
+    .parallax-drift {
+      animation: drift-slow 1ms linear both;
+      animation-timeline: scroll(root);
+      animation-range: 0 120svh;
+    }
+  }
+
+  .animate-blink {
+    animation: blink-soft 2.4s ease-in-out infinite;
+  }
+
+  /* Paused on hover/focus so a moving critical notice can still be read and
+     clicked. Speed scales with content via the inline --marquee-duration. */
+  .marquee-track {
+    animation: marquee-slide var(--marquee-duration, 40s) linear infinite;
+  }
+  .marquee-group:hover .marquee-track,
+  .marquee-group:focus-within .marquee-track {
+    animation-play-state: paused;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -326,5 +460,12 @@
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
+  }
+  /* Scroll-driven animations ignore duration, so they need an explicit off;
+     these would otherwise loop at 0.01ms, worse than motion. */
+  .parallax-drift,
+  .animate-blink,
+  .marquee-track {
+    animation: none !important;
   }
 }

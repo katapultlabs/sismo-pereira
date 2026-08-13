@@ -18,6 +18,7 @@ complete by inventing data.
 
 | Doc | For |
 |---|---|
+| [PRODUCT.md](./PRODUCT.md) | Register, audience, brand personality, design principles |
 | [docs/EDITORIAL.md](./docs/EDITORIAL.md) | What we publish and refuse to publish |
 | [docs/RUNBOOK.md](./docs/RUNBOOK.md) | Operating it: moderation, publishing, partners |
 | [docs/SUPABASE.md](./docs/SUPABASE.md) | Schema, RLS trust model, provisioning |
@@ -283,6 +284,12 @@ a resident is never offered it.
   status hues for the same attention. The one exception is the small square epicentre
   mark in the masthead, the footer, and the site icon, which is a shape rather than a
   state.
+  The **one accent** is `--ember`, a desaturated humanitarian amber introduced with the
+  2026-08-13 landing. It sits between `--down` (h27) and `--warn` (h70) in hue but far
+  below both in chroma, so it reads as tone rather than a fifth status. It is for
+  section eyebrows, the seismic artwork and the clock's carrier light. **Never encode a
+  service state with it**, and never add a second accent — it is gated by
+  `pnpm check:contrast` in both themes, and it is the exception, not a precedent.
 - **The site icon is that same mark, and it is generated.** `src/app/icon.svg` is the
   source of truth; `pnpm icons` redraws `favicon.ico` (16/32/48) and `apple-icon.png`
   from geometry duplicated in `scripts/render-icons.mjs` — change the SVG and you must
@@ -308,11 +315,24 @@ a resident is never offered it.
   form label. Prefer these utilities over ad-hoc type stacks.
 - `SectionHeading` is the bulletin's section rule. Reuse it rather than hand-rolling a
   heading — repeating it is what makes the pages read as one document.
-- `--radius` is `0.1875rem`, and the tight radius is load-bearing: rounding it up makes
-  the site read as a generic card UI again.
-- Dark mode is real and mounted (`ThemeProvider`, `defaultTheme="system"`). It is not
-  decorative — people read this at night, during a blackout, on battery. Check both
-  themes when adding a surface.
+- `--radius` is `0.5rem` and `rounded-sm` takes it directly (it is 70 of the ~110
+  `rounded-*` uses, so it sets the tone). This was `0.1875rem` with a note calling the
+  tight corner load-bearing; the 2026-08-13 redesign raised it and the note did not
+  survive — what keeps this off generic-card-UI is the achromatic chrome, hairline
+  rules, mono readouts and condensed display face
+  ([why](./docs/DECISIONS.md#3px-stamped-radius--8px)).
+- **Dark mode is real, mounted (`ThemeProvider`, `defaultTheme="system"`), and every
+  page follows it — including `/`.** It is not decorative: people read this at night,
+  during a blackout, on battery. Check both themes when adding a surface, and never
+  pin a page to one of them. The landing shipped hardcoded to the night palette in
+  both themes for one release, which silently disabled the theme switch on the page
+  most readers ever see
+  ([why](./docs/DECISIONS.md#the-landing-was-locked-to-dark-in-both-themes--it-follows-the-theme)).
+  In practice this bites through **artwork**, not tokens: `mix-blend-screen` keeps a
+  source's light pixels and vanishes on bone paper, `mix-blend-multiply` does the
+  reverse, and a `shadow-black/40` that lifts a card off ink reads as a bruise on
+  paper. Prefer art drawn from tokens (`SeismicField`) over an imported asset, which
+  can only ever be right in one theme.
 - Status is always encoded three ways — colour, icon, and text — so it survives colour
   blindness, greyscale, and a cracked screen. Preserve that when adding indicators.
 - Route segments are Spanish (`/servicios`, `/reportes`, `/recursos`, `/enlaces`,
@@ -323,16 +343,25 @@ a resident is never offered it.
 - The inline header nav starts at `lg`, not `md` — six items plus the 123 button and
   the language/theme controls do not fit at 768. Adding a seventh means reworking the
   bar, not tightening the gap.
-- **The home page is an action hub, and its fold order is load-bearing.** `/` runs
-  masthead → `EmergencyPlates` → `PinnedAlerts` → the `/luz` drive → `ActionRoutes` →
-  status board → donate → update feed. The two plates lead because they are standing
-  instructions
-  rendered from hardcoded constants (they survive a degraded read); pinned notices
-  are compressed to a strap line rather than cards because three `UpdateCard`s cost
-  ~540px and pushed everything actionable off a phone screen. Don't reorder these
-  without re-measuring on a 390px viewport — the previous hero passed every check
-  and still left nothing actionable above the fold.
+- **The home page is an editorial landing with two layouts, and its order is
+  load-bearing.** From `lg` it is a sticky left rail (wordmark → five numbered routes →
+  emergency-line directory → Reportar → Donar) beside a full-bleed wall (pinned ticker
+  + clock/theme/language → hero panel → `/luz` drive → `ActionRoutes` → report CTA →
+  status board → donate → figures → update feed). Below `lg` the rail becomes a 2-up
+  plate grid under the hero, followed by `HeroSafetyMobile`. The horizontal masthead is
+  `lg:hidden` on `/` only, because the rail replaces it — which is why the rail has to
+  carry the theme and language controls itself.
+  Pinned notices are a ticker rather than cards because three `UpdateCard`s cost ~540px
+  and pushed everything actionable off a phone screen. Don't reorder without
+  re-measuring on a 390px viewport.
   ([why](./docs/DECISIONS.md#the-home-page-is-a-hub-not-a-bulletin))
+- **Life safety must outrank the donate CTA at every scroll position, not just at the
+  top.** On `lg` that is `HeroSafety`: a fixed bottom-right stack with the alarm-red
+  123 plate above the closures card. It is fixed precisely because the hero's donate
+  button scrolls away and 123 must not. Below `lg`, `HeroSafetyMobile` carries both in
+  the flow. Removing the 123 plate because "the header has one" is the specific
+  regression that shipped once — the header is hidden on this route
+  ([why](./docs/DECISIONS.md#life-safety-as-a-corner-widget-on-desktop--a-fixed-123-plate)).
 - **A route tile must carry a live readout**, and must be named for what the reader
   does ("Busca a una persona"), not for a part of the site ("Enlaces"). A tile with
   no readout is a nav link wearing a card. Any count shown must be the number the
@@ -344,6 +373,14 @@ a resident is never offered it.
   The `/luz` drive sits *above* the board as its own plate for this reason — it is a
   time-boxed campaign asking for a contribution, not a standing route, and as tile
   seven it would both break the grid and read as a peer of `/organizaciones`.
+- **`StatusCarousel` is a carousel below `lg` and a `grid-cols-3` grid at `lg` and
+  above** — the route board, the status board and the update feed all run through it.
+  Do not make it a carousel at all widths: that hides four of the seven service
+  statuses behind a horizontal swipe on a desktop screen, which is the opposite of
+  what a status board is for
+  ([why](./docs/DECISIONS.md#carousels-on-the-landings-two-boards--carousel-on-mobile-grid-on-desktop)).
+  It takes `lang` because the prev/next buttons need real accessible names; they read
+  the arrow glyph otherwise.
 - **The masthead row is full.** It is capped at `max-w-6xl` (1152px), so its space
   does **not** grow with the viewport — a control that fits at 1600 fits at 1280 and
   no better. The three actions are ranked and appear at different breakpoints: 123
@@ -352,6 +389,23 @@ a resident is never offered it.
   Adding anything here means removing something, not finding space.
 
 ## Things that will bite
+
+- **`check:contrast` finds the dark token block by string search, and takes the first
+  match.** It looks for the dark class selector followed by a space and `{`. Write that
+  sequence anywhere earlier in `globals.css` — including inside a comment explaining
+  this very rule — and the gate parses a comment body, extracts no tokens, and fails
+  all 27 dark pairings at once with a message that looks like a palette regression.
+  This has now cost two red builds. Describe the sequence; don't quote it.
+- **An unused module is invisible to `pnpm lint`.** ESLint flags unused *variables*,
+  not unused *files*, so a component nobody imports ships silently — the 2026-08-13
+  branch carried `landing-art.tsx` (269 lines), `local-clock.tsx` and a 131KB SVG that
+  nothing referenced, alongside a 1.9MB one that everything did. Before merging a large
+  feature branch, grep each new file's exports for a consumer.
+- **Check what an "SVG" actually contains before shipping it.** `seismic-dark.svg` was
+  a 1024×1536 PNG base64'd inside an SVG wrapper: 1.9MB, and 1.42MB *gzipped*, because
+  already-compressed pixels do not compress twice. It passed every gate — build, lint,
+  types — and would have put more weight on the landing than the rest of the site
+  combined. `ls -lh public/` is the whole check.
 
 - **Never invent data to fill a gap** — no status, address, phone number, timestamp,
   or placeholder email. Render the honest empty state. This has already slipped in
