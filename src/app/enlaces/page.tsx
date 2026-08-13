@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { ExternalLink, Info, ShieldCheck, Users } from "lucide-react";
 
 import { DegradedNotice } from "@/components/degraded-notice";
@@ -57,9 +58,20 @@ export default async function LinksPage() {
         subtitle={t.links.subheading}
       />
 
+      {/* The notice says we checked who runs each destination and nothing
+          more. `/verificacion` is where "checked" is actually defined, so the
+          claim and its standard sit together rather than the claim alone. */}
       <Alert className="mt-8 rounded-sm">
         <Info className="size-4" aria-hidden />
-        <AlertDescription>{t.links.externalNotice}</AlertDescription>
+        <AlertDescription>
+          {t.links.externalNotice}{" "}
+          <Link
+            href="/verificacion"
+            className="font-semibold underline underline-offset-4"
+          >
+            {t.verification.cardLink}
+          </Link>
+        </AlertDescription>
       </Alert>
 
       {degraded ? (

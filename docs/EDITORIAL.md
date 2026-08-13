@@ -214,6 +214,29 @@ official channel from a citizen-run one, and the UI renders a non-official
 source as an explicit **"No es un canal oficial"** badge rather than leaving the
 reader to infer it.
 
+### Name the operator; never name the checker
+
+The rule above is about **the organization running the destination** — Cruz Roja,
+a clinic, the person whose fundraiser it is. That name is accountability: it is
+who the reader is trusting when they hand something over.
+
+It is **not** licence to credit whoever on our side did the checking. A card that
+says "Fuente: <a person's name>" reads as a personal vouch, and it asks the reader
+a question they cannot answer — *do I trust this stranger?* — in place of the one
+that decides anything: *what was actually checked, and when?* So `source_name`
+carries the confirming channel, or `sismopereira.org` when the confirmation was
+our own, and the card links to the standard.
+
+That standard lives in one place, [`/verificacion`](../src/app/verificacion/page.tsx):
+what "verificado" means, the checks that precede publishing, and — the half that
+makes it worth reading — what we explicitly do not check. It is hardcoded and
+queries nothing, because it is what a suspicious reader opens, and Rule 7 says it
+has to survive the outage that made them suspicious.
+
+This was a real correction, not a hypothetical: the three launch collection points
+shipped crediting a person by name and were rewritten in the live database on
+2026-08-12.
+
 **Verify the destination by hand before adding a row.** Open it, confirm the
 operator, confirm it does what the description says. A forwarded URL is not a
 source, and `verified` defaults to `false`.

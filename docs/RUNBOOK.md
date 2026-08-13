@@ -277,9 +277,19 @@ values
    null,
    'operational',
    array['Agua', 'Gasas', 'Pañales'],
-   'official', 'Canal o persona que lo confirmó', 'https://…',
+   'official', 'Canal que lo confirmó, o sismopereira.org', 'https://…',
    true);
 ```
+
+- **`source_name` names a channel or this site — never the person who checked
+  it.** Put the official channel there when there is one ("Alcaldía de Pereira",
+  "Cruz Roja Risaralda"). When the confirmation was our own phone call, it is
+  `sismopereira.org`. A personal name reads as a personal vouch: it asks the
+  reader to decide whether they trust a stranger, which is not a question they
+  can answer, and it is not what made the row publishable. The method is at
+  [`/verificacion`](../src/app/verificacion/page.tsx), which every card links to.
+  The three launch collection points shipped crediting a person by name and had
+  to be corrected in place on 2026-08-12.
 
 - **`needs` is the reason the page exists.** Array order is display order, so keep
   the operator's own ordering. A point with an empty `needs` renders "pregunta

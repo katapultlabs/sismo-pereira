@@ -678,6 +678,114 @@ const es = {
       alternativesCta: "Ver todos los canales",
     },
   },
+  /*
+   * The verification standard, in one place.
+   *
+   * This exists because the site sends people somewhere — a car park, a
+   * payment form, a registry — and "verificado" was doing a lot of unexamined
+   * work on those cards. A reader could see the badge and the date and still
+   * not know what had actually been checked.
+   *
+   * It also replaced a worse answer. Cards used to credit the person who did
+   * the checking by name, which reads as a personal vouch: it asks the reader
+   * to decide whether they trust a stranger, which is not a question they can
+   * answer and not the one that matters. The method and the date are the
+   * useful facts, so the cards now name the site and link here.
+   */
+  verification: {
+    heading: "Cómo verificamos",
+    /* The link on a card. Short, because it sits in a mono metadata row
+       beside the source and the date. */
+    cardLink: "Cómo verificamos",
+    lede:
+      "Este sitio manda gente a lugares: puntos de acopio, campañas de " +
+      "donación, registros para buscar a alguien. Esto es lo que " +
+      "comprobamos antes de publicar uno — y lo que no.",
+
+    meansHeading: "Qué quiere decir «verificado» aquí",
+    meansBody:
+      "Que en la fecha que aparece en la ficha confirmamos tres cosas: que " +
+      "el lugar existe, que lo opera quien decimos, y que recibe a quien " +
+      "llegue. No quiere decir que respondamos por lo que ocurra allí, ni " +
+      "que hayamos revisado sus cuentas.",
+
+    checksHeading: "Qué comprobamos antes de publicar",
+    checks: [
+      {
+        title: "Que se pueda nombrar a quien lo opera",
+        detail:
+          "Si no podemos decir qué organización está detrás de un lugar, no " +
+          "lo hemos comprobado lo suficiente como para mandarte allá.",
+      },
+      {
+        title: "Que un desconocido pueda entrar",
+        detail:
+          "Varios de estos sitios están dentro de clubes, conjuntos o " +
+          "edificios de oficinas. Que circule «estamos recibiendo " +
+          "donaciones» entre sus miembros no significa que dejen pasar a " +
+          "cualquiera. Lo preguntamos explícitamente.",
+      },
+      {
+        title: "Que la dirección lleve a una puerta y no a un edificio",
+        detail:
+          "«Viva Cerritos» te dice a qué construcción ir; «el parqueadero » " +
+          "te dice dónde parar el carro. Si sólo tenemos el edificio, " +
+          "dejamos la dirección vacía en lugar de inventar una entrada.",
+      },
+      {
+        title: "Que el dominio sea el de la organización",
+        detail:
+          "Un dominio parecido, registrado después del sismo, es la forma " +
+          "más común de fraude tras un desastre. Por eso cada ficha imprime " +
+          "el dominio: para que lo compares con la barra de direcciones.",
+      },
+      {
+        title: "Que el dinero pase por una pasarela conocida",
+        detail:
+          "Si una campaña pide los datos de la tarjeta en un formulario " +
+          "propio en vez de un procesador reconocido, no la publicamos.",
+      },
+    ],
+
+    limitsHeading: "Qué no comprobamos",
+    limitsLede:
+      "Decirlo es parte del método. Una verificación que no declara sus " +
+      "límites se lee como una garantía, y no lo es.",
+    limits: [
+      "No auditamos a nadie. No vemos sus cuentas, ni sus contratos, ni a " +
+        "dónde va cada peso después de que lo entregas.",
+      "No comprobamos lo que un sitio publica, sólo quién lo opera. Que " +
+        "confirmemos que una página es de la Cruz Roja no nos hace " +
+        "responsables de lo que diga esa página mañana.",
+      "No lo volvemos a mirar solo. Cada ficha lleva la fecha en que se " +
+        "revisó, y un punto de acopio puede cerrar en horas. La fecha es " +
+        "parte del dato, no un adorno.",
+    ],
+
+    badgeHeading: "Por qué algunas fichas dicen «No es un canal oficial»",
+    badgeBody:
+      "Porque quien lo opera no es una autoridad ni la organización " +
+      "responsable de esa tarea, sino un vecino, una empresa o una " +
+      "iniciativa particular. No quiere decir que sea falso — varios de los " +
+      "puntos de acopio de esta ciudad son exactamente eso — pero sí que no " +
+      "tiene detrás la obligación de responder que tiene un canal oficial.",
+
+    whoHeading: "Quién lo hace",
+    whoBody:
+      "La redacción de este sitio, no una persona a la que tengas que " +
+      "conocer. Por eso las fichas dicen «sismopereira.org» y no un nombre " +
+      "propio: un nombre te pide decidir si confías en un desconocido, que " +
+      "no es una pregunta que puedas responder. Lo que sí te sirve para " +
+      "decidir es el método y la fecha, y los dos están aquí.",
+
+    wrongHeading: "Si algo de esto está mal",
+    wrongBody:
+      "Si un punto cerró, cambió de horario o nunca recibió a nadie, " +
+      "dínoslo. Corregir un dato viejo importa tanto como publicar uno " +
+      "nuevo: un punto de acopio que cerró esta mañana manda a alguien a " +
+      "un viaje perdido con el carro lleno.",
+    wrongCta: "Enviar un reporte",
+  },
   links: {
     heading: "Enlaces útiles",
     subheading:
@@ -1271,6 +1379,98 @@ const en: typeof es = {
         "the same detail about who operates them.",
       alternativesCta: "See all channels",
     },
+  },
+  verification: {
+    heading: "How we verify",
+    cardLink: "How we verify",
+    lede:
+      "This site sends people places: collection points, donation campaigns, " +
+      "registries for finding someone. This is what we check before " +
+      "publishing one — and what we do not.",
+
+    meansHeading: "What “verified” means here",
+    meansBody:
+      "That on the date shown on the card we confirmed three things: the " +
+      "place exists, it is run by who we say, and it will receive whoever " +
+      "turns up. It does not mean we answer for what happens there, or that " +
+      "we have reviewed anyone's books.",
+
+    checksHeading: "What we check before publishing",
+    checks: [
+      {
+        title: "That whoever runs it can be named",
+        detail:
+          "If we cannot say which organization is behind a place, we have " +
+          "not checked it well enough to send you there.",
+      },
+      {
+        title: "That a stranger can actually get in",
+        detail:
+          "Several of these sit inside clubs, gated compounds and office " +
+          "buildings. “We are collecting donations” circulating among their " +
+          "members does not mean the public may drive through the gate. We " +
+          "ask explicitly.",
+      },
+      {
+        title: "That the address leads to a door, not a building",
+        detail:
+          "“Viva Cerritos” tells you which building; “the car park” tells " +
+          "you where to stop the car. If we only have the building, we " +
+          "leave the address empty rather than invent an entrance.",
+      },
+      {
+        title: "That the domain belongs to the organization",
+        detail:
+          "A lookalike domain registered after the earthquake is the most " +
+          "common form of post-disaster fraud. That is why every card " +
+          "prints its domain: so you can compare it with the address bar.",
+      },
+      {
+        title: "That money goes through a known processor",
+        detail:
+          "If a campaign asks for card details in a homemade form rather " +
+          "than a recognized gateway, we do not publish it.",
+      },
+    ],
+
+    limitsHeading: "What we do not check",
+    limitsLede:
+      "Saying so is part of the method. A verification that does not state " +
+      "its limits reads as a guarantee, and it is not one.",
+    limits: [
+      "We audit no one. We do not see anyone's books or contracts, or where " +
+        "each peso goes after you hand it over.",
+      "We check who operates a site, not what it publishes. Confirming that " +
+        "a page belongs to the Red Cross does not make us responsible for " +
+        "what that page says tomorrow.",
+      "We do not re-check it on our own. Every card carries the date it was " +
+        "reviewed, and a collection point can close within hours. The date " +
+        "is part of the fact, not decoration.",
+    ],
+
+    badgeHeading: "Why some cards say “Not an official channel”",
+    badgeBody:
+      "Because whoever runs it is not an authority or the organization " +
+      "responsible for that task, but a neighbour, a business or a private " +
+      "initiative. It does not mean it is fake — several of this city's " +
+      "collection points are exactly that — but it does mean it carries " +
+      "none of the obligation to answer that an official channel does.",
+
+    whoHeading: "Who does it",
+    whoBody:
+      "This site's editors, not a person you have to know. That is why the " +
+      "cards say “sismopereira.org” rather than someone's name: a name asks " +
+      "you to decide whether you trust a stranger, which is not a question " +
+      "you can answer. What does help you decide is the method and the " +
+      "date, and both are here.",
+
+    wrongHeading: "If any of this is wrong",
+    wrongBody:
+      "If a point has closed, changed its hours, or never received anyone, " +
+      "tell us. Correcting an old fact matters as much as publishing a new " +
+      "one: a collection point that closed this morning sends someone on a " +
+      "wasted trip with a full boot.",
+    wrongCta: "Send a report",
   },
   links: {
     heading: "Useful links",

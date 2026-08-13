@@ -194,6 +194,16 @@ export default async function DonatePage() {
           className="mt-2"
         />
 
+        {/* What "verificado" meant, for the reader who wants the standard
+            rather than this one campaign's dossier. */}
+        <Link
+          href="/verificacion"
+          className="label-signage mt-2 inline-flex items-center gap-1.5 text-muted-foreground underline-offset-4 hover:text-foreground hover:underline"
+        >
+          {t.verification.cardLink}
+          <ArrowRight className="size-3.5" aria-hidden />
+        </Link>
+
         {/*
          * Rule 10, requirement 2. In the body, at full size, before the
          * trust panel rather than inside it — a reader who never opens the
@@ -555,6 +565,15 @@ function BuenaventuraCard({
             ·
           </span>
           <span>{o.reviewedOn}</span>
+          <span className="text-border" aria-hidden>
+            ·
+          </span>
+          <Link
+            href="/verificacion"
+            className="underline-offset-4 hover:text-foreground hover:underline"
+          >
+            {t.verification.cardLink}
+          </Link>
         </div>
 
         <Button
@@ -701,7 +720,10 @@ function CollectionCard({
         )}
       </div>
 
-      {/* Rule 3: who told us, and when. */}
+      {/* Rule 3: who told us, and when — plus what "checked" meant.
+          `source_name` is the site rather than whoever made the call: a name
+          asks the reader to judge a stranger, which is not a question they can
+          answer, so the row links to the method instead. */}
       <div className="mt-4 flex flex-wrap items-center gap-x-2.5 gap-y-1 border-t border-border pt-3 font-mono text-[0.6875rem] text-muted-foreground">
         {point.source_name ? (
           <>
@@ -736,6 +758,15 @@ function CollectionCard({
             </a>
           </>
         ) : null}
+        <span className="text-border" aria-hidden>
+          ·
+        </span>
+        <Link
+          href="/verificacion"
+          className="underline-offset-4 hover:text-foreground hover:underline"
+        >
+          {t.verification.cardLink}
+        </Link>
       </div>
     </article>
   );

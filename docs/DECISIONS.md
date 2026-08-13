@@ -249,6 +249,43 @@ and a fabricated one is a working method for stealing donated goods. Rows arrive
 `supabase/pending/`, which nothing runs automatically — the wording is preserved
 without being published.
 
+### The verification standard is a page, not a byline
+
+**Decision:** `/verificacion` states what "verificado" means, what is checked
+before a destination is published, and what is not. Cards link to it. `source_name`
+never carries the name of whoever did the checking.
+
+**What it replaced.** The three launch collection points shipped with
+`source_name = 'Tomás Gutiérrez — sismopereira.org'`, and the RUNBOOK template
+invited it: `'Canal o persona que lo confirmó'`. That is the wrong shape for the
+claim. A personal byline reads as a personal vouch — it asks the reader *do I
+trust this stranger?*, which is unanswerable for almost everyone who lands here,
+and which is not what made the row publishable in the first place. What made it
+publishable was a phone call confirming that a stranger could actually drive
+through the gate. So publish the method, not the caller.
+
+**This is a distinction, not a reversal of Rule 9.** Naming the organization that
+*runs* a destination stays mandatory — that name is who the reader is trusting
+with their money or their afternoon. Naming the person on our side who *checked*
+it is the part that was never justified.
+
+**Why a page rather than a paragraph on each card.** The interesting half is the
+limits — we audit nobody, we check who operates a site and not what it publishes,
+and we do not re-check on our own — and that does not fit in a metadata row. It is
+also the answer to a question a reader asks once, not once per card.
+
+**Hardcoded, queries nothing.** It is what a suspicious reader opens, and Rule 7
+says the page explaining why to trust the site must survive the outage that made
+them suspicious.
+
+**Not in the masthead.** The nav is full at six. It is reached from the cards that
+make the claim, which is where the question actually occurs.
+
+**Correcting it needed a database write, not a deploy.** The name was `resources`
+content in production, so no code change touched it — which is the `seed.sql` trap
+from the other direction, and worth remembering: grepping the repo for a string a
+reader can see on the live site will find nothing if the string is a row.
+
 ### Giving gets the one hue that is not a status
 
 **Decision:** every donate surface — the site-wide strip, the home and `/recursos`

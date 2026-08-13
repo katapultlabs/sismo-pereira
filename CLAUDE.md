@@ -343,7 +343,7 @@ a resident is never offered it.
 - Status is always encoded three ways — colour, icon, and text — so it survives colour
   blindness, greyscale, and a cracked screen. Preserve that when adding indicators.
 - Route segments are Spanish (`/servicios`, `/reportes`, `/recursos`, `/enlaces`,
-  `/reportar`, `/luz`, `/organizaciones`, `/donar`,
+  `/reportar`, `/luz`, `/organizaciones`, `/donar`, `/verificacion`,
   `/actualizaciones/[slug]`); code identifiers are English. `/admin` and `/panel` are internal and **Spanish-only** —
   the bilingual machinery is for the public bulletin, not for a control room in
   Pereira.
@@ -384,6 +384,18 @@ a resident is never offered it.
   or placeholder email. Render the honest empty state. This has already slipped in
   once as a "sensible default" (commit `eca5dd3`, `NEXT_PUBLIC_CONTACT_EMAIL` on the
   **organizaciones page** — the footer does not use it).
+- **`source_name` never carries the name of whoever did the checking.** It is the
+  confirming channel, or `sismopereira.org` when the confirmation was ours. A
+  personal byline reads as a personal vouch and asks the reader an unanswerable
+  question; the method belongs at `/verificacion`, which every card links to.
+  Naming the organization that *runs* a destination is still required — that is
+  Rule 9 and a different thing
+  ([why](./docs/EDITORIAL.md#name-the-operator-never-name-the-checker)).
+- **A string a reader can see on the live site may not exist in this repo.** The
+  three collection points credited a person by name for two days; grepping the
+  tree found nothing, because it was a `resources` row in production. Check the
+  live database before concluding that rendered text is not published anywhere —
+  this is the `seed.sql` trap running in reverse.
 - **A seeded `unknown` can outrank a real report.** `current_service_status` is
   `distinct on (service, zone_slug) order by reported_at desc` — newest
   `reported_at` wins, and the seed stamps all seven baseline rows with the moment
