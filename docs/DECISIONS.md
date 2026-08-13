@@ -196,10 +196,28 @@ visibly different containers, because merging them into one confident block is t
 Rule 3 failure this site exists to avoid.
 
 **What stayed in the open, and is not negotiable.** The declaration of interest —
-the site operator's investment stake in Vaki — renders in the body at full size,
-between the donate plate and the trust panel. Rule 10 requires it not be a footnote,
-and a disclosure behind a disclosure is a footnote with extra steps. It was also
-never the thing making the page heavy: it is one short paragraph.
+the investment stake in Vaki — renders in the body at full size, between the donate
+plate and the trust panel. Rule 10 requires it not be a footnote, and a disclosure
+behind a disclosure is a footnote with extra steps. It was also never the thing
+making the page heavy: it is one short paragraph.
+
+**The disclosure is stated about the site, not about a person.** It used to open
+"Quien opera este sitio…". That sentence made a reader stop and resolve an
+identity — *who runs this, and does that matter to me?* — before they could get at
+the fact, which is that the recommendation has a conflict behind it. The conflict is
+a property of the recommendation, so the sentence is now about the recommendation.
+Nothing was removed: same position, same size, same claim. If you are tempted to put
+a name back in for candour, note that it buys no information a donor can act on.
+
+**Verified / not verified sits above the dossier.** Even collapsed, "¿Por qué
+deberías confiar en esto?" answers a question in ~400 words that a donor holds in
+one: *is this checked or not.* So the page now states that first, in two sentences —
+one solid card for what was verified, one dashed card for what was not — and the
+evidence stays one click behind it. The two containers are the same ones the dossier
+uses internally, so the summary and the detail read as one argument rather than two.
+The caveat is set at the same weight as the finding on purpose; a summary that put
+the reassuring half in body type and the gap in fine print would be the merged
+confident block Rule 10 forbids, just executed with typography instead of layout.
 
 **Native `<details>`, not the Base UI accordion.** The panel has to open with no
 JavaScript. Someone reads this on a degraded connection during an aftershock, which
@@ -230,6 +248,78 @@ and a fabricated one is a working method for stealing donated goods. Rows arrive
 `verified = false`. Announcements that cannot be checked yet wait in
 `supabase/pending/`, which nothing runs automatically — the wording is preserved
 without being published.
+
+### Giving gets the one hue that is not a status
+
+**Decision:** every donate surface — the site-wide strip, the home and `/recursos`
+plates, the `/donar` CTA, the footer chip — moved off `bg-foreground` onto a new
+`--donate` mulberry. Four tokens, same roles as a status (`--donate`,
+`-contrast`, `-muted`, `-foreground`), gated by `pnpm check:contrast`.
+
+**Why.** "Chroma is signal" was written to stop a brand colour competing with the
+four status hues, and it is still right. But it had a side effect nobody costed: the
+donate surfaces were the *only* thing left to render in inverted near-black, and they
+are the most-repeated element on the site. A near-black band under the masthead on
+every page, and a near-black slab in the middle of a bone-coloured `/donar`, read as
+a funeral notice. Asking a stranger for money is the one act on this bulletin that
+should feel warm, and it was the coldest thing on it.
+
+**The two bounds that keep it from being a fifth signal**, and they are the whole
+reason this is not a violation:
+
+- **Hue 318 is the furthest point from every status.** The four sit at 27, 70, 149
+  and 250; the widest gap on the wheel is 250 → 27 and its midpoint is ~318. The
+  mulberry is 68° from its nearest neighbour. The obvious "friendly" choice — a warm
+  clay or terracotta at ~50 — lands *between* `down` and `warn` and would have read
+  as a muted alert. That is why this is not orange, and warmth is not a good enough
+  reason to move it back toward one.
+- **Chroma is roughly half a status.** 0.098 light / 0.105 dark, against 0.145–0.215
+  for the status fills. It is a substrate, not a brand.
+
+**Dark mode does not invert it, and this is the part that is easy to get wrong.**
+Statuses lift their fill to L 0.62–0.8 at night and flip to dark text, which is
+correct for a chip. Applied to a full-width slab it produced a lavender panel that
+was the brightest object on the instrument face — read in a blackout, on battery. So
+`--donate` goes *darker* at night (L 0.44) and keeps light text. The measurement:
+at L 0.62 the plate out-shone a `down` card sharing the screen; at 0.44 it sits
+behind it.
+
+**The CTA is `--donate-contrast`, not `bg-background`.** A bone button on the plate
+is right in the light theme and becomes a near-black button in a hole in the dark
+one, which is the exact complaint the whole change answers. `--donate-contrast` is
+pale in both themes.
+
+### A second campaign, for a region we do not cover
+
+**Decision:** `/donar` carries a Buenaventura fundraiser as section `03`, below both
+doors, hardcoded, linking to a personal GoFundMe.
+
+This is the weakest destination the site points at — a personal fundraiser on a
+platform that hosts anyone, which arrived through a personal connection rather than
+an official channel — so it carries the most apparatus rather than the least: the
+"no es un canal oficial" badge, a named organizer, a sourced reason the place needs
+help, verified/not-verified, and a line saying how the link reached us.
+
+**It sits below the two doors, not beside them.** The fold is "how do you want to
+help", answered by dinero and cosas. Geography is a question a reader only reaches
+after deciding to give, and a third plate would have broken the two-door grid the
+page is built on.
+
+**We do not assert the damage ourselves.** The site has no reporting in Valle del
+Cauca, so the reason-to-give is attributed to El Tiempo and La Silla Vacía, with the
+mayor quoted as the mayor. Rule 3 applies to a reason for giving exactly as it
+applies to a status card — the temptation to write "Buenaventura was hit really hard"
+in our own voice is the whole failure mode.
+
+**The published URL is the canonical `gofundme.com` one**, never the `gofund.me`
+shortener it arrived as. Rule 9 prints a bare domain so a reader can compare it with
+the address bar; a shortener hides precisely that, on the click where it matters
+most. Anything that arrives as a short link gets resolved before it is published.
+
+**No running total.** The raised/goal figures were deliberately left off: they go
+stale within hours, and every number on this site has to carry a timestamp (Rule 3).
+The card carries its own review date instead of the page's, because it was checked a
+day after the Vaki dossier.
 
 ### The home page is a hub, not a bulletin
 

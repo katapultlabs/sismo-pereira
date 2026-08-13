@@ -10,9 +10,12 @@ import { getDictionary, type Lang } from "@/lib/i18n";
 /**
  * The slim, site-wide strip, directly under the masthead on every page.
  *
- * Inverted ink rather than a saturated fill: the chrome is achromatic so the
- * only saturated colour on the site is a service status, and a donation CTA
- * competing with four status hues would cost more attention than it gains.
+ * The `--donate` mulberry rather than inverted ink. The strip was
+ * `bg-foreground` — a near-black band directly under the masthead on every
+ * page — which set a funereal tone for the whole site before a reader got to
+ * any content. `--donate` sits at roughly half a status colour's chroma and at
+ * the furthest hue from all four, so the strip warms up without becoming a
+ * fifth signal competing with the status board.
  *
  * The whole strip is the link, with an arrow rather than a button chip — the
  * masthead directly above carries a real "Donar" button, and two solid buttons
@@ -33,11 +36,11 @@ export function DonateBar({ lang }: { lang: Lang }) {
   return (
     <aside
       aria-label={t.donate.eyebrow}
-      className="border-b border-foreground/25 bg-foreground text-background"
+      className="border-b border-donate/30 bg-donate text-donate-contrast"
     >
       <Link
         href={DONATE_PATH}
-        className="group mx-auto flex max-w-6xl items-center gap-3 px-4 py-2 outline-none focus-visible:ring-2 focus-visible:ring-background sm:gap-4"
+        className="group mx-auto flex max-w-6xl items-center gap-3 px-4 py-2 outline-none focus-visible:ring-2 focus-visible:ring-donate-contrast sm:gap-4"
       >
         <HeartHandshake className="hidden size-4 shrink-0 sm:block" aria-hidden />
 
@@ -45,7 +48,7 @@ export function DonateBar({ lang }: { lang: Lang }) {
             is pushed off a 320px screen. */}
         <span className="min-w-0 flex-1">
           <span className="block truncate text-sm leading-tight font-semibold">
-            <span className="label-signage mr-2 hidden text-background/70 md:inline">
+            <span className="label-signage mr-2 hidden text-donate-contrast/75 md:inline">
               {t.donate.eyebrow}
             </span>
             {t.donate.barTitle}

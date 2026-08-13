@@ -182,6 +182,19 @@ goods, then the alternatives pointer.
   expander.** Rule 10 requires it not be a footnote, and a disclosure hidden behind
   a disclosure is a footnote with extra steps. It renders between the donate plate
   and the trust panel, so a reader who never expands anything has still read it.
+  It is written **about the site, not about a person** — the conflict is a property
+  of the recommendation, and naming an individual spends the reader's attention on
+  working out who that is. Grammar only: do not let "depersonalise" become "shorten".
+- **A verified / not-verified pair sits above the dossier**, one solid card and one
+  dashed, and the dashed one is the same weight as the solid one. Setting the gap in
+  fine print would be the merged-confident-block failure done with typography.
+- **Section `03` is the Buenaventura fundraiser** (`#buenaventura`), below both
+  doors. It is the weakest destination on the site — a personal GoFundMe reached
+  through a personal connection — so it carries the *most* apparatus: not-official
+  badge, named organizer, sourced reason, verified/not-verified, and how the link
+  reached us. Publish the canonical `gofundme.com` URL, never a `gofund.me`
+  shortener: Rule 9 prints the bare domain precisely so it can be compared with the
+  address bar.
 - **The trust dossier is collapsed, not softened.** Findings, campaign claims, and
   gaps stay three visibly different containers *inside* `<details>` — bordered
   cards with a source line, quoted blocks, dashed boxes. Collapsing them into one
@@ -280,9 +293,23 @@ a resident is never offered it.
 - **Chroma is signal.** The chrome is deliberately achromatic — warm bone "paper" by
   day, cold instrument "ink" by night — so the only saturated colour anywhere is a
   service status. Do not add a saturated brand colour: it would compete with the four
-  status hues for the same attention. The one exception is the small square epicentre
-  mark in the masthead, the footer, and the site icon, which is a shape rather than a
-  state.
+  status hues for the same attention. Two exceptions, both deliberate: the small
+  square epicentre mark in the masthead, footer and site icon (a shape, not a state),
+  and `--donate`.
+- **`--donate` is the one hue that is not a status, and it is bounded.** Every donate
+  surface used to be inverted near-black, which on a bone page read as a funeral
+  notice — the wrong invitation for the only thing here that asks a stranger for
+  money. The mulberry is legitimate *because of its bounds*, so preserve them if you
+  touch it: **hue 318** is the furthest point from all four status hues (27 / 70 /
+  149 / 250 — widest gap is 250→27, midpoint ~318), and **chroma stays near half a
+  status** (0.098 light, 0.105 dark vs 0.145–0.215). Warming it toward clay or
+  terracotta walks it into `warn`/`down` territory and it starts reading as a muted
+  alert. Note it does **not** invert at night like a status does: a status chip lifts
+  to L 0.62–0.8, and a full-width slab at that lightness was the brightest thing on
+  the screen during a blackout, so `--donate` goes *darker* (L 0.44) and keeps light
+  text ([why](./docs/DECISIONS.md#giving-gets-the-one-hue-that-is-not-a-status)).
+  Donate CTAs use `bg-donate-contrast`, never `bg-background` — the latter is
+  near-black under the dark theme.
 - **The site icon is that same mark, and it is generated.** `src/app/icon.svg` is the
   source of truth; `pnpm icons` redraws `favicon.ico` (16/32/48) and `apple-icon.png`
   from geometry duplicated in `scripts/render-icons.mjs` — change the SVG and you must

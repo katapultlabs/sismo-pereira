@@ -504,6 +504,33 @@ const es = {
         "impuestos desde Estados Unidos, donación internacional, y pago en " +
         "pesos con métodos locales colombianos. Todas se procesan con Stripe.",
 
+      /*
+       * The one-glance answer, printed above the dossier.
+       *
+       * Someone deciding whether to give does not want four bordered cards and
+       * three dashed boxes first; they want to know which parts of this have
+       * been checked and which have not. So the page says that in two lines
+       * and keeps the evidence behind the expander for whoever wants it.
+       *
+       * This compresses Rule 10's separation of findings from gaps — it does
+       * not soften it. "Sin verificar" is set at the same size, in the same
+       * container, as "Verificado"; a summary that printed only the reassuring
+       * half would be exactly the merged-confident-block failure Rule 10
+       * forbids.
+       */
+      checks: {
+        yes: "Verificado",
+        no: "Sin verificar",
+        verified:
+          "Quién opera la campaña. Vaki es una plataforma colombiana con " +
+          "años de operación, la campaña vive en su propio dominio y los " +
+          "pagos se procesan con Stripe.",
+        unverified:
+          "A dónde llega el dinero. La campaña todavía no publica las " +
+          "organizaciones que reciben, un informe de desembolsos, ni qué " +
+          "parte del aporte se va en comisiones.",
+      },
+
       verifiedHeading: "Qué verificamos nosotros",
       verifiedLede:
         "Lo que comprobamos por nuestra cuenta, con la fuente al lado. No " +
@@ -582,12 +609,66 @@ const es = {
           "aporte se destina a comisiones de plataforma o de procesamiento.",
       ],
 
+      /*
+       * Rule 10, requirement 2 — stated about the site rather than about a
+       * person. The disclosure itself is not negotiable and has not moved or
+       * shrunk; only the grammar changed. Naming an individual made a reader
+       * stop and work out who that was and whether it mattered, which is
+       * cognitive load spent on the wrong question: what they need is the
+       * relationship, not the biography.
+       */
       disclosureHeading: "Declaración de interés",
       disclosureBody:
-        "Quien opera este sitio tiene una participación como inversionista en " +
-        "Vaki. Lo decimos aquí, y no en una nota al pie, porque esta página " +
-        "recomienda una campaña de esa plataforma — y esa relación es " +
-        "exactamente el tipo de dato que deberías conocer antes de decidir.",
+        "Hay un conflicto de interés en esta recomendación: este sitio está " +
+        "vinculado a Vaki —la plataforma que opera la campaña— por una " +
+        "participación como inversionista. Va aquí, y no en una nota al pie, " +
+        "porque es exactamente el tipo de dato que deberías conocer antes de " +
+        "decidir.",
+
+      /*
+       * Rule 9 in its hardest form: a personal fundraiser, on a platform that
+       * will host anyone, which reached us through a personal connection
+       * rather than an official channel. Everything that makes it publishable
+       * is on the card — who organizes it, the bare domain, what could be
+       * checked, what could not, and how it got here.
+       *
+       * The published URL is the canonical `gofundme.com` one, never the
+       * `gofund.me` shortener it arrived as. A shortened link hides the exact
+       * domain Rule 9 prints for the reader to compare against the address
+       * bar, which would defeat the check on the page that needs it most.
+       */
+      otherRegions: {
+        heading: "Ayudar a otra región",
+        lede:
+          "El sismo no se detuvo en Risaralda. Si quieres que tu aporte " +
+          "llegue a otra zona golpeada, esta es la campaña que revisamos.",
+        place: "Buenaventura, Valle del Cauca",
+        campaignTitle: "Earthquake Relief for Buenaventura, Colombia",
+        /* Its own date, not the page's: this card was checked a day after the
+           Vaki dossier, and Rule 3 dates the claim, not the page. */
+        reviewedOn: "Revisado el 12 de agosto de 2026",
+        context:
+          "El puerto quedó aislado por tres derrumbes en la vía a " +
+          "Loboguerrero y Buga, con la red hospitalaria al límite y " +
+          "calamidad pública declarada. El alcalde dijo que «el terremoto " +
+          "desbordó todas las capacidades» del distrito.",
+        contextSource: "El Tiempo, La Silla Vacía",
+        organizerLabel: "Organiza",
+        organizer: "Catalina García Cure, desde Fort Lauderdale (EE. UU.)",
+        verified:
+          "El enlace lleva a una campaña real alojada en gofundme.com, con " +
+          "una persona identificada al frente y una organización receptora " +
+          "con nombre: la Patrulla Aérea Civil Colombiana.",
+        unverified:
+          "Es un recaudo personal, no una entidad auditada. Los fondos " +
+          "entran a una cuenta particular en Estados Unidos antes de llegar " +
+          "a Colombia, y no hay un informe de gastos que puedas revisar.",
+        relation:
+          "Este enlace no llegó por un canal oficial sino por una relación " +
+          "personal con quien organiza la campaña. Lo decimos por la misma " +
+          "razón que declaramos todo lo demás en esta página.",
+        cta: "Ver la campaña",
+      },
 
       alternativesHeading: "No es el único canal",
       alternativesBody:
@@ -1053,6 +1134,19 @@ const en: typeof es = {
         "from the United States, an international donation, and payment in " +
         "pesos using local Colombian methods. All are processed by Stripe.",
 
+      checks: {
+        yes: "Verified",
+        no: "Not verified",
+        verified:
+          "Who runs the campaign. Vaki is a Colombian platform with years of " +
+          "operation, the campaign lives on its own domain, and payments are " +
+          "processed by Stripe.",
+        unverified:
+          "Where the money lands. The campaign does not yet publish the " +
+          "receiving organizations, a disbursement report, or how much of a " +
+          "contribution goes to fees.",
+      },
+
       verifiedHeading: "What we verified ourselves",
       verifiedLede:
         "What we checked independently, with the source beside it. We did not " +
@@ -1133,10 +1227,42 @@ const en: typeof es = {
 
       disclosureHeading: "Declaration of interest",
       disclosureBody:
-        "The operator of this site holds an investment stake in Vaki. We say " +
-        "so here, rather than in a footnote, because this page recommends a " +
-        "campaign on that platform — and that relationship is exactly the " +
-        "kind of fact you should know before deciding.",
+        "There is a conflict of interest in this recommendation: this site is " +
+        "tied to Vaki — the platform running the campaign — by an investment " +
+        "stake. It goes here, rather than in a footnote, because it is exactly " +
+        "the kind of fact you should know before deciding.",
+
+      otherRegions: {
+        heading: "Help another region",
+        lede:
+          "The earthquake did not stop at Risaralda. If you want your " +
+          "contribution to reach another hard-hit area, this is the campaign " +
+          "we reviewed.",
+        place: "Buenaventura, Valle del Cauca",
+        campaignTitle: "Earthquake Relief for Buenaventura, Colombia",
+        reviewedOn: "Reviewed on 12 August 2026",
+        context:
+          "The port was cut off by three landslides on the road to " +
+          "Loboguerrero and Buga, with the hospital network at its limit and " +
+          "a state of public calamity declared. The mayor said the " +
+          "earthquake “exceeded every capacity” the district had.",
+        contextSource: "El Tiempo, La Silla Vacía",
+        organizerLabel: "Organized by",
+        organizer: "Catalina García Cure, from Fort Lauderdale, U.S.",
+        verified:
+          "The link goes to a real campaign hosted on gofundme.com, with an " +
+          "identified person running it and a named receiving organization: " +
+          "Patrulla Aérea Civil Colombiana.",
+        unverified:
+          "It is a personal fundraiser, not an audited entity. Funds arrive " +
+          "in a private U.S. account before reaching Colombia, and there is " +
+          "no spending report you can review.",
+        relation:
+          "This link did not arrive through an official channel but through a " +
+          "personal connection to the person organizing the campaign. We say " +
+          "so for the same reason we declare everything else on this page.",
+        cta: "See the campaign",
+      },
 
       alternativesHeading: "This is not the only channel",
       alternativesBody:

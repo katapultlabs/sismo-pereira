@@ -74,6 +74,10 @@
   --color-fixing-contrast: var(--fixing-contrast);
   --color-fixing-foreground: var(--fixing-foreground);
   --color-fixing-muted: var(--fixing-muted);
+  --color-donate: var(--donate);
+  --color-donate-contrast: var(--donate-contrast);
+  --color-donate-foreground: var(--donate-foreground);
+  --color-donate-muted: var(--donate-muted);
 
   /* Stamped, not pill-shaped. The tight radius is load-bearing for the
    * bulletin aesthetic — raising it reads as a generic card UI again. */
@@ -147,6 +151,34 @@
   --fixing-muted: oklch(0.934 0.04 250);
   --fixing-foreground: oklch(0.37 0.13 250);
 
+  /*
+   * Giving. The one hue on this site that is not a service status.
+   *
+   * "Chroma is signal" still holds, and this does not break it — it bends it
+   * under two explicit bounds, because the donate surfaces were a near-black
+   * inverted slab (`bg-foreground`, L 0.185) and a black button, which on a
+   * bone-coloured page reads as a funeral notice rather than an invitation.
+   * Asking for money is the one thing on this bulletin that should feel warm.
+   *
+   *  1. **Hue 318 is the furthest point from every status hue.** The four sit
+   *     at 27 (down), 70 (warn), 149 (ok) and 250 (fixing); the widest gap on
+   *     the wheel is 250 → 27, and its midpoint is ~318. A mulberry is 68° from
+   *     its nearest status, so it can never be misread as one. A warm clay —
+   *     the obvious "friendly" choice — sits at ~50, between `down` and `warn`,
+   *     and would have read as a muted alert. That is why this is not orange.
+   *  2. **Chroma stays roughly half a status.** 0.075 here against 0.145–0.215
+   *     for the status fills, so a donate plate never out-shouts a status card
+   *     sharing a screen. It is a warm substrate, not a brand colour.
+   *
+   * Roles match the status tokens exactly (`--x` fill, `--x-contrast` text on
+   * it, `--x-muted` tint, `--x-foreground` text on the tint), and are gated at
+   * 4.5:1 by `pnpm check:contrast` the same way.
+   */
+  --donate: oklch(0.485 0.098 318);
+  --donate-contrast: oklch(0.985 0.008 318);
+  --donate-muted: oklch(0.945 0.024 318);
+  --donate-foreground: oklch(0.335 0.085 318);
+
   --sidebar: oklch(0.945 0.008 83);
   --sidebar-foreground: oklch(0.185 0.014 65);
   --sidebar-primary: oklch(0.21 0.016 65);
@@ -207,6 +239,23 @@
   --fixing-contrast: oklch(0.15 0.02 250);
   --fixing-muted: oklch(0.305 0.065 250);
   --fixing-foreground: oklch(0.885 0.07 250);
+
+  /*
+   * Night does **not** invert this the way the statuses do.
+   *
+   * A status badge is a small chip, so lifting its fill to L 0.62–0.8 and
+   * dropping the text to near-black is right. The donate plate is a full-width
+   * slab, and at L 0.62 it became the brightest object on the instrument face
+   * — a lavender panel glowing louder than a `down` card, read in a blackout,
+   * on battery. So the fill stays *darker* than the statuses and keeps light
+   * text: a deep mulberry panel sitting on the dark ground rather than a lamp
+   * bolted to it. (The plate was `bg-foreground` before, near-white, which had
+   * the same problem and worse.)
+   */
+  --donate: oklch(0.44 0.105 318);
+  --donate-contrast: oklch(0.975 0.012 318);
+  --donate-muted: oklch(0.295 0.055 318);
+  --donate-foreground: oklch(0.895 0.055 318);
 
   --sidebar: oklch(0.178 0.011 255);
   --sidebar-foreground: oklch(0.955 0.004 85);

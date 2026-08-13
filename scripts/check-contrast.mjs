@@ -125,8 +125,10 @@ const PAIRS = [
   ["destructive", "background", "destructive text on the page"],
 ];
 
-// Status tokens carry the site's actual meaning; check both of their surfaces.
-for (const status of ["ok", "warn", "down", "fixing"]) {
+// `donate` is not a status, but it carries the same four token roles and the
+// same failure mode — it is the substrate under the one CTA that asks for
+// money, so an illegible one costs more than a mismatched badge.
+for (const status of ["ok", "warn", "down", "fixing", "donate"]) {
   PAIRS.push([
     `${status}-foreground`,
     `${status}-muted`,

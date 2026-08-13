@@ -252,10 +252,25 @@ Three things are non-negotiable on any page that recommends rather than lists:
    which without reading the headings. Merging them into one confident block
    is the failure this whole document exists to prevent.
 2. **A financial or personal interest is declared on the page itself**, in the
-   body, not a footnote — the site operator holds an investment stake in Vaki,
-   and `/donar` says so at full size. A reader who learns it somewhere else
-   has been misled by omission, and that costs more credibility than any
-   recommendation can buy back.
+   body, not a footnote — there is an investment stake in Vaki, and `/donar`
+   says so at full size. A reader who learns it somewhere else has been misled
+   by omission, and that costs more credibility than any recommendation can
+   buy back.
+
+   **Declare the relationship, not the person.** The disclosure is written
+   about the site ("este sitio está vinculado a Vaki…"), not about a named
+   individual. Naming someone makes a reader stop and work out who that is and
+   whether it matters, which spends attention on the wrong question — what
+   they need is the conflict, and the conflict is a property of the
+   recommendation. This is a rule about grammar and never about substance: the
+   disclosure does not shrink, move, or soften.
+
+   **A personal connection is an interest.** It is not only money. The
+   Buenaventura fundraiser on `/donar` reached the site through a personal
+   relationship with its organizer rather than an official channel, and the
+   card says so, for the same reason and at the same size. A link that arrives
+   through a friend is the single most common way an unverified appeal gets
+   amplified, so how it arrived is part of what we publish about it.
 
    **This is the one thing on `/donar` that may not be collapsed.** The
    verification dossier — findings, claims, gaps — now sits behind a

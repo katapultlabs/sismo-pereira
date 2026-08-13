@@ -15,10 +15,18 @@ import { cn } from "@/lib/utils";
  *
  * **Every CTA in here points inward, to `/donar`.** That page is the single
  * exit point to the campaign. Routing through it means the verification, the
- * open questions, and the operator's declared stake in Vaki are all on screen
- * *before* anyone leaves the site, rather than discovered afterwards. It costs
- * a click; the alternative is a site that amplifies a donation link on every
- * page and discloses its interest nowhere.
+ * open questions, and the declared stake in Vaki are all on screen *before*
+ * anyone leaves the site, rather than discovered afterwards. It costs a click;
+ * the alternative is a site that amplifies a donation link on every page and
+ * discloses its interest nowhere.
+ *
+ * **The substrate is `--donate`, not `bg-foreground`.** Every plate here used
+ * to be inverted near-black ink. On a warm bone page that reads as a funeral
+ * notice, which is the wrong invitation for the one thing on this bulletin
+ * that asks a stranger for money. `--donate` is a mulberry deliberately placed
+ * at the furthest point on the hue wheel from all four status colours, at
+ * roughly half their chroma, so it warms the appeal without ever competing
+ * with a status card — see the token comment in `globals.css`.
  */
 
 /** The campaign. Only `DonateAction`, rendered on `/donar`, links to it. */
@@ -56,13 +64,13 @@ export function DonateBlock({
     <section
       aria-label={t.donate.eyebrow}
       className={cn(
-        "border border-foreground/25 bg-foreground text-background",
+        "border border-donate/30 bg-donate text-donate-contrast",
         className,
       )}
     >
       <div className="flex flex-col gap-6 p-6 sm:p-8 lg:flex-row lg:items-center lg:justify-between">
         <div className="min-w-0">
-          <p className="label-signage flex items-center gap-2 text-background/70">
+          <p className="label-signage flex items-center gap-2 text-donate-contrast/75">
             <HeartHandshake className="size-3.5" aria-hidden />
             {t.donate.eyebrow}
           </p>
@@ -71,16 +79,16 @@ export function DonateBlock({
             {t.donate.title}
           </h2>
 
-          <p className="mt-2.5 max-w-xl text-sm leading-relaxed text-pretty text-background/85">
+          <p className="mt-2.5 max-w-xl text-sm leading-relaxed text-pretty text-donate-contrast/90">
             {t.donate.body}
           </p>
-          <p className="mt-2 max-w-xl text-sm leading-relaxed text-pretty text-background/70">
+          <p className="mt-2 max-w-xl text-sm leading-relaxed text-pretty text-donate-contrast/75">
             {t.donate.scope}
           </p>
 
-          <p className="mt-4 font-mono text-[0.6875rem] text-background/70">
+          <p className="mt-4 font-mono text-[0.6875rem] text-donate-contrast/75">
             {t.links.operator}{" "}
-            <span className="font-semibold text-background">
+            <span className="font-semibold text-donate-contrast">
               {DONATE_OPERATOR}
             </span>
           </p>
@@ -89,8 +97,12 @@ export function DonateBlock({
         <Button
           size="lg"
           /* Full-bleed tap target on a phone; natural width once the plate is
-             wide enough that a 900px-wide button just looks stretched. */
-          className="label-signage h-11 shrink-0 gap-2 rounded-sm bg-background px-6 text-foreground hover:bg-background/85 sm:self-start lg:self-auto"
+             wide enough that a 900px-wide button just looks stretched.
+             `--donate-contrast` rather than `bg-background`: the latter is
+             near-black under the dark theme, which put a black button in a
+             hole on the plate — the exact thing the warm substrate is here to
+             get rid of. This one is a pale chip in both themes. */
+          className="label-signage h-11 shrink-0 gap-2 rounded-sm bg-donate-contrast px-6 text-donate hover:bg-donate-contrast/90 sm:self-start lg:self-auto"
           render={<Link href={DONATE_PATH} />}
         >
           {t.donate.cta}
@@ -100,7 +112,7 @@ export function DonateBlock({
 
       {/* Set apart on its own rule: it qualifies the appeal above rather than
           continuing it, and must not read as part of the pitch. */}
-      <p className="border-t border-background/20 px-6 py-3 text-xs leading-relaxed text-background/70 sm:px-8">
+      <p className="border-t border-donate-contrast/20 px-6 py-3 text-xs leading-relaxed text-donate-contrast/75 sm:px-8">
         {t.donate.blockNote}
       </p>
     </section>
@@ -132,7 +144,7 @@ export function DonateFooterLink({ lang }: { lang: Lang }) {
           {t.donate.learnMore}
         </span>
       </span>
-      <span className="label-signage inline-flex shrink-0 items-center gap-1.5 rounded-sm bg-foreground px-2.5 py-2 text-background">
+      <span className="label-signage inline-flex shrink-0 items-center gap-1.5 rounded-sm bg-donate px-2.5 py-2 text-donate-contrast">
         {t.donate.cta}
         <ArrowRight className="size-3" aria-hidden />
       </span>
@@ -159,7 +171,7 @@ export function DonateAction({
   return (
     <section
       className={cn(
-        "border border-foreground/25 bg-foreground p-6 text-background sm:p-8",
+        "border border-donate/30 bg-donate p-6 text-donate-contrast sm:p-8",
         className,
       )}
     >
@@ -168,23 +180,23 @@ export function DonateAction({
           <h2 className="display-condensed text-2xl font-extrabold text-balance uppercase">
             {t.donate.page.actionTitle}
           </h2>
-          <p className="mt-2.5 max-w-xl text-sm leading-relaxed text-pretty text-background/85">
+          <p className="mt-2.5 max-w-xl text-sm leading-relaxed text-pretty text-donate-contrast/90">
             {t.donate.page.actionBody}
           </p>
 
-          <div className="mt-4 flex flex-wrap items-center gap-x-2.5 gap-y-1 font-mono text-[0.6875rem] text-background/70">
+          <div className="mt-4 flex flex-wrap items-center gap-x-2.5 gap-y-1 font-mono text-[0.6875rem] text-donate-contrast/75">
             <span>
               {t.links.operator}{" "}
-              <span className="font-semibold text-background">
+              <span className="font-semibold text-donate-contrast">
                 {DONATE_OPERATOR}
               </span>
             </span>
-            <span className="text-background/40" aria-hidden>
+            <span className="text-donate-contrast/40" aria-hidden>
               ·
             </span>
             <span
               data-readout
-              className="inline-flex items-center gap-1 font-semibold text-background"
+              className="inline-flex items-center gap-1 font-semibold text-donate-contrast"
             >
               {DONATE_HOST}
               <ExternalLink className="size-3" aria-hidden />
@@ -194,7 +206,7 @@ export function DonateAction({
 
         <Button
           size="lg"
-          className="label-signage h-12 shrink-0 gap-2 rounded-sm bg-background px-7 text-base text-foreground hover:bg-background/85 sm:self-start lg:self-auto"
+          className="label-signage h-12 shrink-0 gap-2 rounded-sm bg-donate-contrast px-7 text-base text-donate hover:bg-donate-contrast/90 sm:self-start lg:self-auto"
           render={
             <a href={DONATE_URL} target="_blank" rel="noreferrer noopener" />
           }

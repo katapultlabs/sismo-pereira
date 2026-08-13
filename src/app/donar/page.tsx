@@ -5,6 +5,7 @@ import {
   Banknote,
   Check,
   ChevronDown,
+  CircleDashed,
   Clock,
   ExternalLink,
   Info,
@@ -21,6 +22,7 @@ import { DegradedNotice } from "@/components/degraded-notice";
 import { DonateAction } from "@/components/donate-banner";
 import { SectionHeading } from "@/components/section-heading";
 import { StatusBadge } from "@/components/status-badge";
+import { Button } from "@/components/ui/button";
 import { getCollectionPoints } from "@/lib/data";
 import { SOURCE_LABELS, formatDateTime, getDictionary } from "@/lib/i18n";
 import { getLang } from "@/lib/lang";
@@ -84,6 +86,7 @@ export default async function DonatePage() {
   const lang = await getLang();
   const t = getDictionary(lang);
   const p = t.donate.page;
+  const o = p.otherRegions;
   const c = t.collection;
   const { data: points, degraded } = await getCollectionPoints();
 
@@ -171,11 +174,36 @@ export default async function DonatePage() {
         <DonateAction lang={lang} className="mt-5" />
 
         {/*
+         * The one-glance verdict, above the disclosure and the dossier.
+         *
+         * The dossier answers "why should you trust this" in about 400 words.
+         * This answers the question a donor actually holds — *is this checked
+         * or not* — in two sentences, and the long version stays one click
+         * away for anyone who wants it.
+         *
+         * It reuses the two containers this page already uses for exactly
+         * this distinction: a solid bordered card for a finding, a dashed one
+         * for an absence. Same grammar as the `verified`/`gaps` blocks inside
+         * the expander, so the summary and the detail read as one argument.
+         */}
+        <ChecksStrip
+          yes={p.checks.yes}
+          no={p.checks.no}
+          verified={p.checks.verified}
+          unverified={p.checks.unverified}
+          className="mt-2"
+        />
+
+        {/*
          * Rule 10, requirement 2. In the body, at full size, before the
          * trust panel rather than inside it — a reader who never opens the
          * expander must still have read this.
+         *
+         * Carries the donate tint rather than a heavy black rule: it is part
+         * of the appeal's own voice, and `border-2 border-foreground/25` read
+         * as a legal warning stapled to the page.
          */}
-        <div className="mt-2 border-2 border-foreground/25 bg-muted/40 p-6 sm:p-8">
+        <div className="mt-2 border-2 border-donate/25 bg-donate-muted/50 p-6 sm:p-8">
           <h3 className="display-condensed flex items-center gap-2.5 text-lg font-extrabold uppercase">
             <Scale className="size-5 shrink-0" aria-hidden />
             {p.disclosureHeading}
@@ -347,6 +375,20 @@ export default async function DonatePage() {
       </section>
 
       {/* ------------------------------------------------------------------ */}
+      {/* Another region                                                      */}
+      {/* ------------------------------------------------------------------ */}
+      {/*
+       * Below both doors on purpose. The fold is still "how do you want to
+       * help" answered by dinero and cosas; geography is a question a reader
+       * only reaches once they have already decided to give, and promoting it
+       * to a third plate would break the two-door grid the page is built on.
+       */}
+      <section id="buenaventura" className="mt-14 scroll-mt-20">
+        <SectionHeading index="03" title={o.heading} subtitle={o.lede} />
+        <BuenaventuraCard lang={lang} />
+      </section>
+
+      {/* ------------------------------------------------------------------ */}
       {/* Alternatives                                                        */}
       {/* ------------------------------------------------------------------ */}
       {/* Rule 10, requirement 3: a give page with exactly one destination is
@@ -371,6 +413,167 @@ export default async function DonatePage() {
         </div>
       </section>
     </div>
+  );
+}
+
+/**
+ * Verified / not verified, side by side.
+ *
+ * Two containers this page already uses for the distinction: a solid bordered
+ * card is something we checked, a dashed one is something we could not. The
+ * dashed box is deliberately the same weight as the solid one — a summary that
+ * set the reassuring half in body type and the caveat in fine print would be
+ * the merged-confident-block failure Rule 10 exists to stop.
+ */
+function ChecksStrip({
+  yes,
+  no,
+  verified,
+  unverified,
+  className,
+}: {
+  yes: string;
+  no: string;
+  verified: string;
+  unverified: string;
+  className?: string;
+}) {
+  return (
+    <ul className={cn("grid gap-2 sm:grid-cols-2", className)}>
+      <li className="flex gap-3 border border-border bg-card p-5">
+        <ShieldCheck className="mt-0.5 size-4 shrink-0 text-ok" aria-hidden />
+        <div className="min-w-0">
+          <p className="label-signage text-muted-foreground">{yes}</p>
+          <p className="mt-1.5 text-sm leading-relaxed">{verified}</p>
+        </div>
+      </li>
+      <li className="flex gap-3 border border-dashed border-border p-5">
+        <CircleDashed
+          className="mt-0.5 size-4 shrink-0 text-muted-foreground"
+          aria-hidden
+        />
+        <div className="min-w-0">
+          <p className="label-signage text-muted-foreground">{no}</p>
+          <p className="mt-1.5 text-sm leading-relaxed">{unverified}</p>
+        </div>
+      </li>
+    </ul>
+  );
+}
+
+/**
+ * The Buenaventura appeal.
+ *
+ * Hardcoded rather than a `resources` or `links` row, for the same reason the
+ * Vaki drive is: it has to survive a degraded read (Rule 7), and a campaign
+ * that vanishes when Supabase does is one nobody sees.
+ *
+ * **The canonical `gofundme.com` URL, never the `gofund.me` shortener it
+ * arrived as.** Rule 9 prints a bare domain so a reader can compare it against
+ * the address bar; a shortener hides precisely that, on the click where it
+ * matters most.
+ *
+ * This is the weakest destination the site links to — a personal fundraiser on
+ * a platform that hosts anyone — so it carries the most apparatus: the
+ * "no es un canal oficial" badge, a named organizer, a sourced reason the
+ * place needs help, what was checked, what was not, and how the link reached
+ * us. That last one is Rule 10: a personal connection is an interest, and it
+ * is disclosed on the card rather than left for someone to discover.
+ */
+const BUENAVENTURA_URL =
+  "https://www.gofundme.com/f/earthquake-relief-for-buenaventura-colombia-mprzj";
+
+/** Printed for the reader to compare against the address bar, same as
+ *  `DONATE_HOST`. A literal, so it is legible in the diff that changes it. */
+const BUENAVENTURA_HOST = "gofundme.com";
+
+function BuenaventuraCard({
+  lang,
+}: {
+  lang: Awaited<ReturnType<typeof getLang>>;
+}) {
+  const t = getDictionary(lang);
+  const o = t.donate.page.otherRegions;
+
+  return (
+    <article className="mt-5 border border-border bg-card p-5 sm:p-6">
+      <div className="flex flex-wrap items-start justify-between gap-x-4 gap-y-2">
+        <div className="min-w-0">
+          <p className="label-signage text-muted-foreground">{o.place}</p>
+          <h3 className="display-condensed mt-1 text-lg font-bold text-balance sm:text-xl">
+            {o.campaignTitle}
+          </h3>
+        </div>
+        {/* Encoded three ways — tint, icon, words — same as `/enlaces`. */}
+        <span className="label-signage inline-flex shrink-0 items-center gap-1 rounded-sm border border-warn/40 bg-warn-muted px-1.5 py-1 text-warn-foreground">
+          <Users className="size-3" aria-hidden />
+          {t.links.notOfficial}
+        </span>
+      </div>
+
+      {/* Why this place, sourced. We do not assert the damage ourselves — the
+          site has no reporting in Valle del Cauca, and Rule 3 applies to a
+          reason for giving exactly as it applies to a status card. */}
+      <p className="mt-3 max-w-2xl text-sm leading-relaxed text-muted-foreground">
+        {o.context}
+      </p>
+      <p className="mt-2 font-mono text-[0.6875rem] text-muted-foreground">
+        {t.status.source}{" "}
+        <span className="font-semibold text-foreground">{o.contextSource}</span>
+      </p>
+
+      <ChecksStrip
+        yes={t.donate.page.checks.yes}
+        no={t.donate.page.checks.no}
+        verified={o.verified}
+        unverified={o.unverified}
+        className="mt-5"
+      />
+
+      {/* Rule 10: how this link reached us. */}
+      <p className="mt-2 border-l-2 border-donate/40 bg-donate-muted/50 py-3 pr-4 pl-4 text-sm leading-relaxed">
+        {o.relation}
+      </p>
+
+      <div className="mt-5 flex flex-col gap-4 border-t border-border pt-5 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1 font-mono text-[0.6875rem] text-muted-foreground">
+          <span>
+            {o.organizerLabel}{" "}
+            <span className="font-semibold text-foreground">{o.organizer}</span>
+          </span>
+          <span className="text-border" aria-hidden>
+            ·
+          </span>
+          <span
+            data-readout
+            className="inline-flex items-center gap-1 font-semibold text-foreground"
+          >
+            {BUENAVENTURA_HOST}
+            <ExternalLink className="size-3" aria-hidden />
+          </span>
+          <span className="text-border" aria-hidden>
+            ·
+          </span>
+          <span>{o.reviewedOn}</span>
+        </div>
+
+        <Button
+          size="lg"
+          className="label-signage h-11 shrink-0 gap-2 rounded-sm bg-donate px-6 text-donate-contrast hover:bg-donate/90"
+          render={
+            <a
+              href={BUENAVENTURA_URL}
+              target="_blank"
+              rel="noreferrer noopener"
+            />
+          }
+        >
+          {o.cta}
+          <ExternalLink className="size-4" aria-hidden />
+          <span className="sr-only"> ({t.links.newTab})</span>
+        </Button>
+      </div>
+    </article>
   );
 }
 
