@@ -5,7 +5,6 @@ import { ArrowRight, Phone } from "lucide-react";
 import { DegradedNotice } from "@/components/degraded-notice";
 import { DonateBlock } from "@/components/donate-banner";
 import { MedicalClosures } from "@/components/medical-closures";
-import { SectionHeading } from "@/components/section-heading";
 import { StatusBadge } from "@/components/status-badge";
 import { getResources } from "@/lib/data";
 import { EMERGENCY_LINES } from "@/lib/fallback-data";
@@ -32,23 +31,23 @@ export default async function ResourcesPage() {
 
   return (
     <div className="pb-12">
-      <SectionHeading
-        as="h1"
-        title={t.resources.heading}
-        subtitle={t.resources.subheading}
-        /* The verified-resources list is empty far more often than not, so the
-           way out to other people's directories belongs at the top of this
-           page rather than only in the footer. */
-        action={
-          <Link
-            href="/enlaces"
-            className="label-signage inline-flex items-center gap-1.5 text-muted-foreground underline-offset-4 hover:text-foreground hover:underline"
-          >
-            {t.resources.linksCta}
-            <ArrowRight className="size-3.5" aria-hidden />
-          </Link>
-        }
-      />
+      <h1 className="display-condensed text-center text-3xl font-extrabold uppercase sm:text-4xl">
+        {t.resources.heading}
+      </h1>
+      <p className="mx-auto mt-2 max-w-2xl text-center text-sm leading-relaxed text-pretty text-muted-foreground">
+        {t.resources.subheading}
+      </p>
+      {/* The verified-resources list is empty far more often than not, so the
+          way out to other people's directories sits right under the heading. */}
+      <div className="mt-4 flex justify-center">
+        <Link
+          href="/enlaces"
+          className="label-signage inline-flex items-center gap-1.5 text-muted-foreground underline-offset-4 hover:text-foreground hover:underline"
+        >
+          {t.resources.linksCta}
+          <ArrowRight className="size-3.5" aria-hidden />
+        </Link>
+      </div>
 
       {/*
        * Emergency lines are static, national, and always correct — they lead,
@@ -66,7 +65,7 @@ export default async function ResourcesPage() {
             <a
               key={line.number}
               href={`tel:${line.number}`}
-              className="animate-rise group flex items-center gap-3 border border-border bg-card p-4 transition-colors hover:border-down hover:bg-down-muted"
+              className="animate-rise group flex items-center gap-3 rounded-sm border border-border p-4 transition-colors hover:border-down hover:bg-down-muted"
               style={{ animationDelay: `${i * 40}ms` }}
             >
               <Phone
@@ -123,7 +122,7 @@ export default async function ResourcesPage() {
                 {rows.map((resource) => (
                   <article
                     key={resource.id}
-                    className="flex flex-col gap-2 border border-border bg-card p-4"
+                    className="group flex flex-col gap-2 rounded-sm border border-border p-4 transition-colors hover:border-foreground/30 hover:bg-muted"
                   >
                     <div className="flex items-start justify-between gap-3">
                       <h3 className="display-condensed text-base font-bold text-balance">

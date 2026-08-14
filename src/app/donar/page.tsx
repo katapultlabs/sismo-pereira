@@ -38,13 +38,18 @@ export default async function DonatePage() {
 
   return (
     <div className="pb-12">
-      <SectionHeading as="h1" title={p.heading} subtitle={p.lede} />
+      <h1 className="display-condensed text-center text-3xl font-extrabold uppercase sm:text-4xl">
+        {p.heading}
+      </h1>
+      <p className="mx-auto mt-2 max-w-2xl text-center text-sm leading-relaxed text-pretty text-muted-foreground">
+        {p.lede}
+      </p>
 
       {/* Rule 3: a claim carries its time as well as its source. This page is
           a snapshot of one afternoon's checking, and says so. */}
       <p
         data-readout
-        className="label-signage mt-4 text-muted-foreground"
+        className="label-signage mt-4 text-center text-muted-foreground"
       >
         {p.checkedOn}
       </p>
@@ -56,7 +61,7 @@ export default async function DonatePage() {
       {/* ------------------------------------------------------------------ */}
       <section className="mt-14">
         <SectionHeading
-          index="01"
+          centered
           title={p.verifiedHeading}
           subtitle={p.verifiedLede}
         />
@@ -65,7 +70,7 @@ export default async function DonatePage() {
           {p.verified.map((item, i) => (
             <li
               key={item.title}
-              className="animate-rise border border-border bg-card p-4"
+              className="animate-rise rounded-sm border border-border bg-card p-4"
               style={{ animationDelay: `${Math.min(i, 8) * 40}ms` }}
             >
               <h3 className="flex items-start gap-2.5 text-sm leading-snug font-semibold">
@@ -94,7 +99,7 @@ export default async function DonatePage() {
       {/* ------------------------------------------------------------------ */}
       <section className="mt-14">
         <SectionHeading
-          index="02"
+          centered
           title={p.claimsHeading}
           subtitle={p.claimsLede}
         />
@@ -106,7 +111,7 @@ export default async function DonatePage() {
           {p.claims.map((item) => (
             <li
               key={item.title}
-              className="border-l-2 border-border bg-muted/40 py-3 pr-4 pl-4"
+              className="rounded-sm border border-border bg-muted/40 p-4"
             >
               <h3 className="flex items-start gap-2.5 text-sm leading-snug font-semibold">
                 <Quote
@@ -127,7 +132,7 @@ export default async function DonatePage() {
       {/* 03 — Open questions                                                 */}
       {/* ------------------------------------------------------------------ */}
       <section className="mt-14">
-        <SectionHeading index="03" title={p.gapsHeading} subtitle={p.gapsLede} />
+        <SectionHeading centered title={p.gapsHeading} subtitle={p.gapsLede} />
 
         {/* Dashed, achromatic, and unalarming. These are absences, not
             findings — spending a status hue on them would overstate them. */}
@@ -135,7 +140,7 @@ export default async function DonatePage() {
           {p.gaps.map((gap) => (
             <li
               key={gap}
-              className="flex items-start gap-2.5 border border-dashed border-border p-4 text-sm leading-relaxed text-muted-foreground"
+              className="flex items-start gap-2.5 rounded-sm border border-dashed border-border p-4 text-sm leading-relaxed text-muted-foreground"
             >
               <Info className="mt-0.5 size-4 shrink-0" aria-hidden />
               {gap}
@@ -153,7 +158,7 @@ export default async function DonatePage() {
        * has been misled by omission — which would cost more credibility than
        * the recommendation could ever buy.
        */}
-      <section className="mt-14 border-2 border-foreground/25 bg-muted/40 p-6 sm:p-8">
+      <section className="mt-14 rounded-sm border border-border bg-muted/40 p-6 sm:p-8">
         <h2 className="display-condensed flex items-center gap-2.5 text-xl font-extrabold uppercase">
           <Scale className="size-5 shrink-0" aria-hidden />
           {p.disclosureHeading}
@@ -167,7 +172,7 @@ export default async function DonatePage() {
       {/* Alternatives                                                        */}
       {/* ------------------------------------------------------------------ */}
       {/* A donation page with exactly one option is an advertisement. */}
-      <section className="mt-8 border border-border p-6 sm:p-8">
+      <section className="mt-8 rounded-sm border border-border p-6 sm:p-8">
         <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <h2 className="display-condensed text-xl font-extrabold uppercase">

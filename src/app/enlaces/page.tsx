@@ -2,8 +2,6 @@ import type { Metadata } from "next";
 import { ExternalLink, Info, ShieldCheck, Users } from "lucide-react";
 
 import { DegradedNotice } from "@/components/degraded-notice";
-import { SectionHeading } from "@/components/section-heading";
-import { Alert, AlertDescription } from "@/components/ui/alert";
 import { getLinks } from "@/lib/data";
 import {
   LINK_CATEGORIES,
@@ -51,16 +49,22 @@ export default async function LinksPage() {
 
   return (
     <div className="pb-12">
-      <SectionHeading
-        as="h1"
-        title={t.links.heading}
-        subtitle={t.links.subheading}
-      />
+      <h1 className="display-condensed text-center text-3xl font-extrabold uppercase sm:text-4xl">
+        {t.links.heading}
+      </h1>
+      <p className="mx-auto mt-2 max-w-2xl text-center text-sm leading-relaxed text-pretty text-muted-foreground">
+        {t.links.subheading}
+      </p>
 
-      <Alert className="mt-8 rounded-sm">
-        <Info className="size-4" aria-hidden />
-        <AlertDescription>{t.links.externalNotice}</AlertDescription>
-      </Alert>
+      <div className="mt-8 flex items-start gap-2.5 rounded-sm border border-border bg-muted/40 p-4">
+        <Info
+          className="mt-px size-4 shrink-0 text-muted-foreground"
+          aria-hidden
+        />
+        <p className="text-sm leading-relaxed text-pretty text-muted-foreground">
+          {t.links.externalNotice}
+        </p>
+      </div>
 
       {degraded ? (
         <div className="mt-4">
@@ -107,16 +111,16 @@ export default async function LinksPage() {
                   </p>
                 ) : null}
 
-                <ul className="mt-4 space-y-2">
+                <ul className="mt-4 grid gap-2 sm:grid-cols-2">
                   {rows.map(({ link, host }, i) => {
                     const official = link.source === "official";
                     return (
                       <li
                         key={link.id}
-                        className="animate-rise relative border border-border bg-card transition-colors hover:border-foreground/30"
+                        className="animate-rise group relative flex flex-col rounded-sm border border-border transition-colors hover:border-foreground/30 hover:bg-muted"
                         style={{ animationDelay: `${Math.min(i, 8) * 40}ms` }}
                       >
-                        <div className="flex flex-col gap-2 p-4">
+                        <div className="flex flex-1 flex-col gap-2 p-4">
                           <div className="flex flex-wrap items-start justify-between gap-x-3 gap-y-2">
                             <h3 className="display-condensed text-base font-bold text-balance">
                               <a

@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { Phone, ShieldCheck } from "lucide-react";
 
 import { ReportForm } from "@/components/report-form";
-import { SectionHeading } from "@/components/section-heading";
 import { getZones } from "@/lib/data";
 import { getDictionary } from "@/lib/i18n";
 import { getLang } from "@/lib/lang";
@@ -19,11 +18,12 @@ export default async function ReportPage() {
 
   return (
     <div className="pb-12">
-      <SectionHeading
-        as="h1"
-        title={t.form.heading}
-        subtitle={t.form.subheading}
-      />
+      <h1 className="display-condensed text-center text-3xl font-extrabold uppercase sm:text-4xl">
+        {t.form.heading}
+      </h1>
+      <p className="mx-auto mt-2 max-w-2xl text-center text-sm leading-relaxed text-pretty text-muted-foreground">
+        {t.form.subheading}
+      </p>
 
       {/*
        * This has to be impossible to miss. The form is not an emergency line,
@@ -31,11 +31,11 @@ export default async function ReportPage() {
        * this block exists to prevent — so the number is a tap target set at
        * headline size, not a link inside a sentence.
        */}
-      <aside className="mt-6 flex flex-col gap-3 border-2 border-down bg-down-muted p-4 text-down-foreground sm:flex-row sm:items-center">
+      <aside className="mt-6 flex flex-col gap-3 rounded-sm border-2 border-down bg-down-muted p-4 text-down-foreground sm:flex-row sm:items-center">
         <a
           href="tel:123"
           aria-label={`${t.hero.emergencyCta}: 123`}
-          className="flex shrink-0 items-center gap-2 bg-down px-4 py-2.5 font-mono text-2xl leading-none font-semibold tracking-tight text-down-contrast transition-opacity hover:opacity-90"
+          className="flex shrink-0 items-center gap-2 rounded-sm bg-down px-4 py-2.5 font-mono text-2xl leading-none font-semibold tracking-tight text-down-contrast transition-opacity hover:opacity-90"
         >
           <Phone className="size-5" aria-hidden />
           123

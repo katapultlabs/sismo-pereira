@@ -1,9 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ShieldCheck } from "lucide-react";
+import { ArrowRight, ShieldCheck } from "lucide-react";
 
 import { DegradedNotice } from "@/components/degraded-notice";
-import { SectionHeading } from "@/components/section-heading";
 import { Button } from "@/components/ui/button";
 import { getPublicReports } from "@/lib/data";
 import {
@@ -21,7 +20,8 @@ export async function generateMetadata(): Promise<Metadata> {
   return { title: getDictionary(lang).reports.heading };
 }
 
-const CHIP = "label-signage inline-flex items-center rounded-sm border px-1.5 py-1";
+const PILL =
+  "inline-flex items-center rounded-full py-1 pr-2 pl-2.5 font-mono text-[0.625rem] font-semibold uppercase leading-none tracking-[0.06em] transition-colors group-hover:bg-background";
 
 export default async function ReportsPage() {
   const lang = await getLang();
@@ -30,23 +30,26 @@ export default async function ReportsPage() {
 
   return (
     <div className="pb-12">
-      <SectionHeading
-        as="h1"
-        title={t.reports.heading}
-        subtitle={t.reports.subheading}
-        action={
-          <Button
-            className="label-signage h-9 rounded-sm px-4"
-            render={<Link href="/reportar" />}
-          >
-            {t.reports.submitCta}
-          </Button>
-        }
-      />
+      <h1 className="display-condensed text-center text-3xl font-extrabold uppercase sm:text-4xl">
+        {t.reports.heading}
+      </h1>
+      <p className="mx-auto mt-2 max-w-2xl text-center text-sm leading-relaxed text-pretty text-muted-foreground">
+        {t.reports.subheading}
+      </p>
 
-      {/* Moderation is the whole promise of this page — state it before the
-          first record, not in a footnote. */}
-      <p className="mt-5 flex items-start gap-2 border-l-2 border-fixing bg-fixing-muted px-3 py-2.5 text-sm text-fixing-foreground">
+      <div className="mt-6 flex justify-center">
+        <Button
+          className="label-signage h-10 gap-2 rounded-sm px-5"
+          render={<Link href="/reportar" />}
+        >
+          {t.reports.submitCta}
+          <ArrowRight className="size-4" aria-hidden />
+        </Button>
+      </div>
+
+      {/* Moderation is the whole promise of this page — an info card, not a
+          footnote. */}
+      <p className="mt-8 flex items-start gap-2.5 rounded-sm border border-fixing/40 bg-fixing-muted px-4 py-3 text-sm leading-relaxed text-pretty text-fixing-foreground">
         <ShieldCheck className="mt-0.5 size-4 shrink-0" aria-hidden />
         {t.reports.moderationNote}
       </p>
@@ -58,38 +61,38 @@ export default async function ReportsPage() {
       ) : null}
 
       {reports.length === 0 ? (
-        <p className="mt-8 border border-dashed border-border p-10 text-center text-sm text-muted-foreground">
+        <p className="mt-6 border border-dashed border-border p-10 text-center text-sm text-muted-foreground">
           {t.reports.empty}
         </p>
       ) : (
-        <ul className="mt-8 border-t border-border">
+        <div className="mt-6 grid gap-3 sm:grid-cols-2">
           {reports.map((report) => (
-            <li
+            <article
               key={report.id}
-              className="border-b border-border py-4 transition-colors hover:bg-card"
+              className="group flex flex-col gap-2.5 rounded-sm border border-border p-4 transition-colors hover:border-foreground/30 hover:bg-muted"
             >
               <div className="flex flex-wrap items-center gap-1.5">
-                <span className={`${CHIP} border-transparent bg-secondary text-secondary-foreground`}>
+                <span className={`${PILL} bg-secondary text-secondary-foreground`}>
                   {CATEGORY_LABELS[lang][report.category as ReportCategory] ??
                     report.category}
                 </span>
                 {report.service ? (
-                  <span className={`${CHIP} border-border text-muted-foreground`}>
+                  <span className={`${PILL} bg-muted text-muted-foreground`}>
                     {SERVICE_LABELS[lang][report.service]}
                   </span>
                 ) : null}
                 {report.zone_name ? (
-                  <span className={`${CHIP} border-border text-muted-foreground`}>
+                  <span className={`${PILL} bg-muted text-muted-foreground`}>
                     {report.zone_name}
                   </span>
                 ) : null}
               </div>
 
-              <p className="mt-2.5 text-sm leading-relaxed whitespace-pre-line">
+              <p className="text-sm leading-relaxed whitespace-pre-line text-pretty">
                 {report.description}
               </p>
 
-              <div className="mt-2.5 flex flex-wrap items-center gap-x-2.5 gap-y-1 font-mono text-[0.6875rem] text-muted-foreground">
+              <div className="mt-auto flex flex-wrap items-center gap-x-2.5 gap-y-1 border-t border-border pt-2.5 font-mono text-[0.6875rem] text-muted-foreground">
                 {report.address_hint ? (
                   <>
                     <span>{report.address_hint}</span>
@@ -105,9 +108,9 @@ export default async function ReportsPage() {
                   {formatRelative(report.created_at, lang)}
                 </time>
               </div>
-            </li>
+            </article>
           ))}
-        </ul>
+        </div>
       )}
     </div>
   );

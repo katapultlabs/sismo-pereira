@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { BadgeCheck, Clock, KeyRound, Mail } from "lucide-react";
 
-import { SectionHeading } from "@/components/section-heading";
 import { getOrganizations } from "@/lib/data";
 import { SERVICE_LABELS, getDictionary } from "@/lib/i18n";
 import { getLang } from "@/lib/lang";
@@ -20,7 +19,8 @@ export async function generateMetadata(): Promise<Metadata> {
   return { title: getDictionary(lang).partners.heading };
 }
 
-const CHIP = "label-signage inline-flex items-center gap-1 rounded-sm border px-1.5 py-1";
+const CHIP =
+  "inline-flex items-center gap-1 rounded-full border px-2 py-1 font-mono text-[0.625rem] font-semibold uppercase leading-none tracking-[0.06em]";
 
 export default async function PartnersPage() {
   const lang = await getLang();
@@ -29,20 +29,21 @@ export default async function PartnersPage() {
 
   return (
     <div className="pb-12">
-      <SectionHeading
-        as="h1"
-        title={t.partners.heading}
-        subtitle={t.partners.subheading}
-      />
+      <h1 className="display-condensed text-center text-3xl font-extrabold uppercase sm:text-4xl">
+        {t.partners.heading}
+      </h1>
+      <p className="mx-auto mt-2 max-w-2xl text-center text-sm leading-relaxed text-pretty text-muted-foreground">
+        {t.partners.subheading}
+      </p>
 
       <div className="mt-8 grid gap-2 sm:grid-cols-2">
-        <section className="border border-border bg-card p-5">
+        <section className="rounded-sm border border-border bg-card p-5">
           <h2 className="label-signage text-muted-foreground">
             {t.partners.whoHeading}
           </h2>
           <p className="mt-2 text-sm leading-relaxed">{t.partners.whoBody}</p>
         </section>
-        <section className="border border-border bg-card p-5">
+        <section className="rounded-sm border border-border bg-card p-5">
           <h2 className="label-signage flex items-center gap-1.5 text-muted-foreground">
             <KeyRound className="size-3.5" aria-hidden />
             {t.partners.apiHeading}
@@ -77,7 +78,7 @@ export default async function PartnersPage() {
         </ol>
       </section>
 
-      <section className="mt-12 border-l-2 border-foreground bg-muted/40 p-5">
+      <section className="mt-12 rounded-sm border border-border bg-muted/40 p-5">
         <h2 className="label-signage flex items-center gap-1.5 text-muted-foreground">
           <Mail className="size-3.5" aria-hidden />
           {t.partners.contactHeading}
@@ -110,7 +111,7 @@ export default async function PartnersPage() {
           {orgs.map((org) => (
             <article
               key={org.id}
-              className="flex flex-col gap-2 border border-border bg-card p-4"
+              className="group flex flex-col gap-2 rounded-sm border border-border bg-card p-4 transition-colors hover:border-foreground/30"
             >
               <div className="flex items-start justify-between gap-2">
                 <div className="min-w-0">
