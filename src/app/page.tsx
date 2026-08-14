@@ -4,7 +4,9 @@ import { ArrowRight, Info } from "lucide-react";
 import { ActionRoutes } from "@/components/action-board";
 import { DONATE_OPERATOR } from "@/components/donate-banner";
 import { HeroSafety, HeroSafetyMobile } from "@/components/hero-safety";
+import { LanguageToggle } from "@/components/language-toggle";
 import { PinnedAlerts } from "@/components/pinned-alerts";
+import { ThemeToggle } from "@/components/theme-toggle";
 import { SectionHeading } from "@/components/section-heading";
 import { Seismograph } from "@/components/seismograph";
 import { ServiceStatusCard } from "@/components/service-status-card";
@@ -97,11 +99,18 @@ export default async function HomePage() {
       <HeroSafety lang={lang} />
 
       <div className="space-y-3">
-          {/* Top row — the pinned-notices ticker. `min-h` matches the rail's
-              wordmark so the hero below lands level with the first nav
-              plate (SERVICES). */}
-          <div className="flex min-h-[2.5625rem] items-center">
-            <PinnedAlerts updates={pinned} lang={lang} />
+          {/* Top row — the pinned-notices ticker, with the language and theme
+              controls at the right. `min-h` matches the rail's wordmark so the
+              hero below lands level with the first nav plate (SERVICES). */}
+          <div className="flex min-h-[2.5625rem] items-center gap-3">
+            <div className="min-w-0 flex-1">
+              <PinnedAlerts updates={pinned} lang={lang} />
+            </div>
+            {/* lg only — below `lg` the masthead carries these controls. */}
+            <div className="hidden items-center gap-2 lg:flex">
+              <LanguageToggle current={lang} />
+              <ThemeToggle lang={lang} className="size-[1.625rem] shrink-0" />
+            </div>
           </div>
 
           {/* Hero panel: contour terrain and chart paper behind a centered
@@ -132,10 +141,10 @@ export default async function HomePage() {
               }}
             >
               <div
-                className="size-full bg-down opacity-45"
+                className="size-full bg-down opacity-[0.62]"
                 style={{
-                  maskImage: "url(/seismic-dark.svg)",
-                  WebkitMaskImage: "url(/seismic-dark.svg)",
+                  maskImage: "url(/seismic-accents.svg)",
+                  WebkitMaskImage: "url(/seismic-accents.svg)",
                   maskMode: "luminance",
                   maskSize: "cover",
                   WebkitMaskSize: "cover",
@@ -249,15 +258,14 @@ export default async function HomePage() {
           {/* A light panel — a bright break in the dark scroll — with the
               seismic field faint behind it, and a dark button. */}
           <section className="relative mt-16 overflow-hidden rounded-sm border border-border bg-card sm:mt-24">
-            {/* Subtle seismic wash — the dark map, screened so only its faint
-                lines show, positioned left so the two banners never read as
-                the same tile. */}
+            {/* Subtle seismic wash — the accent lines, faint, positioned left
+                so the two banners never read as the same tile. */}
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
-              src="/seismic-dark.svg"
+              src="/seismic-accents.svg"
               alt=""
               aria-hidden
-              className="pointer-events-none absolute inset-0 h-full w-full scale-110 object-cover object-[20%_35%] opacity-[0.06] mix-blend-screen [mask-image:radial-gradient(130%_130%_at_30%_50%,black_45%,transparent_92%)]"
+              className="pointer-events-none absolute inset-0 h-full w-full scale-110 object-cover object-[20%_35%] opacity-[0.06] [mask-image:radial-gradient(130%_130%_at_30%_50%,black_45%,transparent_92%)]"
             />
             <div className="relative flex flex-col items-center px-6 py-16 text-center sm:py-20">
               <p className="label-signage text-ember">
@@ -335,10 +343,10 @@ export default async function HomePage() {
                 the report one never look identical. */}
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
-              src="/seismic-dark.svg"
+              src="/seismic-accents.svg"
               alt=""
               aria-hidden
-              className="pointer-events-none absolute inset-0 h-full w-full scale-x-[-1.2] scale-y-[1.2] object-cover object-[80%_70%] opacity-[0.06] mix-blend-screen [mask-image:radial-gradient(130%_130%_at_70%_50%,black_45%,transparent_92%)]"
+              className="pointer-events-none absolute inset-0 h-full w-full scale-x-[-1.2] scale-y-[1.2] object-cover object-[80%_70%] opacity-[0.06] [mask-image:radial-gradient(130%_130%_at_70%_50%,black_45%,transparent_92%)]"
             />
             <div className="relative flex flex-col items-center px-6 py-16 text-center sm:py-20">
               <p className="label-signage text-ember">{t.donate.eyebrow}</p>

@@ -362,14 +362,15 @@ html:has([data-shell]) {
   scroll-behavior: smooth;
 }
 
-/* The landing carries a softer, Linear-like corner than the tight bulletin
- * radius the rest of the site keeps. Scoped to `[data-shell]` so cards,
- * buttons, nav plates, and the hero panel all round to ~8px here while the
- * inner pages stay stamped. Values are rem, so they scale with the page. */
+/* A softer, Linear-like corner site-wide (the shell wraps every page). Cards,
+ * buttons, nav plates, inputs, and the hero panel all pick these up; pills
+ * (`rounded-full`) are unaffected. Values are rem, so they scale with the
+ * page. The base `--radius` is bumped too so shadcn defaults round to match. */
 [data-shell] {
-  --radius-sm: 0.5rem; /* 8px at the 1280 base */
-  --radius-md: 0.625rem;
-  --radius-lg: 0.75rem;
+  --radius: 0.625rem; /* 10px base at 1280 */
+  --radius-sm: 0.625rem; /* 10px */
+  --radius-md: 0.75rem; /* 12px */
+  --radius-lg: 0.875rem; /* 14px */
 }
 
 /* ── Landing (editorial) motion ─────────────────────────────────────────────

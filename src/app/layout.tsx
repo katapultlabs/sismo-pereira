@@ -6,6 +6,7 @@ import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import { SiteRail } from "@/components/site-rail";
 import { ThemeProvider } from "@/components/theme-provider";
+import { WallControls } from "@/components/wall-controls";
 import { Toaster } from "@/components/ui/sonner";
 import { getDictionary } from "@/lib/i18n";
 import { getLang } from "@/lib/lang";
@@ -110,6 +111,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
             <div className="flex flex-1 items-start gap-3 px-3">
               <SiteRail lang={lang} />
               <main id="contenido" className="min-w-0 flex-1 py-3">
+                <WallControls lang={lang} />
                 {children}
               </main>
             </div>

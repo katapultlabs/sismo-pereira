@@ -4,8 +4,6 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ArrowRight, ArrowUpRight, HeartHandshake, Megaphone } from "lucide-react";
 
-import { LanguageToggle } from "@/components/language-toggle";
-import { ThemeToggle } from "@/components/theme-toggle";
 import { EMERGENCY_LINES } from "@/lib/fallback-data";
 import { getDictionary, type Lang } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
@@ -167,14 +165,6 @@ export function SiteRail({ lang }: { lang: Lang }) {
       </ul>
 
       <RailActions lang={lang} />
-
-      {/* Foot controls. */}
-      <div className="flex items-center gap-2">
-        <div className="flex flex-1 items-center justify-center rounded-sm bg-secondary px-2 py-1.5">
-          <LanguageToggle current={lang} />
-        </div>
-        <ThemeToggle lang={lang} className="size-9 shrink-0" />
-      </div>
     </nav>
   );
 }
