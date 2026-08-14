@@ -59,7 +59,7 @@ export function DonateBlock({
          plate to match a neighbouring column, the appeal centres instead of
          leaving a dead band above the note. At natural height, no change. */
       className={cn(
-        "flex flex-col border border-foreground/25 bg-foreground text-background",
+        "flex flex-col overflow-hidden rounded-sm border border-foreground/25 bg-foreground text-background",
         className,
       )}
     >
@@ -162,47 +162,35 @@ export function DonateAction({
   return (
     <section
       className={cn(
-        "border border-foreground/25 bg-foreground p-6 text-background sm:p-8",
+        "relative overflow-hidden rounded-sm border border-border bg-card",
         className,
       )}
     >
-      <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
-        <div className="min-w-0">
-          <p className="label-signage flex items-center gap-2 text-background/70">
-            <HeartHandshake className="size-3.5" aria-hidden />
-            {t.donate.eyebrow}
-          </p>
+      {/* The same seismic wash the home banners carry, so this appeal reads as
+          part of the site's voice rather than a bolted-on advert. */}
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src="/seismic-accents.svg"
+        alt=""
+        aria-hidden
+        className="pointer-events-none absolute inset-0 h-full w-full scale-110 object-cover object-[50%_40%] opacity-[0.06] [mask-image:radial-gradient(130%_130%_at_50%_50%,black_45%,transparent_92%)]"
+      />
+      <div className="relative flex flex-col items-center px-6 py-16 text-center sm:py-20">
+        <p className="label-signage text-ember">{t.donate.eyebrow}</p>
 
-          <h2 className="display-condensed mt-3 text-2xl font-extrabold text-balance uppercase sm:text-3xl">
-            {t.donate.page.actionTitle}
-          </h2>
-          <p className="mt-2.5 max-w-xl text-sm leading-relaxed text-pretty text-background/85">
-            {t.donate.page.actionBody}
-          </p>
+        <h2 className="display-condensed mt-4 max-w-2xl text-2xl leading-tight font-extrabold text-balance uppercase sm:text-3xl">
+          {t.donate.page.actionTitle}
+        </h2>
+        <p className="mt-4 max-w-xl text-sm leading-relaxed text-pretty text-muted-foreground">
+          {t.donate.page.actionBody}
+        </p>
 
-          <div className="mt-4 flex flex-wrap items-center gap-x-2.5 gap-y-1 font-mono text-[0.6875rem] text-background/70">
-            <span>
-              {t.links.operator}{" "}
-              <span className="font-semibold text-background">
-                {DONATE_OPERATOR}
-              </span>
-            </span>
-            <span className="text-background/40" aria-hidden>
-              ·
-            </span>
-            <span
-              data-readout
-              className="inline-flex items-center gap-1 font-semibold text-background"
-            >
-              {DONATE_HOST}
-              <ExternalLink className="size-3" aria-hidden />
-            </span>
-          </div>
-        </div>
-
+        {/* The action sits below the appeal and above the operator line: the
+            click leaves the site, so the hostname a reader checks against the
+            address bar belongs right beneath the button. */}
         <Button
           size="lg"
-          className="label-signage h-12 shrink-0 gap-2 rounded-sm bg-background px-7 text-base text-foreground hover:bg-background/85 sm:self-start lg:self-auto"
+          className="label-signage mt-8 h-12 gap-2 rounded-sm bg-primary px-7 text-base text-primary-foreground hover:bg-primary/90"
           render={
             <a href={DONATE_URL} target="_blank" rel="noreferrer noopener" />
           }
@@ -211,6 +199,25 @@ export function DonateAction({
           <ExternalLink className="size-4" aria-hidden />
           <span className="sr-only"> ({t.links.newTab})</span>
         </Button>
+
+        <div className="mt-6 flex flex-wrap items-center justify-center gap-x-2.5 gap-y-1 font-mono text-[0.6875rem] text-muted-foreground">
+          <span>
+            {t.links.operator}{" "}
+            <span className="font-semibold text-foreground">
+              {DONATE_OPERATOR}
+            </span>
+          </span>
+          <span className="text-border" aria-hidden>
+            ·
+          </span>
+          <span
+            data-readout
+            className="inline-flex items-center gap-1 font-semibold text-foreground"
+          >
+            {DONATE_HOST}
+            <ExternalLink className="size-3" aria-hidden />
+          </span>
+        </div>
       </div>
     </section>
   );
