@@ -70,7 +70,7 @@ export default async function DonatePage() {
           {p.verified.map((item, i) => (
             <li
               key={item.title}
-              className="animate-rise rounded-sm border border-border bg-card p-4"
+              className="animate-rise group rounded-sm border border-border p-4 transition-colors hover:border-foreground/30 hover:bg-muted"
               style={{ animationDelay: `${Math.min(i, 8) * 40}ms` }}
             >
               <h3 className="flex items-start gap-2.5 text-sm leading-snug font-semibold">
@@ -111,7 +111,7 @@ export default async function DonatePage() {
           {p.claims.map((item) => (
             <li
               key={item.title}
-              className="rounded-sm border border-border bg-muted/40 p-4"
+              className="group rounded-sm border border-border bg-muted/40 p-4 transition-colors hover:border-foreground/30"
             >
               <h3 className="flex items-start gap-2.5 text-sm leading-snug font-semibold">
                 <Quote

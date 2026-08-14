@@ -168,7 +168,12 @@ export function DonateAction({
     >
       <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
         <div className="min-w-0">
-          <h2 className="display-condensed text-2xl font-extrabold text-balance uppercase">
+          <p className="label-signage flex items-center gap-2 text-background/70">
+            <HeartHandshake className="size-3.5" aria-hidden />
+            {t.donate.eyebrow}
+          </p>
+
+          <h2 className="display-condensed mt-3 text-2xl font-extrabold text-balance uppercase sm:text-3xl">
             {t.donate.page.actionTitle}
           </h2>
           <p className="mt-2.5 max-w-xl text-sm leading-relaxed text-pretty text-background/85">
