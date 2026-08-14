@@ -20,10 +20,10 @@ export default async function ServicesPage() {
 
   return (
     <div className="pb-12">
-      <h1 className="display-condensed text-3xl font-extrabold uppercase sm:text-4xl">
+      <h1 className="display-condensed text-center text-3xl font-extrabold uppercase sm:text-4xl">
         {t.status.heading}
       </h1>
-      <p className="mt-2 max-w-2xl text-sm leading-relaxed text-pretty text-muted-foreground">
+      <p className="mx-auto mt-2 max-w-2xl text-center text-sm leading-relaxed text-pretty text-muted-foreground">
         {t.status.subheading}
       </p>
 
