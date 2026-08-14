@@ -36,7 +36,7 @@ export default async function ServicesPage() {
   }, new Map());
 
   return (
-    <div className="mx-auto max-w-5xl px-4 py-10 pb-16 sm:py-14">
+    <div className="pb-12">
       <SectionHeading
         as="h1"
         title={t.status.heading}

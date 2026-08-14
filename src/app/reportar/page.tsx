@@ -18,7 +18,7 @@ export default async function ReportPage() {
   const { data: zones } = await getZones();
 
   return (
-    <div className="mx-auto max-w-3xl px-4 py-10 pb-16 sm:py-14">
+    <div className="pb-12">
       <SectionHeading
         as="h1"
         title={t.form.heading}

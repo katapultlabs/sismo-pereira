@@ -35,10 +35,8 @@ export function SiteHeader({ lang }: { lang: Lang }) {
     <header
       className={cn(
         "sticky top-0 z-50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/85",
-        /* The landing carries its own vertical rail from `lg` — wordmark,
-           123, section plates, donate, language — so the horizontal masthead
-           yields to it there and returns on every other route. */
-        pathname === "/" && "lg:hidden",
+        /* The vertical rail is the primary navigation from `lg` site-wide;
+           the layout hides this masthead there. */
       )}
     >
       <div className="mx-auto flex h-14 max-w-6xl items-center gap-3 px-4">

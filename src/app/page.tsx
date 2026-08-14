@@ -1,20 +1,14 @@
 import Link from "next/link";
-import {
-  ArrowRight,
-  ArrowUpRight,
-  HeartHandshake,
-  Info,
-  Megaphone,
-} from "lucide-react";
+import { ArrowRight, Info } from "lucide-react";
 
 import { ActionRoutes } from "@/components/action-board";
 import { DONATE_OPERATOR } from "@/components/donate-banner";
 import { HeroSafety, HeroSafetyMobile } from "@/components/hero-safety";
-import { LanguageToggle } from "@/components/language-toggle";
 import { PinnedAlerts } from "@/components/pinned-alerts";
 import { SectionHeading } from "@/components/section-heading";
 import { Seismograph } from "@/components/seismograph";
 import { ServiceStatusCard } from "@/components/service-status-card";
+import { RailActions, RailRoutes } from "@/components/site-rail";
 import { StatusCarousel } from "@/components/status-carousel";
 import { UpdateCard } from "@/components/update-card";
 import { Button } from "@/components/ui/button";
@@ -24,122 +18,19 @@ import {
   MEDICAL_CENTRES_CLOSED,
   PMU_REPORT,
 } from "@/lib/fallback-data";
-import { formatDateTime, getDictionary, type Lang } from "@/lib/i18n";
+import { formatDateTime, getDictionary } from "@/lib/i18n";
 import { getLang } from "@/lib/lang";
 import { cn } from "@/lib/utils";
 
 /**
- * The rail plates — the site's routes, in the bulletin's numbering, closed
- * by the two action plates: Reportar in the alarm red, Donar as the inverted
- * ink slab every donate surface on the site shares. Rendered twice — as the
- * vertical navbar from `lg`, and as a 2-up grid under the hero below it.
- * Life safety no longer lives here: the 123 and closures cards sit pinned
- * to the hero itself, and `EmergencyPlates` carries them below `lg`.
- */
-/** The five section routes, one row each. */
-function RailRoutes({ lang }: { lang: Lang }) {
-  const t = getDictionary(lang);
-
-  return (
-    <>
-      {(
-        [
-          { index: "01", label: t.nav.services, href: "/servicios", wide: false },
-          { index: "02", label: t.nav.reports, href: "/reportes", wide: false },
-          { index: "03", label: t.nav.resources, href: "/recursos", wide: false },
-          { index: "04", label: t.nav.links, href: "/enlaces", wide: false },
-          { index: "05", label: t.nav.partners, href: "/organizaciones", wide: true },
-        ] as const
-      ).map((item) => (
-        /* One row per route: index, title, arrow. A single line can never
-           spill out of its plate, whatever the viewport height. Achromatic
-           on purpose — a coloured nav plate would trespass on the four
-           status hues. `col-span-2` fills the row in the mobile 2-up grid
-           (ignored in the desktop flex rail). */
-        <Link
-          key={item.href}
-          href={item.href}
-          className={cn(
-            "group flex items-center gap-3 rounded-sm bg-secondary px-3.5 py-3 transition-colors outline-none hover:bg-accent focus-visible:ring-2 focus-visible:ring-ring",
-            item.wide && "col-span-2",
-          )}
-        >
-          <span
-            data-readout
-            className="shrink-0 font-mono text-xs font-semibold text-muted-foreground"
-          >
-            {item.index}
-          </span>
-          <span className="display-condensed min-w-0 flex-1 text-base leading-tight font-bold uppercase lg:text-sm">
-            {item.label}
-          </span>
-          <ArrowUpRight
-            className="size-3.5 shrink-0 text-muted-foreground transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:text-foreground"
-            aria-hidden
-          />
-        </Link>
-      ))}
-    </>
-  );
-}
-
-/** The two action plates — report in the alarm red, donate in the inverted
- *  ink of every donate surface on the site. The rail's closing pair. */
-function RailActions({ lang }: { lang: Lang }) {
-  const t = getDictionary(lang);
-
-  return (
-    <>
-      <Link
-        href="/reportar"
-        /* `col-span-2` fills the row in the mobile 2-up grid; ignored in the
-           desktop flex rail. */
-        className="group col-span-2 flex items-center gap-3 rounded-sm bg-down px-3.5 py-3 text-down-contrast transition-opacity outline-none hover:opacity-95 focus-visible:ring-2 focus-visible:ring-ring"
-      >
-        <Megaphone className="size-4 shrink-0" aria-hidden />
-        <span className="display-condensed flex-1 text-base leading-tight font-extrabold uppercase lg:text-sm">
-          {t.nav.submit}
-        </span>
-        <ArrowRight
-          className="size-3.5 shrink-0 transition-transform group-hover:translate-x-0.5"
-          aria-hidden
-        />
-      </Link>
-
-      <Link
-        href="/donar"
-        /* `col-span-2` fills the row in the mobile 2-up grid; ignored in the
-           desktop flex rail. */
-        className="group col-span-2 flex items-center gap-3 rounded-sm bg-primary px-3.5 py-3 text-primary-foreground transition-opacity outline-none hover:opacity-90 focus-visible:ring-2 focus-visible:ring-ring"
-      >
-        <HeartHandshake className="size-4 shrink-0" aria-hidden />
-        <span className="display-condensed flex-1 text-base leading-tight font-extrabold uppercase lg:text-sm">
-          {t.donate.cta}
-        </span>
-        <ArrowRight
-          className="size-3.5 shrink-0 transition-transform group-hover:translate-x-0.5"
-          aria-hidden
-        />
-      </Link>
-    </>
-  );
-}
-
-/**
- * The editorial landing.
+ * The home page's wall content. The shell — the vertical rail, the mobile
+ * masthead, the footer, the theme — is provided site-wide by the root layout
+ * (`src/app/layout.tsx`); this file renders only what sits in the main column:
+ * the pinned ticker, the hero, and the sections below it.
  *
- * A dispatch wall: a sticky vertical rail on the left (the navbar from `lg` —
- * wordmark, life safety, the numbered sections, donate, language) and a
- * full-width column beside it that alternates two textures — paneled splits
- * for the storytelling sections, and open ruled sections (the bulletin's own
- * `SectionHeading` grammar) for the records: routes, the status board, the
- * feed. Composed at 1280px and scaled proportionally above it via
- * `[data-landing]` (see globals.css).
- *
- * The whole page is set on the "noche" token set (the `dark` wrapper)
- * regardless of theme. Two invariants survive every restructure: nothing
- * renders a figure without a source elsewhere on the site, and no appeal for
- * money sits above life safety.
+ * Two invariants survive every restructure: nothing renders a figure without
+ * a source elsewhere on the site, and no appeal for money sits above life
+ * safety.
  */
 export default async function HomePage() {
   const lang = await getLang();
@@ -200,92 +91,17 @@ export default async function HomePage() {
   ] as const;
 
   return (
-    <div data-landing className="dark bg-background text-foreground">
+    <>
       {/* Life safety, fixed to the viewport on `lg` — stays reachable through
-          the whole scroll. Renders nothing below `lg` (EmergencyPlates
-          carries it in the flow there). */}
+          the whole scroll. `HeroSafetyMobile` carries it in the flow below. */}
       <HeroSafety lang={lang} />
 
-      <div className="flex items-start gap-3 px-3">
-        {/* ------------------------------------------------------------ */}
-        {/* The rail — the landing's navbar from `lg`                      */}
-        {/* ------------------------------------------------------------ */}
-        <nav
-          aria-label={l.hero.railLabel}
-          /* Full viewport height so the last plate (DONAR) sits at the foot,
-             level with the hero's bottom edge. The routes stay tightly
-             stacked; the numbers directory below grows to absorb the slack
-             (see its `flex-1`), so the rail fills the height with no dead
-             band. `overflow-y-auto` is the last resort for sub-600px
-             windows. */
-          className="sticky top-0 hidden h-svh w-60 shrink-0 flex-col gap-2 overflow-y-auto py-3 lg:flex"
-        >
-          {/* Wordmark — the horizontal masthead is hidden here (see
-              SiteHeader), so the rail carries the identity at logotype
-              size, with the tagline set beneath it. */}
-          <Link
-            href="/"
-            className="px-1 pt-1 pb-1.5 outline-none focus-visible:ring-2 focus-visible:ring-ring"
-          >
-            <span className="display-condensed block truncate text-xl leading-none uppercase">
-              <span className="font-extrabold">Sismo</span>
-              <span className="ml-1.5 font-normal text-muted-foreground">
-                Pereira
-              </span>
-            </span>
-            <span className="label-signage mt-1.5 block text-[0.5625rem] tracking-[0.16em] text-muted-foreground">
-              {t.nav.tagline}
-            </span>
-          </Link>
-
-          <RailRoutes lang={lang} />
-
-          {/* The emergency lines — a phone directory. Each row is an equal
-              share of the panel's height (`flex-1`) with a hairline between,
-              so the list fills the rail's slack as a regular, aligned
-              pattern: a fixed numeral column, labels flush beside it. */}
-          <ul className="flex flex-1 flex-col divide-y divide-border/60 rounded-sm bg-secondary px-3.5">
-            {EMERGENCY_LINES.map((line) => (
-              <li key={line.number} className="flex flex-1 items-center gap-3">
-                <a
-                  href={`tel:${line.number}`}
-                  data-readout
-                  className="w-8 shrink-0 font-mono text-xs font-semibold tabular-nums underline-offset-4 outline-none hover:underline focus-visible:ring-2 focus-visible:ring-ring"
-                >
-                  {line.number}
-                </a>
-                <span className="min-w-0 truncate text-xs leading-snug text-muted-foreground">
-                  {line.label}
-                </span>
-              </li>
-            ))}
-          </ul>
-
-          {/* Report and Donate — the rail's closing pair, at the foot. */}
-          <RailActions lang={lang} />
-        </nav>
-
-        {/* ------------------------------------------------------------ */}
-        {/* The wall                                                       */}
-        {/* ------------------------------------------------------------ */}
-        {/* Rhythm: the fold is one tight cluster; every section after it
-            gets real air (4–6rem). Tight inside compositions, generous
-            between thoughts — the page breathes instead of ticking. */}
-        <div className="min-w-0 flex-1 py-3">
-          <div className="space-y-3">
-          {/* Top row — the wall's header, aligned with the rail's wordmark.
-              The pinned-notices ticker leads, the language toggle sits at the
-              right. `min-h` is tuned so the hero below lands level with the
-              first nav plate (SERVICES). */}
-          <div className="flex min-h-[2.5625rem] items-center gap-3">
-            <div className="min-w-0 flex-1">
-              <PinnedAlerts updates={pinned} lang={lang} />
-            </div>
-            {/* Only from `lg`, where the horizontal header (and its own
-                language toggle) is hidden — otherwise it doubles up. */}
-            <div className="hidden lg:block">
-              <LanguageToggle current={lang} />
-            </div>
+      <div className="space-y-3">
+          {/* Top row — the pinned-notices ticker. `min-h` matches the rail's
+              wordmark so the hero below lands level with the first nav
+              plate (SERVICES). */}
+          <div className="flex min-h-[2.5625rem] items-center">
+            <PinnedAlerts updates={pinned} lang={lang} />
           </div>
 
           {/* Hero panel: contour terrain and chart paper behind a centered
@@ -641,9 +457,6 @@ export default async function HomePage() {
               </StatusCarousel>
             )}
           </section>
-
-        </div>
-      </div>
-    </div>
+    </>
   );
 }

@@ -4,6 +4,7 @@ import { Archivo, IBM_Plex_Mono, Source_Sans_3 } from "next/font/google";
 import { DonateBar } from "@/components/donate-bar";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
+import { SiteRail } from "@/components/site-rail";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
 import { getDictionary } from "@/lib/i18n";
@@ -91,14 +92,30 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
           >
             {t.nav.skipToContent}
           </a>
-          <SiteHeader lang={lang} />
-          {/* Outside <main> and after the header: it is chrome, not content,
-              and it scrolls away rather than joining the sticky masthead. */}
-          <DonateBar lang={lang} />
-          <main id="contenido" className="flex-1">
-            {children}
-          </main>
-          <SiteFooter lang={lang} />
+
+          {/*
+           * The app shell, site-wide: a full-bleed, scaled column (see
+           * `[data-shell]` in globals.css) with the vertical rail as the
+           * primary navigation from `lg`, and the horizontal masthead + donate
+           * bar standing in below it. Theme-responsive — warm "papel" by day,
+           * "noche" by night.
+           */}
+          <div data-shell className="flex min-h-full flex-col">
+            {/* Mobile chrome. The rail replaces both from `lg`. */}
+            <div className="lg:hidden">
+              <SiteHeader lang={lang} />
+              <DonateBar lang={lang} />
+            </div>
+
+            <div className="flex flex-1 items-start gap-3 px-3">
+              <SiteRail lang={lang} />
+              <main id="contenido" className="min-w-0 flex-1 py-3">
+                {children}
+              </main>
+            </div>
+
+            <SiteFooter lang={lang} />
+          </div>
           <Toaster position="top-center" />
         </ThemeProvider>
       </body>

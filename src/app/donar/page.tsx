@@ -37,7 +37,7 @@ export default async function DonatePage() {
   const p = t.donate.page;
 
   return (
-    <div className="mx-auto max-w-4xl px-4 py-10 pb-16 sm:py-14">
+    <div className="pb-12">
       <SectionHeading as="h1" title={p.heading} subtitle={p.lede} />
 
       {/* Rule 3: a claim carries its time as well as its source. This page is
