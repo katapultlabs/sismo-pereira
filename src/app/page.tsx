@@ -141,7 +141,7 @@ export default async function HomePage() {
               }}
             >
               <div
-                className="size-full bg-down opacity-[0.62]"
+                className="size-full bg-down opacity-[0.24]"
                 style={{
                   maskImage: "url(/seismic-accents.svg)",
                   WebkitMaskImage: "url(/seismic-accents.svg)",

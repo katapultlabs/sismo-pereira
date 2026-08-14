@@ -17,11 +17,15 @@ export function ServiceStatusCard({
   lang,
   className,
   style,
+  showZone = false,
 }: {
   status: ServiceStatus;
   lang: Lang;
   className?: string;
   style?: React.CSSProperties;
+  /** Show the zone as the card's title — for the per-zone board on
+   *  /servicios, where the same service appears once per zone. */
+  showZone?: boolean;
 }) {
   const t = getDictionary(lang);
 
@@ -45,6 +49,12 @@ export function ServiceStatusCard({
         </h3>
         <StatusBadge status={status.status} lang={lang} />
       </div>
+
+      {showZone ? (
+        <p className="display-condensed text-lg leading-tight font-bold text-balance">
+          {status.zone_name ?? t.status.noData}
+        </p>
+      ) : null}
 
       {status.headline ? (
         <p className="display-condensed text-lg leading-tight font-bold text-balance">
