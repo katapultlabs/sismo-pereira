@@ -7,8 +7,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## What this is
 
 A crisis information site for Pereira, Risaralda, built after the M7.4 earthquake of
-2026-08-10. Live at https://sismopereira.org. Rebranded **AquíAyuda** (Pereira line)
-on 2026-08-15 — the reskin is shipped, the `aquiayuda.co` DNS cutover is not
+2026-08-10. Live at https://aquiayuda.co (canonical since 2026-08-15); the launch
+domain https://sismopereira.org still serves the site directly. Rebranded
+**AquíAyuda** (Pereira line) on 2026-08-15
 ([why the name is inverted from the brief](./docs/DECISIONS.md#rebrand-aquíayuda)).
 
 **Read [`docs/EDITORIAL.md`](./docs/EDITORIAL.md) before changing anything the site

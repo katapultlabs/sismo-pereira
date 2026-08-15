@@ -50,7 +50,7 @@ export async function generateMetadata(): Promise<Metadata> {
 
   return {
     metadataBase: new URL(
-      process.env.NEXT_PUBLIC_SITE_URL ?? "https://sismopereira.org",
+      process.env.NEXT_PUBLIC_SITE_URL ?? "https://aquiayuda.co",
     ),
     title: { default: t.meta.title, template: "%s · AquíAyuda Pereira" },
     description: t.meta.description,

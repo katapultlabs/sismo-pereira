@@ -327,11 +327,17 @@ on white L0.955 has no silhouette). `--ember` was retinted from humanitarian amb
 the brand instead of fighting it. All of it is gated: `check-contrast` grew a
 `brand-contrast`/`brand` pair, 56/56 pairings pass in both themes.
 
-**Deliberately not done in this pass:**
+**The domain cutover (same day, second pass):** `aquiayuda.co` was wired and made
+canonical hours after the reskin — repo renamed to `katapultlabs/aquiayuda`, all
+four hostnames attached to the Vercel project (`.com` and both `www`s 308 to the
+`.co` apex), Cloudflare zones carrying the standard two DNS-only records, and
+`NEXT_PUBLIC_SITE_URL` flipped to `https://aquiayuda.co`. **`sismopereira.org`
+deliberately still serves the site directly rather than redirecting**: every link
+shared during the emergency's first week points there, and a redirect during the
+response adds a failure mode for no reader benefit. Turning it into a 308 → .co is
+post-emergency housekeeping; canonical tags already consolidate search onto .co.
 
-- **The `aquiayuda.co` DNS cutover.** `metadataBase` still falls back to
-  `sismopereira.org`; moving domains during an active emergency breaks every link
-  already in circulation, so it waits for a coordinated cutover with redirects.
+**Deliberately not done in this pass:**
 - **The type change.** The brief sets a normal-width grotesque; the site keeps
   condensed Archivo. The 2026-08-13 landing is composed around condensation (locked
   `nowrap` hero lines, a 240px rail) and widening every heading ~16% breaks that

@@ -5,7 +5,10 @@ publishing to AquíAyuda Pereira (formerly Sismo Pereira).**
 
 This document is self-contained — it can be sent to someone outside the project.
 
-**Base URL:** `https://sismopereira.org/api/v1`
+**Base URL:** `https://aquiayuda.co/api/v1`
+
+(The former base, `https://sismopereira.org/api/v1`, keeps working — but tell
+partners the new one.)
 
 ---
 
