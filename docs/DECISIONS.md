@@ -394,6 +394,45 @@ confirm a recipient, we do not collect. Opening steps are in
 - **The home page's `/luz` drive was not generalized** — it stays a single-service
   campaign plate until there is a second live instrument to point at.
 
+### The landing is the funnel
+
+**Decision (2026-08-15, days-after phase):** the home page asks one question —
+*¿necesitas ayuda o quieres ayudar?* — and answers it with doors rendered directly:
+six under «Necesito ayuda», three under «Quiero ayudar», the three newest updates as
+rows, and nothing else. `/reportar` lost its triage interstitial the same day: the
+form starts immediately, with the special cases (luz, agua, missing person) as one
+chip row. The community form also gained the GPS/map location capture the
+instruments already had — `reports.lat`/`lng` existed from the initial schema and
+had simply never been collected.
+
+**Why now:** the editorial landing was built for the hours-after phase, when the
+job was narrating the event (hero panel, figures, the full status board, a
+five-line phone directory). Days after, the visitor arrives with intent, and every
+piece of narration between them and their intent is cost. The maintainer's brief:
+bare minimum, minimal cognitive load, route people to where they can be helped or
+be helpful.
+
+**Where each removed piece's job went** (nothing lost its job, only its acreage):
+
+- The **status board** → the «Estado de los servicios» door, whose readout is the
+  unknown-count; the board itself lives on `/servicios`.
+- The **emergency-line directory** → the footer (every page) and `/recursos`. The
+  123 button stays in the sticky masthead — which is what now carries the "life
+  safety outranks donate at every scroll position" invariant, and why the masthead
+  may never again be hidden on a route.
+- The **medical closures** → the `/recursos` door's readout and the pinned ticker.
+- The **update feed** → three plain rows at the foot; the complete record is the
+  pinned ticker plus `/actualizaciones/[slug]`.
+- The **`/luz` drive and donate banners** → first-class doors in their sections.
+- The **seismic artwork, clock, figures grid, rail** → deleted outright, with
+  their components (`landing-art`, `local-clock`, `hero-safety`, `action-board`,
+  `status-carousel`, `update-card`) — an unused module is invisible to lint, so
+  they left in the same commit that orphaned them.
+
+**Deliberately not done:** no re-narration section, however tempting a "state of
+the emergency" summary is — that is `/servicios` and the feed's job; and the
+`[data-landing]` proportional-scaling CSS died with the composition it scaled.
+
 ## Technical
 
 ### Reads degrade; writes fail loudly

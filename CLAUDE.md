@@ -368,44 +368,26 @@ a resident is never offered it.
 - The inline header nav starts at `lg`, not `md` — six items plus the 123 button and
   the language/theme controls do not fit at 768. Adding a seventh means reworking the
   bar, not tightening the gap.
-- **The home page is an editorial landing with two layouts, and its order is
-  load-bearing.** From `lg` it is a sticky left rail (wordmark → five numbered routes →
-  emergency-line directory → Reportar → Donar) beside a full-bleed wall (pinned ticker
-  + clock/theme/language → hero panel → `/luz` drive → `ActionRoutes` → report CTA →
-  status board → donate → figures → update feed). Below `lg` the rail becomes a 2-up
-  plate grid under the hero, followed by `HeroSafetyMobile`. The horizontal masthead is
-  `lg:hidden` on `/` only, because the rail replaces it — which is why the rail has to
-  carry the theme and language controls itself.
-  Pinned notices are a ticker rather than cards because three `UpdateCard`s cost ~540px
-  and pushed everything actionable off a phone screen. Don't reorder without
-  re-measuring on a 390px viewport.
-  ([why](./docs/DECISIONS.md#the-home-page-is-a-hub-not-a-bulletin))
-- **Life safety must outrank the donate CTA at every scroll position, not just at the
-  top.** On `lg` that is `HeroSafety`: a fixed bottom-right stack with the alarm-red
-  123 plate above the closures card. It is fixed precisely because the hero's donate
-  button scrolls away and 123 must not. Below `lg`, `HeroSafetyMobile` carries both in
-  the flow. Removing the 123 plate because "the header has one" is the specific
-  regression that shipped once — the header is hidden on this route
-  ([why](./docs/DECISIONS.md#life-safety-as-a-corner-widget-on-desktop--a-fixed-123-plate)).
-- **A route tile must carry a live readout**, and must be named for what the reader
-  does ("Busca a una persona"), not for a part of the site ("Enlaces"). A tile with
-  no readout is a nav link wearing a card. Any count shown must be the number the
-  reader actually finds on the far side — the reports tile reads with the same limit
-  `/reportes` renders, deliberately.
-- **The route board is full at six.** Two rows of `lg:grid-cols-3`. A seventh means
-  removing one, same as the masthead. The plates are the only chroma the board adds;
-  the six tiles stay achromatic so they don't compete with the four status hues.
-  The `/luz` drive sits *above* the board as its own plate for this reason — it is a
-  time-boxed campaign asking for a contribution, not a standing route, and as tile
-  seven it would both break the grid and read as a peer of `/organizaciones`.
-- **`StatusCarousel` is a carousel below `lg` and a `grid-cols-3` grid at `lg` and
-  above** — the route board, the status board and the update feed all run through it.
-  Do not make it a carousel at all widths: that hides four of the seven service
-  statuses behind a horizontal swipe on a desktop screen, which is the opposite of
-  what a status board is for
-  ([why](./docs/DECISIONS.md#carousels-on-the-landings-two-boards--carousel-on-mobile-grid-on-desktop)).
-  It takes `lang` because the prev/next buttons need real accessible names; they read
-  the arrow glyph otherwise.
+- **The home page is the funnel, and its order is load-bearing.** One question
+  (¿necesitas ayuda o quieres ayudar?), then doors rendered directly: pinned ticker →
+  three-line hero → «Necesito ayuda» (six doors) → «Quiero ayudar» (three doors) →
+  the three newest updates as plain rows. The 2026-08-15 rewrite replaced the
+  editorial landing (rail, hero panel, carousels, figures) — where each removed
+  piece's job went is in
+  [DECISIONS.md](./docs/DECISIONS.md#the-landing-is-the-funnel). The standard
+  masthead now shows on `/` like every route, and `DonateBar` hides there entirely —
+  the «Quiero ayudar» section carries the volt donate door, and a second volt appeal
+  in the chrome reads as pressure.
+- **Life safety must outrank the donate CTA at every scroll position.** The sticky
+  masthead's alarm-red 123 button is what carries this now that the fixed
+  `HeroSafety` widget is gone — which is why the masthead may never be hidden on a
+  route again, and why «Necesito ayuda» renders above «Quiero ayudar». The medical
+  closures survive as the `/recursos` door's readout and the pinned ticker.
+- **A door must carry a live readout where one honestly exists**, and must be named
+  for what the reader does ("Busco a una persona"), not for a part of the site
+  ("Enlaces"). Any count shown is the number the reader actually finds on the far
+  side; a degraded read renders no count rather than a stale one. Doors are
+  achromatic except donate, which wears the brand volt like every donate CTA.
 - **The masthead row is full.** It is capped at `max-w-6xl` (1152px), so its space
   does **not** grow with the viewport — a control that fits at 1600 fits at 1280 and
   no better. The three actions are ranked and appear at different breakpoints: 123

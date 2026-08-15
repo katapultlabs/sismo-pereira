@@ -29,7 +29,10 @@ export function DonateBar({ lang }: { lang: Lang }) {
   const t = getDictionary(lang);
   const pathname = usePathname();
 
-  if (pathname === DONATE_PATH) return null;
+  /* Nothing on /donar (a banner for the page you are reading), and nothing on
+   * the landing — its "quiero ayudar" section carries a first-class volt
+   * donate door, and a second volt appeal in the chrome reads as pressure. */
+  if (pathname === DONATE_PATH || pathname === "/") return null;
 
   return (
     <aside
@@ -38,9 +41,6 @@ export function DonateBar({ lang }: { lang: Lang }) {
         /* The brand volt band — the one saturated chrome surface, worn by the
            standing appeal. Ink text only; see the --brand note in globals.css. */
         "border-b border-brand-contrast/20 bg-brand text-brand-contrast",
-        /* The landing's rail ends in a donate plate and its hero carries the
-           donate CTA — a third appeal in the chrome would read as pressure. */
-        pathname === "/" && "lg:hidden",
       )}
     >
       <Link

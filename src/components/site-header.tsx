@@ -33,15 +33,7 @@ export function SiteHeader({ lang }: { lang: Lang }) {
   ];
 
   return (
-    <header
-      className={cn(
-        "sticky top-0 z-50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/85",
-        /* The landing carries its own vertical rail from `lg` — wordmark,
-           123, section plates, donate, language — so the horizontal masthead
-           yields to it there and returns on every other route. */
-        pathname === "/" && "lg:hidden",
-      )}
-    >
+    <header className="sticky top-0 z-50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/85">
       <div className="mx-auto flex h-14 max-w-6xl items-center gap-3 px-4">
         {/*
          * `min-w-0` rather than `shrink-0`: on a 320px phone the wordmark must

@@ -322,26 +322,6 @@
   letter-spacing: -0.015em;
 }
 
-/* Seismograph chart paper. Pure CSS gradients — no image request, which
- * matters more than the texture does on a 2G connection.
- *
- * Deliberately anisotropic: dense horizontal ruling with sparse vertical time
- * marks, the way a chart recorder's drum is printed. An even grid in both
- * directions just reads as graph paper. */
-@utility chart-paper {
-  background-image:
-    repeating-linear-gradient(
-      to right,
-      var(--rule-tick) 0 1px,
-      transparent 1px 2.5rem
-    ),
-    repeating-linear-gradient(
-      to bottom,
-      var(--rule-ink) 0 1px,
-      transparent 1px 0.5rem
-    );
-}
-
 /* ── Motion ──────────────────────────────────────────────────────────────────
  * One orchestrated reveal on load, nothing else. Anything more would be noise
  * on a page people open in an emergency.
@@ -377,59 +357,6 @@
   animation: trace 1.6s cubic-bezier(0.4, 0, 0.2, 1) both;
 }
 
-/* ── Landing scale ──────────────────────────────────────────────────────────
- * The landing is composed at 1280px and scales proportionally above it: past
- * that width the root em grows linearly (16px × vw⁄1280 = 1.25vw), so every
- * rem-derived size — type, spacing, radii, the rail — enlarges as one
- * drawing and the page stays full-bleed on any monitor. Media queries are
- * unaffected (rem inside @media ignores the root font-size), and pages
- * without a `[data-landing]` element keep the browser default.
- * ────────────────────────────────────────────────────────────────────────── */
-@media (min-width: 80rem) {
-  html:has([data-landing]) {
-    /* Floor and ceiling are in `rem`, which on `html` resolves against the
-     * browser's own root size — so a reader who has set 20px text keeps a
-     * 20px floor and the page still scales from there. A bare `1.25vw` threw
-     * that preference away entirely and left zoom with nothing to do, which
-     * is a WCAG 1.4.4 (resize text) failure. The 1.25 ceiling stops a 4K
-     * monitor inflating the page past the composition it was drawn for. */
-    font-size: clamp(1rem, 1.25vw, 1.25rem);
-  }
-}
-
-/* Rail anchors glide rather than jump. Landing only; the reduced-motion
- * block below restores instant jumps. */
-html:has([data-landing]) {
-  scroll-behavior: smooth;
-}
-
-/* The landing's 8/10/12 corner is now the whole site's corner — see the
- * `--radius` note in the `@theme` block. Nothing to scope here any more. */
-
-/* ── Landing (editorial) motion ─────────────────────────────────────────────
- * Scroll-driven, CSS-only, and fail-open: where `animation-timeline: view()`
- * is unsupported the elements are simply visible. Slow fades and one gentle
- * drift — nothing springs, nothing bounces.
- * ────────────────────────────────────────────────────────────────────────── */
-
-@keyframes drift-slow {
-  to {
-    transform: translateY(-3.5rem);
-  }
-}
-
-/* The clock's carrier light: a slow opacity breath on the dot beside the
- * running time. Purposeful — it says "this is live". */
-@keyframes blink-soft {
-  0%,
-  100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.3;
-  }
-}
-
 /* The pinned-notices ticker. Two identical groups in the track, so -50%
  * lands on an exact period and the loop is seamless. */
 @keyframes marquee-slide {
@@ -438,28 +365,7 @@ html:has([data-landing]) {
   }
 }
 
-/*
- * No scroll-triggered reveals, deliberately. A reveal that starts at
- * `opacity: 0` gates content behind animation support — in any renderer
- * where the timeline never ticks (headless, some readers), the section
- * ships blank. On a site people open during a blackout, content is visible
- * by default, always; motion is reserved for ornament and load.
- */
 @layer utilities {
-  @supports (animation-timeline: scroll()) {
-    /* Background art in the landing hero eases upward as the page scrolls.
-       Ornament only — if the timeline never ticks, the art simply holds. */
-    .parallax-drift {
-      animation: drift-slow 1ms linear both;
-      animation-timeline: scroll(root);
-      animation-range: 0 120svh;
-    }
-  }
-
-  .animate-blink {
-    animation: blink-soft 2.4s ease-in-out infinite;
-  }
-
   /* Paused on hover/focus so a moving critical notice can still be read and
      clicked. Speed scales with content via the inline --marquee-duration. */
   .marquee-track {
@@ -480,10 +386,7 @@ html:has([data-landing]) {
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
-  /* Scroll-driven animations ignore duration, so they need an explicit off;
-     these would otherwise loop at 0.01ms, worse than motion. */
-  .parallax-drift,
-  .animate-blink,
+  /* An infinite animation at 0.01ms is worse than motion — turn it off. */
   .marquee-track {
     animation: none !important;
   }

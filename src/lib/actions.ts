@@ -26,6 +26,11 @@ const reportSchema = z.object({
   service: z.enum(SERVICES).nullish(),
   zone_slug: z.string().min(1).max(64).nullish(),
   address_hint: z.string().max(200).nullish(),
+  // Written by GPS or the map picker, never typed. Optional here — unlike the
+  // service instruments, a community report without coordinates is still
+  // useful to a moderator, so we ask rather than require.
+  lat: z.coerce.number().min(-90).max(90).nullish(),
+  lng: z.coerce.number().min(-180).max(180).nullish(),
   description: z.string().min(10).max(4000),
   contact_name: z.string().max(120).nullish(),
   contact_phone: z.string().max(40).nullish(),
@@ -198,6 +203,8 @@ export async function submitReport(
     service: nullify(formData.get("service")),
     zone_slug: nullify(formData.get("zone_slug")),
     address_hint: nullify(formData.get("address_hint")),
+    lat: nullify(formData.get("lat")),
+    lng: nullify(formData.get("lng")),
     description: nullify(formData.get("description")),
     contact_name: nullify(formData.get("contact_name")),
     contact_phone: nullify(formData.get("contact_phone")),

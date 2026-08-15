@@ -1,8 +1,9 @@
 "use client";
 
-import { useActionState, useEffect } from "react";
+import { useActionState, useEffect, useState } from "react";
 import { useFormStatus } from "react-dom";
-import { CheckCircle2, TriangleAlert } from "lucide-react";
+import dynamic from "next/dynamic";
+import { CheckCircle2, Crosshair, TriangleAlert } from "lucide-react";
 
 import { track } from "@/lib/analytics";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
@@ -32,6 +33,18 @@ const SERVICES: ServiceType[] = [
 
 const INITIAL: SubmitReportState = { ok: false };
 
+/* Same lazy-load rule as the service instruments: MapLibre is ~250 KB and
+ * only loads when someone taps "ajustar en el mapa". */
+const LocationPicker = dynamic(() => import("./location-picker"), {
+  ssr: false,
+});
+
+interface Fix {
+  lat: number;
+  lng: number;
+  accuracy: number | null;
+}
+
 function SubmitButton({ lang }: { lang: Lang }) {
   const t = getDictionary(lang).form;
   const { pending } = useFormStatus();
@@ -51,6 +64,39 @@ function SubmitButton({ lang }: { lang: Lang }) {
 export function ReportForm({ lang, zones }: { lang: Lang; zones: Zone[] }) {
   const t = getDictionary(lang);
   const [state, formAction] = useActionState(submitReport, INITIAL);
+
+  const [fix, setFix] = useState<Fix | null>(null);
+  const [locating, setLocating] = useState(false);
+  const [geoError, setGeoError] = useState<"denied" | "unavailable" | null>(
+    null,
+  );
+  const [showMap, setShowMap] = useState(false);
+
+  function requestLocation() {
+    if (!("geolocation" in navigator)) {
+      setGeoError("unavailable");
+      return;
+    }
+    setLocating(true);
+    setGeoError(null);
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        setFix({
+          lat: pos.coords.latitude,
+          lng: pos.coords.longitude,
+          accuracy: pos.coords.accuracy,
+        });
+        setLocating(false);
+      },
+      (err) => {
+        setLocating(false);
+        setGeoError(
+          err.code === err.PERMISSION_DENIED ? "denied" : "unavailable",
+        );
+      },
+      { enableHighAccuracy: true, timeout: 10_000, maximumAge: 60_000 },
+    );
+  }
 
   /* The database counts the reports that were filed. What it cannot show is
    * the person who tried and was turned away, so that is what we record. */
@@ -170,6 +216,73 @@ export function ReportForm({ lang, zones }: { lang: Lang; zones: Zone[] }) {
           />
         </div>
       </div>
+
+      {/* Precise location — optional here, unlike the service instruments,
+          because a community report a moderator can follow up on is useful
+          without coordinates. The pattern (GPS first, map to adjust) is the
+          same one /luz established. */}
+      <fieldset className="space-y-4 border border-border bg-muted/30 p-4">
+        <legend className="label-signage px-1.5 text-muted-foreground">
+          {t.location.heading}
+        </legend>
+        <p className="text-xs leading-relaxed text-muted-foreground">
+          {t.location.why}
+        </p>
+
+        <div className="flex flex-wrap items-center gap-3">
+          <Button
+            type="button"
+            variant="outline"
+            onClick={requestLocation}
+            disabled={locating}
+            className="label-signage h-11 rounded-sm"
+          >
+            <Crosshair className="size-4" aria-hidden />
+            {locating ? t.location.locating : t.location.useLocation}
+          </Button>
+
+          {fix ? (
+            <span className="flex items-center gap-2 font-mono text-xs text-ok-foreground">
+              <CheckCircle2 className="size-4" aria-hidden />
+              {t.location.ready}
+              {fix.accuracy != null ? (
+                <span className="text-muted-foreground">
+                  · {t.location.accuracy} ±{Math.round(fix.accuracy)} m
+                </span>
+              ) : null}
+            </span>
+          ) : null}
+
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            onClick={() => setShowMap((v) => !v)}
+            className="label-signage h-9 rounded-sm px-2"
+          >
+            {showMap ? t.location.hideMap : t.location.adjustOnMap}
+          </Button>
+        </div>
+
+        {geoError ? (
+          <p className="border border-warn/40 bg-warn-muted p-3 text-xs text-warn-foreground">
+            {geoError === "denied" ? t.location.denied : t.location.unavailable}
+          </p>
+        ) : null}
+
+        {showMap ? (
+          <LocationPicker
+            lat={fix?.lat ?? null}
+            lng={fix?.lng ?? null}
+            onChange={(lat, lng) => setFix({ lat, lng, accuracy: null })}
+            lang={lang}
+          />
+        ) : null}
+
+        {/* Written by GPS or the map, never typed. */}
+        <input type="hidden" name="lat" value={fix?.lat ?? ""} />
+        <input type="hidden" name="lng" value={fix?.lng ?? ""} />
+      </fieldset>
 
       <div className="space-y-1.5">
         <Label className="label-signage text-muted-foreground" htmlFor="description">

@@ -71,113 +71,58 @@ const es = {
    * already publishes — no section may introduce a figure that does not have
    * a source elsewhere on the site.
    */
-  landing: {
-    hero: {
-      /* Two authored lines — the second, the call to act, set in ember.
-         Explicit lines (not wrapping) so no line runs under the life-safety
-         cards pinned to the hero's corner. */
-      titleLines: ["Lo que sabemos, lo que falta", "y cómo ayudar."],
-      lede:
-        "Boletín ciudadano de la emergencia en Pereira: estado de los " +
-        "servicios, reportes verificados y rutas claras para actuar. Cada " +
-        "dato que publicamos indica su fuente y su hora.",
-      railLabel: "En esta página",
-      /* Under the 123 numeral on the rail plate — the numeral is the verb. */
-      lineNote: "Línea única nacional, gratuita",
-    },
-    impact: {
-      heading: "La emergencia en cifras",
-      subheading:
-        "Solo publicamos cifras que podemos sostener con una fuente. Lo que " +
-        "no está confirmado se marca como tal.",
-      event: [
-        { value: "7.4", label: "Magnitud" },
-        { value: "7:34 a. m.", label: "Hora local, 10 de agosto" },
-        { value: "~107 km", label: "Profundidad" },
-        { value: "~55 km", label: "Epicentro en Chocó, al occidente" },
-      ],
-      medicalLabel: "centros médicos sin recibir pacientes",
-      linesLabel: "líneas de emergencia publicadas",
-      unknownLabel: (total: number) =>
-        `de ${total} servicios sin confirmación oficial`,
-      reportsLabel: "reportes de vecinos verificados",
-      note:
-        "No publicamos personas afectadas, viviendas dañadas ni damnificados " +
-        "mientras no exista un consolidado oficial que se pueda verificar. " +
-        "Un vacío honesto informa mejor que una cifra inventada.",
-    },
-    situation: {
-      heading: "Situación actual",
-      subheading: "Lo último que pudimos confirmar, con su fuente y su hora.",
-      timelineHeading: "Cronología",
-      viewFeed: "Ver todas las actualizaciones",
-      mapHeading: "Ubicación del epicentro",
-      mapCaption: "Esquema de referencia — no es un mapa a escala.",
-      mapAlt:
-        "Esquema de la posición del epicentro en Chocó respecto a Pereira, " +
-        "a unos 55 kilómetros al occidente.",
-      epicentreLabel: "Epicentro",
-      cityLabel: "Pereira",
-      distanceLabel: "~55 km",
-      depthLine: "Profundidad estimada: ~107 km",
-    },
-    help: {
-      heading: "Cómo puedes ayudar",
-      subheading:
-        "Tres rutas concretas. Ninguna pide datos que no hagan falta.",
-      offer: {
-        title: "Ofrece ayuda o reporta lo que ves",
-        body:
-          "Un moderador revisa cada envío antes de publicarlo. Nunca " +
-          "publicamos tus datos de contacto.",
-        cta: "Ir al formulario",
-      },
-      orgs: {
-        title: "¿Representas a una organización?",
-        body:
-          "Entidades, empresas de servicios y organismos de socorro " +
-          "publican aquí con su nombre y marca de tiempo.",
-        cta: "Solicitar acceso",
-      },
-      lines: {
-        title: "Comparte las líneas oficiales",
-        body:
-          "Los números de emergencia verificados, listos para guardar y " +
-          "compartir.",
-        cta: "Ver recursos",
-      },
-    },
-    transparency: {
-      heading: "Transparencia",
-      subheading: "Cómo se sostiene lo que este sitio publica y recomienda.",
-      items: [
-        {
-          title: "Qué verificamos antes de recomendar",
-          body:
-            "La única campaña de donación que amplificamos pasó por una " +
-            "verificación pública: qué comprobamos, qué afirma la campaña y " +
-            "qué no es público todavía — incluida nuestra declaración de " +
-            "interés.",
-          cta: "Leer la verificación",
-        },
-        {
-          title: "Quién publica aquí",
-          body:
-            "Todo lo publicado queda atribuido a su organización y con marca " +
-            "de tiempo. Los reportes anónimos pasan por moderación antes de " +
-            "aparecer.",
-          cta: "Ver organizaciones",
-        },
-        {
-          title: "Código y correcciones a la vista",
-          body:
-            "El sitio es de código abierto: cualquiera puede revisar cómo " +
-            "funciona y su historial de cambios. Los errores se corrigen de " +
-            "forma visible, nunca en silencio.",
-          cta: "Ver el repositorio",
-        },
-      ],
-    },
+  /*
+   * The funnel landing — one question, two groups of doors. Door titles for
+   * luz/agua/persona/otra-cosa live in `triage` (the /reportar chips reuse
+   * them); this block carries only what is unique to the home page.
+   */
+  home: {
+    eyebrow: "Sismo del 10 de agosto de 2026 · Pereira",
+    title: "¿Necesitas ayuda o quieres ayudar?",
+    lede:
+      "Información verificada, con su fuente y su hora. Elige a qué vienes y " +
+      "te llevamos directo.",
+    needHeading: "Necesito ayuda",
+    helpHeading: "Quiero ayudar",
+    servicesTitle: "Estado de los servicios",
+    servicesSub: "Lo que confirma cada operador — luz, agua, gas, internet",
+    servicesReadout: (unknown: number, total: number) =>
+      unknown > 0
+        ? `${unknown} de ${total} sin confirmación oficial`
+        : `${total} servicios con reporte del operador`,
+    resourcesTitle: "Albergues, líneas y salud",
+    resourcesSub: "Recursos verificados y centros médicos sin atención",
+    closuresReadout: (n: number) => `${n} centros médicos sin atención`,
+    donateTitle: "Donar dinero",
+    donateSub: "Al fondo de emergencia, desde Colombia o el exterior",
+    goodsTitle: "Llevar cosas",
+    goodsSub: "A un punto de acopio — cada uno publica qué está pidiendo",
+    goodsReadout: (n: number) =>
+      n > 0
+        ? `${n} ${n === 1 ? "punto verificado" : "puntos verificados"}`
+        : "Aún sin puntos confirmados",
+    orgTitle: "Publicar información oficial",
+    orgSub: "Para organizaciones y operadores de servicios",
+    updatesHeading: "Últimas actualizaciones",
+  },
+  /* Generic location-capture strings, shared by the community form. The
+   * instrument dictionaries (`luz`, `agua`) carry their own copies because
+   * their shape is load-bearing — see serviceCopy(). */
+  location: {
+    heading: "Ubicación",
+    why:
+      "Con una ubicación precisa el reporte sirve mucho más. Con el GPS es " +
+      "más exacto que escribir la dirección.",
+    useLocation: "Usar mi ubicación",
+    locating: "Ubicando…",
+    ready: "Ubicación tomada",
+    accuracy: "Precisión",
+    denied:
+      "No nos diste permiso de ubicación. Selecciona tu comuna y, si puedes, " +
+      "agrega una referencia.",
+    unavailable: "No pudimos obtener tu ubicación. Selecciona tu comuna.",
+    adjustOnMap: "Ajustar en el mapa",
+    hideMap: "Ocultar el mapa",
   },
   /*
    * The action board — the hub that occupies the fold.
@@ -976,107 +921,50 @@ const en: typeof es = {
       { label: "Depth", value: "~107 km" },
     ],
   },
-  landing: {
-    hero: {
-      titleLines: ["What we know, what we don't", "and how to help."],
-      lede:
-        "A citizen bulletin for the Pereira emergency: utility status, " +
-        "verified reports, and clear routes to act. Every item we publish " +
-        "shows its source and its time.",
-      railLabel: "On this page",
-      lineNote: "Single national line, toll-free",
-    },
-    impact: {
-      heading: "The emergency in figures",
-      subheading:
-        "We only publish figures we can back with a source. Anything " +
-        "unconfirmed is marked as such.",
-      event: [
-        { value: "7.4", label: "Magnitude" },
-        { value: "7:34 a.m.", label: "Local time, August 10" },
-        { value: "~107 km", label: "Depth" },
-        { value: "~55 km", label: "Epicenter in Chocó, to the west" },
-      ],
-      medicalLabel: "medical centres not receiving patients",
-      linesLabel: "emergency lines published",
-      unknownLabel: (total: number) =>
-        `of ${total} services without official confirmation`,
-      reportsLabel: "verified reports from neighbours",
-      note:
-        "We do not publish counts of people affected, homes damaged, or " +
-        "displaced families until an official, verifiable consolidated " +
-        "figure exists. An honest gap informs better than an invented number.",
-    },
-    situation: {
-      heading: "Current situation",
-      subheading:
-        "The latest we have been able to confirm, with its source and time.",
-      timelineHeading: "Timeline",
-      viewFeed: "See all updates",
-      mapHeading: "Epicenter location",
-      mapCaption: "Reference diagram — not a map to scale.",
-      mapAlt:
-        "Diagram of the epicenter's position in Chocó relative to Pereira, " +
-        "about 55 kilometres to the west.",
-      epicentreLabel: "Epicenter",
-      cityLabel: "Pereira",
-      distanceLabel: "~55 km",
-      depthLine: "Estimated depth: ~107 km",
-    },
-    help: {
-      heading: "How you can help",
-      subheading: "Three concrete routes. None asks for data it doesn't need.",
-      offer: {
-        title: "Offer help or report what you see",
-        body:
-          "A moderator reviews every submission before it is published. We " +
-          "never publish your contact details.",
-        cta: "Go to the form",
-      },
-      orgs: {
-        title: "Do you represent an organization?",
-        body:
-          "Public agencies, utilities, and relief organizations publish " +
-          "here under their own name, timestamped.",
-        cta: "Request access",
-      },
-      lines: {
-        title: "Share the official lines",
-        body:
-          "The verified emergency numbers, ready to save and pass on.",
-        cta: "See resources",
-      },
-    },
-    transparency: {
-      heading: "Transparency",
-      subheading: "What holds up what this site publishes and recommends.",
-      items: [
-        {
-          title: "What we verify before recommending",
-          body:
-            "The one donation campaign we amplify went through a public " +
-            "verification: what we checked, what the campaign claims, and " +
-            "what is not public yet — including our declaration of interest.",
-          cta: "Read the verification",
-        },
-        {
-          title: "Who publishes here",
-          body:
-            "Everything published is attributed to its organization and " +
-            "timestamped. Anonymous reports go through moderation before " +
-            "they appear.",
-          cta: "See organizations",
-        },
-        {
-          title: "Code and corrections in the open",
-          body:
-            "The site is open source: anyone can review how it works and " +
-            "its change history. Errors are corrected visibly, never " +
-            "silently.",
-          cta: "View the repository",
-        },
-      ],
-    },
+  home: {
+    eyebrow: "August 10, 2026 earthquake · Pereira",
+    title: "Do you need help, or want to help?",
+    lede:
+      "Verified information, with its source and its time. Pick what you came " +
+      "for and we take you straight there.",
+    needHeading: "I need help",
+    helpHeading: "I want to help",
+    servicesTitle: "Service status",
+    servicesSub: "What each operator confirms — power, water, gas, internet",
+    servicesReadout: (unknown: number, total: number) =>
+      unknown > 0
+        ? `${unknown} of ${total} without official confirmation`
+        : `${total} services with an operator report`,
+    resourcesTitle: "Shelters, helplines and health",
+    resourcesSub: "Verified resources, and medical centres not taking patients",
+    closuresReadout: (n: number) => `${n} medical centres not taking patients`,
+    donateTitle: "Donate money",
+    donateSub: "To the emergency fund, from Colombia or abroad",
+    goodsTitle: "Bring supplies",
+    goodsSub: "To a collection point — each one lists what it is asking for",
+    goodsReadout: (n: number) =>
+      n > 0
+        ? `${n} verified ${n === 1 ? "point" : "points"}`
+        : "No confirmed points yet",
+    orgTitle: "Publish official information",
+    orgSub: "For organizations and service operators",
+    updatesHeading: "Latest updates",
+  },
+  location: {
+    heading: "Location",
+    why:
+      "A precise location makes the report far more useful. GPS is more " +
+      "accurate than typing an address.",
+    useLocation: "Use my location",
+    locating: "Locating…",
+    ready: "Location captured",
+    accuracy: "Accuracy",
+    denied:
+      "You did not grant location permission. Pick your comuna and add a " +
+      "landmark if you can.",
+    unavailable: "We could not get your location. Pick your comuna.",
+    adjustOnMap: "Adjust on the map",
+    hideMap: "Hide the map",
   },
   actions: {
     heading: "What do you need right now",
