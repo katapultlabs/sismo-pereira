@@ -11,7 +11,7 @@ before debugging anything DNS-shaped — most of an afternoon is written down he
 
 | | |
 |---|---|
-| **Repository** | `katapultlabs/sismo-pereira` (public) |
+| **Repository** | `katapultlabs/aquiayuda` (public) |
 | **Hosting** | Vercel — team **Katapult**, scope slug `katapult-8b361435`, project `sismo-pereira` |
 | **Domain** | `sismopereira.org`, registered 2026-08-10 |
 | **Registrar + DNS** | Cloudflare, under the **Katapult Labs** account |

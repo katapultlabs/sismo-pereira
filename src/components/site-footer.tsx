@@ -5,7 +5,7 @@ import { BrandMark } from "@/components/brand-mark";
 import { EMERGENCY_LINES } from "@/lib/fallback-data";
 import { getDictionary, type Lang } from "@/lib/i18n";
 
-const REPO_URL = "https://github.com/katapultlabs/sismo-pereira";
+const REPO_URL = "https://github.com/katapultlabs/aquiayuda";
 
 const LINK =
   "text-sm text-muted-foreground underline-offset-4 transition-colors hover:text-foreground hover:underline";

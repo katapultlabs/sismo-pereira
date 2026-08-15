@@ -13,7 +13,7 @@ import { getLang } from "@/lib/lang";
  * at the public repo, which definitely exists.
  */
 const CONTACT_EMAIL = process.env.NEXT_PUBLIC_CONTACT_EMAIL ?? null;
-const REPO_ISSUES_URL = "https://github.com/katapultlabs/sismo-pereira/issues";
+const REPO_ISSUES_URL = "https://github.com/katapultlabs/aquiayuda/issues";
 
 export async function generateMetadata(): Promise<Metadata> {
   const lang = await getLang();
@@ -97,7 +97,7 @@ export default async function PartnersPage() {
             rel="noreferrer noopener"
             className="mt-3 inline-block font-mono text-sm font-semibold underline underline-offset-4"
           >
-            github.com/katapultlabs/sismo-pereira
+            github.com/katapultlabs/aquiayuda
           </a>
         )}
       </section>
