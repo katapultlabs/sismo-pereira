@@ -187,6 +187,28 @@ with `verified = false`, or a `services` array missing `electricity` all produce
 rows rather than an error, because RLS filters rather than refuses. Check those three
 things in that order.
 
+### Opening a new service instrument
+
+`/agua` (and any future twin of `/luz`) ships **closed**: it renders an honest
+"not yet taking reports" state and routes people to the moderated community form.
+It stays closed until both halves of the gate in
+`src/lib/service-instruments.ts` hold:
+
+1. **A verified organization covering the service exists** — for water, Aguas y
+   Aguas with `water` in `organizations.services` and `verified = true`. This is
+   the same condition RLS uses to let them read the rows.
+2. **The launch switch is flipped in code** (`live: true`), and it is flipped
+   only after a named person at the operator confirms a team will read
+   `/panel?servicio=agua` (or take the CSV). A form that collects phone numbers
+   nobody reads is the exact failure
+   [EDITORIAL Rule 5](./EDITORIAL.md#rule-5--moderate-before-publishing-always)
+   forbids — do not open the instrument to "see if reports come in".
+
+Before flipping the switch: give their staff panel access (previous section,
+with `water` in the org's `services`), have them load the panel once, and only
+then merge the one-line diff. The `/reportar` triage door updates itself — it
+reads the same gate.
+
 ### Handing the data over without an account
 
 `/panel/export` returns a CSV of everything the signed-in session may see, scoped by

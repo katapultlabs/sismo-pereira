@@ -3,7 +3,7 @@ import Link from "next/link";
 import { Info, Phone } from "lucide-react";
 
 import { DegradedNotice } from "@/components/degraded-notice";
-import { LuzReportForm } from "@/components/luz-report-form";
+import { ServiceReportForm } from "@/components/service-report-form";
 import { ReportDensity } from "@/components/report-density";
 import { SectionHeading } from "@/components/section-heading";
 import { getServiceReportDensity, getZones } from "@/lib/data";
@@ -64,7 +64,7 @@ export default async function LuzPage() {
       </p>
 
       <div className="mt-8">
-        <LuzReportForm lang={lang} zones={zones} />
+        <ServiceReportForm lang={lang} zones={zones} service="electricity" />
       </div>
 
       <section className="mt-14 space-y-5">

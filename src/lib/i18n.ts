@@ -330,7 +330,7 @@ const es = {
    * channel, and the number you type goes to EEP. See docs/EDITORIAL.md Rule 4.
    */
   luz: {
-    metaTitle: "Reportar si hay luz — AquíAyuda",
+    metaTitle: "Reportar si hay luz",
     metaDescription:
       "Reporta si tienes luz en tu casa. Estamos reuniendo los reportes de " +
       "toda Pereira para entregárselos a la Empresa de Energía.",
@@ -446,6 +446,153 @@ const es = {
     noZone: "Sin comuna indicada",
     lastReport: "Último reporte",
     ctaFromHome: "Reportar si hay luz",
+  },
+  /*
+   * The water twin of `luz` — same shape, because `ServiceReportForm` renders
+   * either dictionary. Keys that only make sense here (the closed state) are
+   * additive; TypeScript forces `en.agua` to mirror all of it.
+   */
+  agua: {
+    metaTitle: "Reportar el servicio de agua",
+    metaDescription:
+      "Reporta si tienes agua en tu casa o si hay una fuga. Reunimos los " +
+      "reportes para entregárselos al operador del acueducto.",
+    eyebrow: "Acueducto",
+    title: "¿Hay agua en tu casa?",
+    lede:
+      "Tu reporte ayuda a ubicar los sectores sin servicio y los daños en la " +
+      "red. Lo reunimos junto con los de toda Pereira para entregárselo a " +
+      "Aguas y Aguas.",
+    handoverNotice:
+      "Estamos reuniendo estos reportes para entregárselos a Aguas y Aguas de " +
+      "Pereira. Tu teléfono y tu ubicación se comparten con ellos para que " +
+      "puedan revisar tu sector. No los publicamos en este sitio.",
+    notOfficialNotice:
+      "Este no es un canal oficial de Aguas y Aguas y no es un servicio de " +
+      "emergencia. Reportar aquí no abre un caso ante ellos.",
+    emergencyWarning:
+      "Si hay una inundación, un derrumbe o alguien está en peligro, llama al " +
+      "123 antes de llenar este formulario. Esta página no es un servicio de " +
+      "emergencia.",
+    minutes: "Toma menos de un minuto.",
+
+    statusQuestion: "¿Cómo está el agua ahora mismo?",
+    statusOutage: "No tengo agua",
+    statusDegraded: "Poca presión o turbia",
+    statusOperational: "Ya tengo agua",
+    statusOperationalHint:
+      "Reportar que volvió el agua es igual de útil: así saben qué sectores " +
+      "ya quedaron con servicio.",
+
+    sinceQuestion: "¿Desde cuándo?",
+
+    locationHeading: "Ubicación",
+    locationWhy:
+      "Sin ubicación el reporte no le sirve a nadie. Con el GPS es más preciso " +
+      "que escribir la dirección.",
+    useLocation: "Usar mi ubicación",
+    locating: "Ubicando…",
+    locationReady: "Ubicación tomada",
+    accuracy: "Precisión",
+    locationDenied:
+      "No nos diste permiso de ubicación. Selecciona tu comuna abajo y, si " +
+      "puedes, agrega una referencia.",
+    locationUnavailable:
+      "No pudimos obtener tu ubicación. Selecciona tu comuna abajo.",
+    adjustOnMap: "Ajustar en el mapa",
+    hideMap: "Ocultar el mapa",
+    mapHint: "Arrastra el mapa para mover el punto al lugar correcto.",
+    mapLoading: "Cargando el mapa…",
+    mapFailed:
+      "No pudimos cargar el mapa. Puedes seguir con la comuna y la referencia.",
+    mapAria: "Mapa para ajustar la ubicación del reporte",
+    onBehalf: "Estoy reportando por otra persona",
+    onBehalfHint:
+      "Marca esto si el punto no es donde estás tú. Así saben que el teléfono " +
+      "no contesta en esa dirección.",
+
+    hazardHeading: "¿Hay una fuga o un daño visible?",
+    hazardLabel:
+      "Sí, hay un tubo roto, agua brotando o un hundimiento en la vía",
+    hazardWarning:
+      "El agua que brota puede socavar el terreno, y un hundimiento puede " +
+      "ceder. No te acerques y, si alguien está en riesgo, llama al 123 ahora " +
+      "— no esperes a que alguien lea este reporte.",
+    hazardCall: "Llamar al 123",
+
+    contactHeading: "Tu teléfono",
+    phone: "Teléfono",
+    phoneHint:
+      "Obligatorio. Aguas y Aguas lo usa para confirmar contigo y para no " +
+      "contar dos veces la misma casa. No aparece en el sitio.",
+    phoneError: "Escribe un número de teléfono válido.",
+    matricula: "Matrícula o número de cuenta (opcional)",
+    matriculaHint:
+      "Está en tu factura del acueducto. Con ella pueden ubicar la acometida " +
+      "exacta.",
+    note: "Algo más que debamos saber (opcional)",
+    notePlaceholder:
+      "Ej. desde ayer sale un chorro de agua en la esquina, y baja por toda " +
+      "la calle.",
+
+    submit: "Enviar reporte",
+    submitting: "Enviando…",
+    successTitle: "Reporte recibido",
+    successBody:
+      "Gracias. Queda en el consolidado que le entregamos a Aguas y Aguas. Si " +
+      "el servicio cambia, vuelve y repórtalo — el reporte más reciente de tu " +
+      "número es el que cuenta.",
+    submitAnother: "Enviar otro reporte",
+    errorGeneric:
+      "No pudimos enviar el reporte. Vuelve a intentarlo — no quedó guardado.",
+    errorLocation: "Indica tu comuna o comparte tu ubicación.",
+    required: "Campo obligatorio",
+
+    densityHeading: "Lo que está reportando la gente",
+    densitySubheading: "Hogares que han reportado en las últimas 12 horas",
+    densityEmpty:
+      "Todavía no hay reportes en las últimas 12 horas. Sé el primero de tu " +
+      "sector.",
+    densityNotOfficial:
+      "Esto es lo que reportan los vecinos, no el estado oficial del " +
+      "acueducto. El estado que publica el operador está en Servicios.",
+    households: "hogares",
+    householdsOutage: "sin agua",
+    householdsDegraded: "presión baja",
+    householdsOperational: "con agua",
+    hazards: "fugas o daños reportados",
+    noZone: "Sin comuna indicada",
+    lastReport: "Último reporte",
+    ctaFromHome: "Reportar el servicio de agua",
+
+    /* The honest state while the instrument is gated (see
+     * src/lib/service-instruments.ts). */
+    closedTitle: "Aún no estamos recibiendo reportes de acueducto",
+    closedBody:
+      "Este formulario entrega los reportes — con tu teléfono — directamente " +
+      "al operador del servicio, y solo lo abrimos cuando hay un equipo " +
+      "confirmado que los lea. Un formulario que nadie lee es peor que " +
+      "ninguno. Mientras tanto, cuenta lo que pasa por el formulario general: " +
+      "un moderador sí lo revisa.",
+    closedCta: "Ir al formulario general",
+  },
+  /* The `/reportar` triage — the funnel's intake question. */
+  triage: {
+    heading: "¿Qué quieres reportar?",
+    subheading:
+      "Cada formulario llega a quien puede actuar. Elige el que corresponde.",
+    luzTitle: "La luz",
+    luzSub: "Sin luz, intermitente, o ya volvió",
+    aguaTitle: "El agua",
+    aguaSub: "Sin servicio, poca presión o una fuga",
+    aguaClosed: "Recepción aún no habilitada",
+    personTitle: "Busco a una persona",
+    personSub: "Te llevamos al registro oficial de la Cruz Roja",
+    otherTitle: "Otra cosa",
+    otherSub: "Daños, vías, albergues u otra situación",
+    otherReadout: "Formulario general, en esta página",
+    householdsReadout: (n: number) => `${n} hogares en las últimas 12 h`,
+    otherFormHeading: "Otro reporte",
   },
   resources: {
     heading: "Recursos de emergencia",
@@ -1059,7 +1206,7 @@ const en: typeof es = {
     tooShort: "Write at least 10 characters",
   },
   luz: {
-    metaTitle: "Report whether you have power — AquíAyuda",
+    metaTitle: "Report whether you have power",
     metaDescription:
       "Report whether you have electricity at home. We are collecting reports " +
       "across Pereira to hand to the electricity utility.",
@@ -1164,6 +1311,141 @@ const en: typeof es = {
     noZone: "No comuna given",
     lastReport: "Last report",
     ctaFromHome: "Report whether you have power",
+  },
+  agua: {
+    metaTitle: "Report your water service",
+    metaDescription:
+      "Report whether you have water at home, or a leak. We collect the " +
+      "reports to hand to the aqueduct operator.",
+    eyebrow: "Water",
+    title: "Do you have water at home?",
+    lede:
+      "Your report helps locate areas without service and damage to the " +
+      "network. We collect it, along with reports from across Pereira, to " +
+      "hand to Aguas y Aguas.",
+    handoverNotice:
+      "We are collecting these reports to hand to Aguas y Aguas de Pereira. " +
+      "Your phone number and location are shared with them so they can check " +
+      "your area. We do not publish them on this site.",
+    notOfficialNotice:
+      "This is not an official channel of Aguas y Aguas, and it is not an " +
+      "emergency service. Reporting here does not open a case with them.",
+    emergencyWarning:
+      "If there is flooding, a landslide, or anyone is in danger, call 123 " +
+      "before filling in this form. This page is not an emergency service.",
+    minutes: "Takes under a minute.",
+
+    statusQuestion: "How is the water right now?",
+    statusOutage: "No water",
+    statusDegraded: "Low pressure or cloudy",
+    statusOperational: "Water is back",
+    statusOperationalHint:
+      "Reporting that your water came back is just as useful: it shows which " +
+      "areas already have service.",
+
+    sinceQuestion: "Since when?",
+
+    locationHeading: "Location",
+    locationWhy:
+      "Without a location the report is no use to anyone. GPS is more precise " +
+      "than typing an address.",
+    useLocation: "Use my location",
+    locating: "Locating…",
+    locationReady: "Location captured",
+    accuracy: "Accuracy",
+    locationDenied:
+      "You did not grant location permission. Pick your comuna below and add a " +
+      "landmark if you can.",
+    locationUnavailable:
+      "We could not get your location. Pick your comuna below.",
+    adjustOnMap: "Adjust on the map",
+    hideMap: "Hide the map",
+    mapHint: "Drag the map to move the pin to the right place.",
+    mapLoading: "Loading the map…",
+    mapFailed:
+      "We could not load the map. You can continue with the comuna and a landmark.",
+    mapAria: "Map for adjusting the report location",
+    onBehalf: "I am reporting for someone else",
+    onBehalfHint:
+      "Tick this if the pin is not where you are, so they know the phone will " +
+      "not answer at that address.",
+
+    hazardHeading: "Is there a leak or visible damage?",
+    hazardLabel:
+      "Yes — a broken pipe, water gushing out, or the road sinking",
+    hazardWarning:
+      "Escaping water can undermine the ground, and a sinkhole can give way. " +
+      "Keep clear, and if anyone is at risk call 123 now — do not wait for " +
+      "someone to read this report.",
+    hazardCall: "Call 123",
+
+    contactHeading: "Your phone number",
+    phone: "Phone",
+    phoneHint:
+      "Required. Aguas y Aguas uses it to confirm with you and to avoid " +
+      "counting the same household twice. It never appears on the site.",
+    phoneError: "Enter a valid phone number.",
+    matricula: "Account number (optional)",
+    matriculaHint:
+      "It is on your water bill. It lets them locate the exact connection.",
+    note: "Anything else we should know (optional)",
+    notePlaceholder:
+      "e.g. since yesterday water has been gushing out at the corner and " +
+      "running down the whole street.",
+
+    submit: "Send report",
+    submitting: "Sending…",
+    successTitle: "Report received",
+    successBody:
+      "Thank you. It is in the summary we hand to Aguas y Aguas. If your " +
+      "service changes, report again — the most recent report from your " +
+      "number is the one that counts.",
+    submitAnother: "Send another report",
+    errorGeneric: "We could not send the report. Try again — nothing was saved.",
+    errorLocation: "Choose your comuna or share your location.",
+    required: "Required field",
+
+    densityHeading: "What people are reporting",
+    densitySubheading: "Households that reported in the last 12 hours",
+    densityEmpty:
+      "No reports in the last 12 hours yet. Be the first in your area.",
+    densityNotOfficial:
+      "This is what neighbours report, not the official state of the " +
+      "aqueduct. The operator's own status is under Services.",
+    households: "households",
+    householdsOutage: "no water",
+    householdsDegraded: "low pressure",
+    householdsOperational: "have water",
+    hazards: "leaks or damage reported",
+    noZone: "No comuna given",
+    lastReport: "Last report",
+    ctaFromHome: "Report your water service",
+
+    closedTitle: "We are not yet taking aqueduct reports",
+    closedBody:
+      "This form hands reports — including your phone number — directly to " +
+      "the service operator, and we only open it once a confirmed team is " +
+      "reading them. A form nobody reads is worse than none. In the meantime, " +
+      "tell us what is happening through the general form: a moderator does " +
+      "review that one.",
+    closedCta: "Go to the general form",
+  },
+  triage: {
+    heading: "What do you want to report?",
+    subheading:
+      "Each form reaches someone who can act. Pick the one that fits.",
+    luzTitle: "Power",
+    luzSub: "No power, intermittent, or back on",
+    aguaTitle: "Water",
+    aguaSub: "No service, low pressure, or a leak",
+    aguaClosed: "Not yet taking reports",
+    personTitle: "Looking for a person",
+    personSub: "We take you to the official Cruz Roja registry",
+    otherTitle: "Something else",
+    otherSub: "Damage, roads, shelters, or another situation",
+    otherReadout: "General form, on this page",
+    householdsReadout: (n: number) => `${n} households in the last 12 h`,
+    otherFormHeading: "Another report",
   },
   resources: {
     heading: "Emergency resources",
@@ -1455,6 +1737,16 @@ export type Dictionary = typeof es;
 
 export function getDictionary(lang: Lang): Dictionary {
   return DICTIONARIES[lang];
+}
+
+/**
+ * The dictionary block a service instrument renders — `luz` and `agua` share a
+ * shape by construction, so the form and the density table stay one component.
+ * Lives here (not in a "use client" module) so server components can call it.
+ */
+export function serviceCopy(lang: Lang, service: "electricity" | "water") {
+  const dict = getDictionary(lang);
+  return service === "water" ? dict.agua : dict.luz;
 }
 
 // ---------------------------------------------------------------------------

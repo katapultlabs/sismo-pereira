@@ -7,8 +7,11 @@ import {
   Activity,
   CheckCircle2,
   Crosshair,
+  Droplet,
+  DropletOff,
   Phone,
   TriangleAlert,
+  Waves,
   Zap,
   ZapOff,
 } from "lucide-react";
@@ -28,8 +31,10 @@ import {
   OUTAGE_SINCE_OPTIONS,
   REPORTED_STATUS_OPTIONS,
   getDictionary,
+  serviceCopy,
   type Lang,
 } from "@/lib/i18n";
+import type { InstrumentService } from "@/lib/service-instruments";
 import type { LocationSource, ReportedStatus, Zone } from "@/lib/types";
 
 /*
@@ -56,31 +61,60 @@ const SAME_PLACE = 1e-6;
 /**
  * Status is encoded three ways — colour, icon, and word — so it survives
  * greyscale, colour blindness, and a cracked screen. Class strings are literal
- * because Tailwind cannot see through interpolation.
+ * because Tailwind cannot see through interpolation. Only the icon varies by
+ * service; the status colours are the same instrument grammar everywhere.
  */
 const STATUS_STYLES: Record<
-  (typeof REPORTED_STATUS_OPTIONS)[number],
-  { checked: string; icon: typeof Zap }
+  InstrumentService,
+  Record<
+    (typeof REPORTED_STATUS_OPTIONS)[number],
+    { checked: string; icon: typeof Zap }
+  >
 > = {
-  outage: {
-    checked:
-      "peer-checked:border-down peer-checked:bg-down-muted peer-checked:text-down-foreground",
-    icon: ZapOff,
+  electricity: {
+    outage: {
+      checked:
+        "peer-checked:border-down peer-checked:bg-down-muted peer-checked:text-down-foreground",
+      icon: ZapOff,
+    },
+    degraded: {
+      checked:
+        "peer-checked:border-warn peer-checked:bg-warn-muted peer-checked:text-warn-foreground",
+      icon: Activity,
+    },
+    operational: {
+      checked:
+        "peer-checked:border-ok peer-checked:bg-ok-muted peer-checked:text-ok-foreground",
+      icon: Zap,
+    },
   },
-  degraded: {
-    checked:
-      "peer-checked:border-warn peer-checked:bg-warn-muted peer-checked:text-warn-foreground",
-    icon: Activity,
-  },
-  operational: {
-    checked:
-      "peer-checked:border-ok peer-checked:bg-ok-muted peer-checked:text-ok-foreground",
-    icon: Zap,
+  water: {
+    outage: {
+      checked:
+        "peer-checked:border-down peer-checked:bg-down-muted peer-checked:text-down-foreground",
+      icon: DropletOff,
+    },
+    degraded: {
+      checked:
+        "peer-checked:border-warn peer-checked:bg-warn-muted peer-checked:text-warn-foreground",
+      icon: Waves,
+    },
+    operational: {
+      checked:
+        "peer-checked:border-ok peer-checked:bg-ok-muted peer-checked:text-ok-foreground",
+      icon: Droplet,
+    },
   },
 };
 
-function SubmitButton({ lang }: { lang: Lang }) {
-  const t = getDictionary(lang).luz;
+function SubmitButton({
+  lang,
+  service,
+}: {
+  lang: Lang;
+  service: InstrumentService;
+}) {
+  const t = serviceCopy(lang, service);
   const { pending } = useFormStatus();
 
   return (
@@ -95,18 +129,31 @@ function SubmitButton({ lang }: { lang: Lang }) {
   );
 }
 
-export function LuzReportForm({ lang, zones }: { lang: Lang; zones: Zone[] }) {
-  const t = getDictionary(lang).luz;
+export function ServiceReportForm({
+  lang,
+  zones,
+  service,
+}: {
+  lang: Lang;
+  zones: Zone[];
+  service: InstrumentService;
+}) {
+  const t = serviceCopy(lang, service);
   const [state, formAction] = useActionState(submitServiceReport, INITIAL);
 
   /* The utility reads the rows themselves. The gap this fills is the household
-   * that opened `/luz`, filled it in, and bounced off a validation error. */
+   * that opened the instrument, filled it in, and bounced off a validation
+   * error. */
   useEffect(() => {
-    if (state.ok) track("report_submitted", { form: "household" });
+    if (state.ok) track("report_submitted", { form: "household", service });
     else if (state.error) {
-      track("report_failed", { form: "household", reason: state.error });
+      track("report_failed", {
+        form: "household",
+        service,
+        reason: state.error,
+      });
     }
-  }, [state]);
+  }, [state, service]);
 
   const [fix, setFix] = useState<Fix | null>(null);
   const [locating, setLocating] = useState(false);
@@ -184,6 +231,9 @@ export function LuzReportForm({ lang, zones }: { lang: Lang; zones: Zone[] }) {
 
   return (
     <form action={formAction} className="space-y-8">
+      {/* Which instrument this is. Validated server-side against the launch
+          gate in src/lib/service-instruments.ts. */}
+      <input type="hidden" name="service" value={service} />
       {state.error === "server" ? (
         <Alert className="rounded-sm border-down/40 bg-down-muted text-down-foreground">
           <TriangleAlert className="size-4" aria-hidden />
@@ -200,7 +250,7 @@ export function LuzReportForm({ lang, zones }: { lang: Lang; zones: Zone[] }) {
         </legend>
         <div className="grid gap-2 sm:grid-cols-3">
           {REPORTED_STATUS_OPTIONS.map((option) => {
-            const { checked, icon: Icon } = STATUS_STYLES[option];
+            const { checked, icon: Icon } = STATUS_STYLES[service][option];
             const label =
               option === "outage"
                 ? t.statusOutage
@@ -503,7 +553,7 @@ export function LuzReportForm({ lang, zones }: { lang: Lang; zones: Zone[] }) {
         {t.handoverNotice}
       </p>
 
-      <SubmitButton lang={lang} />
+      <SubmitButton lang={lang} service={service} />
     </form>
   );
 }

@@ -3,9 +3,10 @@ import { TriangleAlert } from "lucide-react";
 import {
   formatDateTime,
   formatRelative,
-  getDictionary,
+  serviceCopy,
   type Lang,
 } from "@/lib/i18n";
+import type { InstrumentService } from "@/lib/service-instruments";
 import type { ServiceReportDensity } from "@/lib/types";
 
 /**
@@ -23,11 +24,13 @@ import type { ServiceReportDensity } from "@/lib/types";
 export function ReportDensity({
   rows,
   lang,
+  service = "electricity",
 }: {
   rows: ServiceReportDensity[];
   lang: Lang;
+  service?: InstrumentService;
 }) {
-  const t = getDictionary(lang).luz;
+  const t = serviceCopy(lang, service);
 
   if (rows.length === 0) {
     return (
@@ -81,7 +84,12 @@ export function ReportDensity({
 
       <ul className="divide-y divide-border border-y border-border">
         {rows.map((row) => (
-          <ZoneRow key={`${row.service}-${row.zone_slug ?? "none"}`} row={row} lang={lang} />
+          <ZoneRow
+            key={`${row.service}-${row.zone_slug ?? "none"}`}
+            row={row}
+            lang={lang}
+            service={service}
+          />
         ))}
       </ul>
 
@@ -111,8 +119,16 @@ function Total({
   );
 }
 
-function ZoneRow({ row, lang }: { row: ServiceReportDensity; lang: Lang }) {
-  const t = getDictionary(lang).luz;
+function ZoneRow({
+  row,
+  lang,
+  service,
+}: {
+  row: ServiceReportDensity;
+  lang: Lang;
+  service: InstrumentService;
+}) {
+  const t = serviceCopy(lang, service);
 
   const outage = Number(row.outage_count);
   const degraded = Number(row.degraded_count);

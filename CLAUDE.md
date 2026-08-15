@@ -147,11 +147,22 @@ Authorization lives in `supabase/migrations/*.sql`, not TypeScript. The public r
 base tables — `public_reports` is what drops the PII columns. If you change who may
 see what, change the policy; don't filter in a component.
 
-### Household service reports (`/luz` → `/panel`)
+### Household service reports (`/luz`, `/agua` → `/panel`)
 
 A separate collection instrument from everything above, added for the electricity
 utility after it lost access to its own telemetry. Residents report whether they have
-power; the operating utility reads the precise rows.
+a service; the operating utility reads the precise rows. The rig is per-service
+(`ServiceReportForm` + the `luz`/`agua` dictionary twins), and `/panel` switches
+consoles with `?servicio=agua` — navigation only, RLS decides what each account sees.
+
+**An instrument only collects while someone reads it.** `/agua` is built but gated:
+the form renders only when the launch switch in `src/lib/service-instruments.ts` is
+on AND a *verified* org covering the service exists in the live database — otherwise
+it renders the honest closed state and routes to the community form. The switch is a
+code constant on purpose (opening a dead drop should be a reviewed diff), it is
+enforced again inside `submitServiceReport`, and it only flips after the operator
+confirms a team will read the panel — the Rule 5 obligation. Activation steps are in
+[RUNBOOK.md](./docs/RUNBOOK.md#opening-a-new-service-instrument).
 
 **It is not the status board and must never feed it.** `service_status` is what an
 operator told us; `service_reports` is what residents told us. Twenty thousand reports
@@ -437,16 +448,18 @@ a resident is never offered it.
   as fresh, which is the stale-green failure [EDITORIAL](./docs/EDITORIAL.md#rule-1--unknown-is-a-first-class-status)
   exists to prevent. Correct the placeholder's artifact timestamp instead, and check
   `current_service_status` — not the `insert` status code — to confirm a publish.
-- **Four anchors are load-bearing and nothing type-checks them.** The home page's
+- **Five anchors are load-bearing and nothing type-checks them.** The home page's
   route tiles link to `/recursos#centros-medicos` (the `MedicalClosures` block) and
-  `/enlaces#personas-desaparecidas` (the `missing_persons` category section);
-  `/donar` carries `#dinero` and `#acopio`, which its own two choice plates target
-  and which `/recursos` links into as `/donar#acopio`. All four ids carry
-  `scroll-mt-20` to clear the sticky masthead. Rename or drop one and the link
-  silently degrades to "top of page" — a build passes, a browser says nothing, and
-  someone looking for a missing person lands on the wrong block. The `/donar` pair
-  fails more softly (you land on the right page, wrong section) but it is the same
-  bug.
+  `/enlaces#personas-desaparecidas` (the `missing_persons` category section — the
+  `/reportar` triage's missing-person door targets it too); `/donar` carries
+  `#dinero` and `#acopio`, which its own two choice plates target and which
+  `/recursos` links into as `/donar#acopio`; and `/reportar#formulario` is where
+  the triage's "otra cosa" door and `/agua`'s closed state both land. All five ids
+  carry `scroll-mt-20` to clear the sticky masthead. Rename or drop one and the
+  link silently degrades to "top of page" — a build passes, a browser says
+  nothing, and someone looking for a missing person lands on the wrong block. The
+  `/donar` pair fails more softly (you land on the right page, wrong section) but
+  it is the same bug.
 - **`supabase-js` infers row types from the `select()` string literal.** Splitting one
   across lines with `+` widens it to `string` and breaks inference. Keep select strings
   on one line.

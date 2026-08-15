@@ -362,6 +362,38 @@ generalizing the content itself (rather than the chrome) would have been a
 Rule 3 overclaim, since the site today covers exactly one emergency. The
 city-lines model (AP/AC/AM pins) remains open and unbuilt.
 
+### The report funnel: triage first, instruments gated
+
+**Decision (2026-08-15):** `/reportar` opens with one question — *¿qué quieres
+reportar?* — and four doors: luz, agua, a missing person, everything else. Each door
+leads to the form whose rows actually reach someone who can act: the two utility
+instruments, Cruz Roja's registry via `/enlaces#personas-desaparecidas`, and the
+moderated community form (now anchored at `/reportar#formulario`, below the doors on
+the same page). This is the same move `/donar` made: model the reader's intent, not
+the schema. Doors follow the route-tile rule — a live readout, and the number on the
+door is the number on the far side.
+
+**The water instrument exists but ships closed.** `service_reports` was keyed on
+`service` from day one precisely so water could inherit the rig; the UI now matches
+(`ServiceReportForm`, the `luz`/`agua` dictionary twins, `/panel?servicio=agua`, the
+scoped CSV export). What does *not* carry over automatically is the thing that made
+`/luz` legitimate: an operator asking for the data and reading it. So `/agua` renders
+its form only behind a two-part gate — a code-level launch switch plus a verified org
+covering `water` in the live database — and until then says plainly why not and
+routes to the community form. The gate closes on a degraded read: when we cannot
+confirm a recipient, we do not collect. Opening steps are in
+[RUNBOOK.md](./RUNBOOK.md#opening-a-new-service-instrument).
+
+**Deliberately not done:**
+
+- **No structural-damage instrument.** Damage reports stay in the community form; a
+  dedicated intake would imply an inspection pipeline no agency has asked us to run.
+- **No per-account panel default.** `/panel` picks its console from `?servicio=`,
+  not from the caller's org profile — the switcher is navigation and RLS is the
+  authority, which keeps the console dumb and the policy in Postgres.
+- **The home page's `/luz` drive was not generalized** — it stays a single-service
+  campaign plate until there is a second live instrument to point at.
+
 ## Technical
 
 ### Reads degrade; writes fail loudly

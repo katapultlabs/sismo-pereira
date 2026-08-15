@@ -50,7 +50,17 @@ function csvCell(value: unknown): string {
   return `"${risky ? `'${escaped}` : escaped}"`;
 }
 
-export async function GET() {
+/*
+ * `?servicio=` narrows the file to one console's service and names it
+ * accordingly. Navigation only, like the panel switcher — RLS still decides
+ * which rows exist for this session.
+ */
+const SERVICE_BY_PARAM = {
+  luz: { service: "electricity", file: "energia" },
+  agua: { service: "water", file: "acueducto" },
+} as const;
+
+export async function GET(request: Request) {
   const supabase = await getServerSupabase();
   if (!supabase) {
     return new Response("Base de datos no disponible.\n", { status: 503 });
@@ -63,12 +73,21 @@ export async function GET() {
     return new Response("Inicia sesión.\n", { status: 401 });
   }
 
-  const { data, error } = await supabase
+  const param = new URL(request.url).searchParams.get("servicio");
+  const scope =
+    param && param in SERVICE_BY_PARAM
+      ? SERVICE_BY_PARAM[param as keyof typeof SERVICE_BY_PARAM]
+      : null;
+
+  let query = supabase
     .from("service_reports")
     .select(SELECT)
     .eq("flagged", false)
     .order("created_at", { ascending: false })
     .limit(10_000);
+  if (scope) query = query.eq("service", scope.service);
+
+  const { data, error } = await query;
 
   if (error) {
     console.error(`[panel/export] ${error.message}`);
@@ -88,7 +107,7 @@ export async function GET() {
   return new Response(`﻿${body}\n`, {
     headers: {
       "content-type": "text/csv; charset=utf-8",
-      "content-disposition": `attachment; filename="reportes-energia-${stamp}.csv"`,
+      "content-disposition": `attachment; filename="reportes-${scope?.file ?? "servicios"}-${stamp}.csv"`,
       // Contains contact details: never let a proxy or the browser keep it.
       "cache-control": "no-store, private",
     },

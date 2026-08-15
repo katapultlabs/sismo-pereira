@@ -6,6 +6,7 @@ import { z } from "zod";
 
 import { getServerSupabase } from "./supabase/server";
 import { REPORT_CATEGORIES } from "./i18n";
+import { INSTRUMENT_SERVICES, INSTRUMENTS } from "./service-instruments";
 
 const SERVICES = [
   "electricity",
@@ -69,6 +70,7 @@ function normalizePhone(raw: string): string {
 
 const serviceReportSchema = z
   .object({
+    service: z.enum(INSTRUMENT_SERVICES),
     status: z.enum(REPORTED_STATUSES),
     zone_slug: z.string().min(1).max(64).nullish(),
     lat: z.coerce.number().min(-90).max(90).nullish(),
@@ -115,6 +117,7 @@ export async function submitServiceReport(
   formData: FormData,
 ): Promise<SubmitServiceReportState> {
   const parsed = serviceReportSchema.safeParse({
+    service: nullify(formData.get("service")),
     status: nullify(formData.get("status")),
     zone_slug: nullify(formData.get("zone_slug")),
     lat: nullify(formData.get("lat")),
@@ -141,6 +144,19 @@ export async function submitServiceReport(
     };
   }
 
+  /*
+   * The launch switch, enforced where it counts. The page renders the closed
+   * state, but a hand-crafted POST must not file into an instrument whose
+   * operator has not confirmed anyone is reading — see
+   * `src/lib/service-instruments.ts`.
+   */
+  if (!INSTRUMENTS[parsed.data.service].live) {
+    console.error(
+      `[submitServiceReport] rejected: ${parsed.data.service} instrument is not live`,
+    );
+    return { ok: false, error: "server" };
+  }
+
   const supabase = await getServerSupabase();
   if (!supabase) {
     console.error("[submitServiceReport] Supabase not configured; report dropped");
@@ -159,7 +175,6 @@ export async function submitServiceReport(
 
   const { error } = await supabase.from("service_reports").insert({
     ...parsed.data,
-    service: "electricity",
     // Records that the sharing notice was displayed at submission — not a
     // ticked consent box. See docs/DECISIONS.md.
     consent_share: true,
