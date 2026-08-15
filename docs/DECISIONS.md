@@ -331,11 +331,12 @@ the brand instead of fighting it. All of it is gated: `check-contrast` grew a
 canonical hours after the reskin — repo renamed to `katapultlabs/aquiayuda`, all
 four hostnames attached to the Vercel project (`.com` and both `www`s 308 to the
 `.co` apex), Cloudflare zones carrying the standard two DNS-only records, and
-`NEXT_PUBLIC_SITE_URL` flipped to `https://aquiayuda.co`. **`sismopereira.org`
-deliberately still serves the site directly rather than redirecting**: every link
-shared during the emergency's first week points there, and a redirect during the
-response adds a failure mode for no reader benefit. Turning it into a 308 → .co is
-post-emergency housekeeping; canonical tags already consolidate search onto .co.
+`NEXT_PUBLIC_SITE_URL` flipped to `https://aquiayuda.co`. **`sismopereira.org` and
+its `www` also 308 to the `.co` apex** — the maintainer chose a full cutover over
+a transition period. The redirect preserves paths (`/luz` lands on
+`aquiayuda.co/luz`), so links already circulating keep working; the one cost is
+that any partner API client that refuses to follow a 308 must move to the new
+base URL, which [PARTNER-API.md](./PARTNER-API.md) already states.
 
 **Deliberately not done in this pass:**
 - **The type change.** The brief sets a normal-width grotesque; the site keeps

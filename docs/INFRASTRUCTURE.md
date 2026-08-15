@@ -13,9 +13,9 @@ before debugging anything DNS-shaped — most of an afternoon is written down he
 |---|---|
 | **Repository** | `katapultlabs/aquiayuda` (public; renamed from `sismo-pereira` 2026-08-15, GitHub redirects the old URL) |
 | **Hosting** | Vercel — team **Katapult**, scope slug `katapult-8b361435`, project `sismo-pereira` (project not renamed; only the repo was) |
-| **Domains** | `aquiayuda.co` (canonical, wired 2026-08-15), `aquiayuda.com` (308 → .co), `sismopereira.org` (registered 2026-08-10, still serves the site directly) |
+| **Domains** | `aquiayuda.co` (canonical, wired 2026-08-15); `aquiayuda.com`, `sismopereira.org` and every `www` 308 → the `.co` apex |
 | **Registrar + DNS** | Cloudflare, under the **Katapult Labs** account — all three zones |
-| **Live** | https://aquiayuda.co (canonical) and https://sismopereira.org |
+| **Live** | https://aquiayuda.co — the only hostname that serves; the rest redirect |
 
 ---
 
@@ -36,8 +36,9 @@ project holds all the hostnames; `www.aquiayuda.co`, `aquiayuda.com` and
 zones already lived on Cloudflare's nameservers, so none of the NXDOMAIN
 propagation pain recorded below recurred.
 
-**`sismopereira.org` still serves the site directly** — it has deliberately
-not been turned into a redirect yet; see the rebrand entry in
+**`sismopereira.org` and `www.sismopereira.org` 308 to the `.co` apex** — set
+the same way as the aquiayuda redirects, path-preserving, so pre-rebrand links
+keep working; see the rebrand entry in
 [DECISIONS.md](./DECISIONS.md#rebrand-aquíayuda).
 
 ### Do not enable the Cloudflare proxy on these records
