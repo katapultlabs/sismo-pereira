@@ -6,11 +6,16 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What this is
 
-A crisis information site for Pereira, Risaralda, built after the M7.4 earthquake of
-2026-08-10. Live at https://aquiayuda.co; the launch domain sismopereira.org and
-every other hostname 308-redirect there. Rebranded **AquíAyuda** (Pereira line) on
-2026-08-15
+A crisis information site built after the M7.4 earthquake of 2026-08-10 in
+Pereira, Risaralda — its only coverage area so far, with more places intended.
+Live at https://aquiayuda.co; the launch domain sismopereira.org and
+every other hostname 308-redirect there. Rebranded **AquíAyuda** on 2026-08-15
 ([why the name is inverted from the brief](./docs/DECISIONS.md#rebrand-aquíayuda)).
+The brand names no city — the wordmark is `AquíAyuda` alone, and the *content*
+(hero title, meta description, zone labels) states the coverage area
+([why](./docs/DECISIONS.md#rebrand-aquíayuda)). Don't reattach "Pereira" to the
+chrome, and don't generalize Pereira out of the content while it is the only
+place the site actually covers.
 
 **Read [`docs/EDITORIAL.md`](./docs/EDITORIAL.md) before changing anything the site
 displays.** Its rules — unknown is a first-class status, no unverified addresses,

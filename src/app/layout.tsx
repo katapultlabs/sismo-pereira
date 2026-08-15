@@ -52,7 +52,7 @@ export async function generateMetadata(): Promise<Metadata> {
     metadataBase: new URL(
       process.env.NEXT_PUBLIC_SITE_URL ?? "https://aquiayuda.co",
     ),
-    title: { default: t.meta.title, template: "%s · AquíAyuda Pereira" },
+    title: { default: t.meta.title, template: "%s · AquíAyuda" },
     description: t.meta.description,
     robots: { index: true, follow: true },
     openGraph: {

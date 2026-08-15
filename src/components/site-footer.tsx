@@ -49,11 +49,8 @@ export function SiteFooter({ lang }: { lang: Lang }) {
             className="inline-flex items-center gap-2 outline-none focus-visible:ring-2 focus-visible:ring-ring"
           >
             <BrandMark className="h-[1.375rem] w-[1.375rem] shrink-0" />
-            <span className="display-condensed text-lg leading-none">
-              <span className="font-extrabold">AquíAyuda</span>
-              <span className="ml-1.5 font-normal text-muted-foreground">
-                Pereira
-              </span>
+            <span className="display-condensed text-lg leading-none font-extrabold">
+              AquíAyuda
             </span>
           </Link>
         </div>

@@ -1,4 +1,4 @@
-# AquíAyuda Pereira
+# AquíAyuda
 
 Crisis information platform built in response to the **M7.4 earthquake of
 10 August 2026**, whose epicentre was in Chocó, roughly 55 km west of Pereira.

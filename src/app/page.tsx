@@ -243,11 +243,8 @@ export default async function HomePage() {
           >
             <span className="flex items-center gap-2">
               <BrandMark className="h-6 w-6 shrink-0" />
-              <span className="display-condensed block truncate text-xl leading-none">
-                <span className="font-extrabold">AquíAyuda</span>
-                <span className="ml-1.5 font-normal text-muted-foreground">
-                  Pereira
-                </span>
+              <span className="display-condensed block truncate text-xl leading-none font-extrabold">
+                AquíAyuda
               </span>
             </span>
             <span className="label-signage mt-1.5 block text-[0.5625rem] tracking-[0.16em] text-muted-foreground">

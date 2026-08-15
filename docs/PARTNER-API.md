@@ -1,7 +1,7 @@
 # Partner API
 
 **For utilities, telecom operators, public agencies, and relief organizations
-publishing to AquíAyuda Pereira (formerly Sismo Pereira).**
+publishing to AquíAyuda (formerly Sismo Pereira).**
 
 This document is self-contained — it can be sent to someone outside the project.
 

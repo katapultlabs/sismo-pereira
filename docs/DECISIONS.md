@@ -350,6 +350,18 @@ base URL, which [PARTNER-API.md](./PARTNER-API.md) already states.
 footer and favicon; the icon pipeline (`icon.svg` → `render-icons.mjs`) now draws the
 pin, with the geometry echoed a third time in `brand-mark.tsx`.
 
+**The city left the wordmark (2026-08-15, third pass):** the muted `Pereira`
+suffix is gone from the masthead, the landing rail, the footer, the mobile-sheet
+title, and every meta title (`%s · AquíAyuda`). The platform's ambition widened
+to more places than Pereira, so the *brand* no longer names a city — **coverage
+is stated by content instead**: the hero still says «Qué sabemos ahora en
+Pereira», the meta description still names the August 10 quake, and every card
+keeps its zone. That split matters editorially: a reader in another city must
+learn from the page — not the logo — whether these statuses apply to them, and
+generalizing the content itself (rather than the chrome) would have been a
+Rule 3 overclaim, since the site today covers exactly one emergency. The
+city-lines model (AP/AC/AM pins) remains open and unbuilt.
+
 ## Technical
 
 ### Reads degrade; writes fail loudly

@@ -55,11 +55,10 @@ export function SiteHeader({ lang }: { lang: Lang }) {
           {/* The AA pin — the brand's one mark. Hidden on phones, where the
               masthead is already tight. */}
           <BrandMark className="hidden h-[1.375rem] w-[1.375rem] shrink-0 sm:block" />
-          <span className="display-condensed truncate text-lg leading-none">
-            <span className="font-extrabold">AquíAyuda</span>
-            <span className="ml-1.5 font-normal text-muted-foreground">
-              Pereira
-            </span>
+          {/* No city in the wordmark: the platform is no longer Pereira-only,
+              so the page content carries the coverage area, not the brand. */}
+          <span className="display-condensed truncate text-lg leading-none font-extrabold">
+            AquíAyuda
           </span>
           {/*
            * The "Boletín de situación" tagline used to sit here at `xl`. It
@@ -158,7 +157,7 @@ export function SiteHeader({ lang }: { lang: Lang }) {
             <SheetContent side="right" className="w-72">
               <SheetHeader>
                 <SheetTitle className="display-condensed text-base">
-                  AquíAyuda Pereira
+                  AquíAyuda
                 </SheetTitle>
               </SheetHeader>
               <nav className="flex flex-col px-4">

@@ -26,7 +26,7 @@ export function isLang(value: string): value is Lang {
 
 const es = {
   meta: {
-    title: "AquíAyuda Pereira — Información verificada en tiempo real",
+    title: "AquíAyuda — Información verificada en tiempo real",
     description:
       "Estado de servicios, reportes verificados y recursos de emergencia tras el " +
       "sismo del 10 de agosto de 2026 en Pereira, Risaralda.",
@@ -330,7 +330,7 @@ const es = {
    * channel, and the number you type goes to EEP. See docs/EDITORIAL.md Rule 4.
    */
   luz: {
-    metaTitle: "Reportar si hay luz — AquíAyuda Pereira",
+    metaTitle: "Reportar si hay luz — AquíAyuda",
     metaDescription:
       "Reporta si tienes luz en tu casa. Estamos reuniendo los reportes de " +
       "toda Pereira para entregárselos a la Empresa de Energía.",
@@ -800,7 +800,7 @@ const es = {
 /** English mirrors the Spanish shape exactly, so a missing key is a type error. */
 const en: typeof es = {
   meta: {
-    title: "AquíAyuda Pereira — Verified real-time earthquake information",
+    title: "AquíAyuda — Verified real-time earthquake information",
     description:
       "Utility status, verified reports, and emergency resources following the " +
       "August 10, 2026 earthquake in Pereira, Risaralda.",
@@ -1059,7 +1059,7 @@ const en: typeof es = {
     tooShort: "Write at least 10 characters",
   },
   luz: {
-    metaTitle: "Report whether you have power — AquíAyuda Pereira",
+    metaTitle: "Report whether you have power — AquíAyuda",
     metaDescription:
       "Report whether you have electricity at home. We are collecting reports " +
       "across Pereira to hand to the electricity utility.",
