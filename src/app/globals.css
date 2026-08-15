@@ -6,17 +6,19 @@
 
 /*
  * ─────────────────────────────────────────────────────────────────────────────
- * Sismo Pereira — "Boletín Sísmico"
+ * AquíAyuda (Pereira line) — 2026-08 reskin to the AyudasAquí design brief
  *
- * The visual language is a civil-defence bulletin board, not a product
- * dashboard: paper substrate, hairline rules, stamped labels, mono readouts.
+ * The visual language keeps the bulletin's bones — hairline rules, stamped
+ * labels, mono readouts — on the brief's substrate: clean white paper by day,
+ * true black by night, and one brand accent, the volt yellow of the AA pin.
  *
- * The governing rule is CHROMA IS SIGNAL. The chrome is deliberately
- * achromatic — warm bone paper by day, cold instrument ink by night — so that
- * the only saturated colour anywhere on the page is a service-status hue.
- * A reader scanning for red finds an outage, never a decorative accent.
- * Do not introduce a saturated brand colour; it would compete with the four
- * status hues for the same attention and make the board harder to read.
+ * The governing rule is still CHROMA IS SIGNAL, amended once. `--brand` is
+ * the single saturated colour the *chrome* may use (the pin mark, donate
+ * CTAs, the campaign strip). Everything else saturated on the page is a
+ * service-status hue, and a status is never encoded in brand yellow — it is
+ * hue-separated from all four (--warn is orange, h70; --brand is a green-leaning
+ * yellow, h106) and always carries near-black text, never white. A reader
+ * scanning for red still finds an outage, never a decorative accent.
  * ─────────────────────────────────────────────────────────────────────────────
  */
 
@@ -79,6 +81,10 @@
   --color-ember: var(--ember);
   --color-ember-contrast: var(--ember-contrast);
 
+  /* Brand — the AA pin's volt yellow. See the --brand note in `:root`. */
+  --color-brand: var(--brand);
+  --color-brand-contrast: var(--brand-contrast);
+
   /* The corner was 3px — "stamped, not pill-shaped" — on the argument that a
    * softer radius reads as generic card UI. The 2026-08-13 redesign reversed
    * it to 8px and the argument did not survive contact: what actually keeps
@@ -98,30 +104,30 @@
 
 /* ── Light: "papel" ──────────────────────────────────────────────────────── */
 :root {
-  --background: oklch(0.967 0.007 83); /* warm bone stock */
-  --foreground: oklch(0.185 0.014 65); /* warm ink */
-  --card: oklch(0.995 0.003 83); /* a sheet laid on the stock */
-  --card-foreground: oklch(0.185 0.014 65);
-  --popover: oklch(0.995 0.003 83);
-  --popover-foreground: oklch(0.185 0.014 65);
-  --primary: oklch(0.21 0.016 65);
-  --primary-foreground: oklch(0.975 0.006 83);
-  --secondary: oklch(0.925 0.009 83);
-  --secondary-foreground: oklch(0.24 0.015 65);
-  --muted: oklch(0.933 0.008 83);
-  --muted-foreground: oklch(0.455 0.014 65);
-  --accent: oklch(0.906 0.011 83);
-  --accent-foreground: oklch(0.22 0.015 65);
+  --background: oklch(0.985 0 0); /* clean white stock — the brief's ground */
+  --foreground: oklch(0.17 0 0); /* neutral ink */
+  --card: oklch(1 0 0); /* a sheet laid on the stock */
+  --card-foreground: oklch(0.17 0 0);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.17 0 0);
+  --primary: oklch(0.2 0 0);
+  --primary-foreground: oklch(0.985 0 0);
+  --secondary: oklch(0.94 0 0);
+  --secondary-foreground: oklch(0.23 0 0);
+  --muted: oklch(0.945 0 0);
+  --muted-foreground: oklch(0.44 0 0);
+  --accent: oklch(0.92 0 0);
+  --accent-foreground: oklch(0.21 0 0);
   --destructive: oklch(0.515 0.213 27);
   /* Rules are meant to be seen — this is a printed form, not a soft card UI. */
-  --border: oklch(0.858 0.011 80);
-  --input: oklch(0.83 0.012 80);
-  --ring: oklch(0.44 0.032 65);
-  --chart-1: oklch(0.87 0.008 83);
-  --chart-2: oklch(0.556 0.012 70);
-  --chart-3: oklch(0.439 0.013 68);
-  --chart-4: oklch(0.371 0.014 66);
-  --chart-5: oklch(0.269 0.015 65);
+  --border: oklch(0.87 0 0);
+  --input: oklch(0.84 0 0);
+  --ring: oklch(0.44 0 0);
+  --chart-1: oklch(0.87 0 0);
+  --chart-2: oklch(0.556 0 0);
+  --chart-3: oklch(0.439 0 0);
+  --chart-4: oklch(0.371 0 0);
+  --chart-5: oklch(0.269 0 0);
   --radius: 0.5rem;
 
   /*
@@ -157,36 +163,46 @@
   --fixing-muted: oklch(0.934 0.04 250);
   --fixing-foreground: oklch(0.37 0.13 250);
 
-  --sidebar: oklch(0.945 0.008 83);
-  --sidebar-foreground: oklch(0.185 0.014 65);
-  --sidebar-primary: oklch(0.21 0.016 65);
-  --sidebar-primary-foreground: oklch(0.975 0.006 83);
-  --sidebar-accent: oklch(0.906 0.011 83);
-  --sidebar-accent-foreground: oklch(0.22 0.015 65);
-  --sidebar-border: oklch(0.858 0.011 80);
-  --sidebar-ring: oklch(0.44 0.032 65);
+  --sidebar: oklch(0.945 0 0);
+  --sidebar-foreground: oklch(0.17 0 0);
+  --sidebar-primary: oklch(0.2 0 0);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.92 0 0);
+  --sidebar-accent-foreground: oklch(0.21 0 0);
+  --sidebar-border: oklch(0.87 0 0);
+  --sidebar-ring: oklch(0.44 0 0);
 
   /* Seismograph chart-paper ruling behind the hero. */
-  --rule-ink: oklch(0.185 0.014 65 / 5%);
-  --rule-tick: oklch(0.185 0.014 65 / 9%);
+  --rule-ink: oklch(0.17 0 0 / 5%);
+  --rule-tick: oklch(0.17 0 0 / 9%);
 
   /*
-   * Ember — the landing page's one deliberate exception to "chroma is signal".
-   * A desaturated humanitarian amber, used only on the home page for the
-   * donate CTA, section eyebrows, and the epicentre mark in the diagram. It
-   * sits between --down (h27) and --warn (h70) in hue but far below both in
-   * chroma, so it reads as tone rather than as a fifth status. Never use it
-   * to encode a service state. Both pairings below are gated by
+   * Ember — the landing's *text-weight* accent, retinted into the brand's
+   * yellow family by the AquíAyuda reskin (it was humanitarian amber, h48).
+   * `--brand` itself is a near-white volt and can never carry text on a pale
+   * ground, so ember is its legible counterpart: a dark mustard by day, a
+   * bright signal yellow by night — used for eyebrows, the hero trace, the
+   * clock. Same hue family as the pin, held far below status chroma. Never
+   * use it to encode a service state. Both pairings below are gated by
    * `pnpm check:contrast`.
    */
-  --ember: oklch(0.5 0.125 48);
-  --ember-contrast: oklch(0.985 0.006 48);
+  --ember: oklch(0.48 0.1 98);
+  --ember-contrast: oklch(0.985 0.008 98);
+
+  /*
+   * Brand — the AA pin's volt yellow, from the AyudasAquí brief. The one
+   * saturated colour the chrome may use (pin mark, donate CTAs, the campaign
+   * strip). Text on it is always near-black ink; volt-on-white text is a
+   * contrast failure by construction, which is what --ember exists for.
+   */
+  --brand: oklch(0.94 0.2 106);
+  --brand-contrast: oklch(0.17 0.02 106);
 }
 
 /* ── Dark: "noche" ───────────────────────────────────────────────────────────
- * Not a tinted copy of the light theme. Day is warm paper; night is a cold
- * instrument face. People read this during a blackout, on battery, in the
- * dark — the background is genuinely dark rather than mid-grey.
+ * Not a tinted copy of the light theme. Day is white stock; night is true
+ * black, per the brief. People read this during a blackout, on battery, in
+ * the dark — the background is genuinely dark rather than mid-grey.
  *
  * This block once also carried `body:has([data-landing])`, which forced the
  * landing (and, cascading from body, the header and footer with it) onto the
@@ -204,29 +220,29 @@
  * comment cost one red build.)
  * ────────────────────────────────────────────────────────────────────────── */
 .dark {
-  --background: oklch(0.152 0.01 255);
-  --foreground: oklch(0.955 0.004 85);
-  --card: oklch(0.196 0.011 255);
-  --card-foreground: oklch(0.955 0.004 85);
-  --popover: oklch(0.196 0.011 255);
-  --popover-foreground: oklch(0.955 0.004 85);
-  --primary: oklch(0.93 0.006 85);
-  --primary-foreground: oklch(0.18 0.012 255);
-  --secondary: oklch(0.265 0.013 255);
-  --secondary-foreground: oklch(0.955 0.004 85);
-  --muted: oklch(0.255 0.012 255);
-  --muted-foreground: oklch(0.735 0.012 255);
-  --accent: oklch(0.3 0.014 255);
-  --accent-foreground: oklch(0.96 0.004 85);
+  --background: oklch(0.148 0 0);
+  --foreground: oklch(0.955 0 0);
+  --card: oklch(0.196 0 0);
+  --card-foreground: oklch(0.955 0 0);
+  --popover: oklch(0.196 0 0);
+  --popover-foreground: oklch(0.955 0 0);
+  --primary: oklch(0.93 0 0);
+  --primary-foreground: oklch(0.18 0 0);
+  --secondary: oklch(0.265 0 0);
+  --secondary-foreground: oklch(0.955 0 0);
+  --muted: oklch(0.255 0 0);
+  --muted-foreground: oklch(0.735 0 0);
+  --accent: oklch(0.3 0 0);
+  --accent-foreground: oklch(0.96 0 0);
   --destructive: oklch(0.68 0.2 25);
-  --border: oklch(0.98 0.005 255 / 14%);
-  --input: oklch(0.98 0.005 255 / 20%);
-  --ring: oklch(0.65 0.03 255);
-  --chart-1: oklch(0.87 0.006 255);
-  --chart-2: oklch(0.7 0.01 255);
-  --chart-3: oklch(0.55 0.012 255);
-  --chart-4: oklch(0.42 0.012 255);
-  --chart-5: oklch(0.3 0.012 255);
+  --border: oklch(0.98 0 0 / 14%);
+  --input: oklch(0.98 0 0 / 20%);
+  --ring: oklch(0.65 0 0);
+  --chart-1: oklch(0.87 0 0);
+  --chart-2: oklch(0.7 0 0);
+  --chart-3: oklch(0.55 0 0);
+  --chart-4: oklch(0.42 0 0);
+  --chart-5: oklch(0.3 0 0);
 
   --ok: oklch(0.72 0.16 149);
   --ok-contrast: oklch(0.16 0.02 149);
@@ -245,20 +261,23 @@
   --fixing-muted: oklch(0.305 0.065 250);
   --fixing-foreground: oklch(0.885 0.07 250);
 
-  --sidebar: oklch(0.178 0.011 255);
-  --sidebar-foreground: oklch(0.955 0.004 85);
-  --sidebar-primary: oklch(0.93 0.006 85);
-  --sidebar-primary-foreground: oklch(0.18 0.012 255);
-  --sidebar-accent: oklch(0.3 0.014 255);
-  --sidebar-accent-foreground: oklch(0.96 0.004 85);
-  --sidebar-border: oklch(0.98 0.005 255 / 14%);
-  --sidebar-ring: oklch(0.65 0.03 255);
+  --sidebar: oklch(0.178 0 0);
+  --sidebar-foreground: oklch(0.955 0 0);
+  --sidebar-primary: oklch(0.93 0 0);
+  --sidebar-primary-foreground: oklch(0.18 0 0);
+  --sidebar-accent: oklch(0.3 0 0);
+  --sidebar-accent-foreground: oklch(0.96 0 0);
+  --sidebar-border: oklch(0.98 0 0 / 14%);
+  --sidebar-ring: oklch(0.65 0 0);
 
-  --rule-ink: oklch(0.955 0.004 85 / 6%);
-  --rule-tick: oklch(0.955 0.004 85 / 10%);
+  --rule-ink: oklch(0.955 0 0 / 6%);
+  --rule-tick: oklch(0.955 0 0 / 10%);
 
-  --ember: oklch(0.75 0.115 55);
-  --ember-contrast: oklch(0.17 0.025 55);
+  --ember: oklch(0.85 0.145 102);
+  --ember-contrast: oklch(0.18 0.02 102);
+
+  --brand: oklch(0.94 0.2 106);
+  --brand-contrast: oklch(0.17 0.02 106);
 }
 
 @layer base {

@@ -308,6 +308,41 @@ intended.
 
 ---
 
+### Rebrand: AquíAyuda
+
+**Decision (2026-08-15):** the site joins a multi-city help network and takes its
+brand: the volt-yellow/black/white identity and AA map-pin monogram from the
+"AyudasAquí" design brief (PDF, draft). We render the name **inverted — AquíAyuda —**
+because the acquired domains are `aquiayuda.co` / `aquiayuda.com` (shorter, and the
+partners are re-cutting the brand to match); the brief's own filename still says
+"AYUDAS AQUI". The wordmark is `AquíAyuda` bold + `Pereira` muted, keeping the brief's
+city-lines model (Pereira/Cali/Manizales as pins AP/AC/AM) open without building it.
+
+**How the brand met "chroma is signal":** volt yellow became the *one* saturated
+chrome colour, with three hard rules — never a service state, always ink text on it
+(volt on white can never pass 4.5:1), always an ink hairline around a volt fill
+(measured: the dark theme's donate slabs are `bg-foreground` ≈ white, and volt L0.94
+on white L0.955 has no silhouette). `--ember` was retinted from humanitarian amber
+(h48) into the yellow family (h98/h102) so the landing's text-weight accents joined
+the brand instead of fighting it. All of it is gated: `check-contrast` grew a
+`brand-contrast`/`brand` pair, 56/56 pairings pass in both themes.
+
+**Deliberately not done in this pass:**
+
+- **The `aquiayuda.co` DNS cutover.** `metadataBase` still falls back to
+  `sismopereira.org`; moving domains during an active emergency breaks every link
+  already in circulation, so it waits for a coordinated cutover with redirects.
+- **The type change.** The brief sets a normal-width grotesque; the site keeps
+  condensed Archivo. The 2026-08-13 landing is composed around condensation (locked
+  `nowrap` hero lines, a 240px rail) and widening every heading ~16% breaks that
+  composition silently. Type moves with the IA rework, when the layouts are
+  recomposed anyway.
+- **City pins (AP/AC/AM/AB).** One city, one line, no invented network directory.
+
+**Consequence:** the epicentre sigil (red square + ripple) is gone from masthead,
+footer and favicon; the icon pipeline (`icon.svg` → `render-icons.mjs`) now draws the
+pin, with the geometry echoed a third time in `brand-mark.tsx`.
+
 ## Technical
 
 ### Reads degrade; writes fail loudly

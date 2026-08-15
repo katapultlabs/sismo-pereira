@@ -7,7 +7,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## What this is
 
 A crisis information site for Pereira, Risaralda, built after the M7.4 earthquake of
-2026-08-10. Live at https://sismopereira.org.
+2026-08-10. Live at https://sismopereira.org. Rebranded **AquíAyuda** (Pereira line)
+on 2026-08-15 — the reskin is shipped, the `aquiayuda.co` DNS cutover is not
+([why the name is inverted from the brief](./docs/DECISIONS.md#rebrand-aquíayuda)).
 
 **Read [`docs/EDITORIAL.md`](./docs/EDITORIAL.md) before changing anything the site
 displays.** Its rules — unknown is a first-class status, no unverified addresses,
@@ -278,26 +280,32 @@ a resident is never offered it.
   `render={<Link … />}`, **not** `asChild` — most shadcn examples online show `asChild`
   and will not work here. Tailwind v4, CSS-first config in `src/app/globals.css`; there
   is no `tailwind.config`.
-- **Chroma is signal.** The chrome is deliberately achromatic — warm bone "paper" by
-  day, cold instrument "ink" by night — so the only saturated colour anywhere is a
-  service status. Do not add a saturated brand colour: it would compete with the four
-  status hues for the same attention. The one exception is the small square epicentre
-  mark in the masthead, the footer, and the site icon, which is a shape rather than a
-  state.
-  The **one accent** is `--ember`, a desaturated humanitarian amber introduced with the
-  2026-08-13 landing. It sits between `--down` (h27) and `--warn` (h70) in hue but far
-  below both in chroma, so it reads as tone rather than a fifth status. It is for
-  section eyebrows, the seismic artwork and the clock's carrier light. **Never encode a
-  service state with it**, and never add a second accent — it is gated by
-  `pnpm check:contrast` in both themes, and it is the exception, not a precedent.
-- **The site icon is that same mark, and it is generated.** `src/app/icon.svg` is the
+- **Chroma is signal, amended once by the 2026-08-15 AquíAyuda reskin.** The chrome is
+  neutral — white "paper" by day, true black by night — and the only saturated colours
+  are the four status hues plus **`--brand`**, the AA pin's volt yellow
+  (`oklch(0.94 0.2 106)`, ~`#fef204`). Brand volt is *chrome only*: the pin mark, every
+  donate CTA, and the campaign strip. Its rules: never encode a service state with it,
+  text on it is always `--brand-contrast` ink (volt text on a pale ground can never
+  pass AA), and every volt fill carries `border border-brand-contrast/25` — in dark
+  mode the donate slabs are `bg-foreground` (near-white), and a volt fill on a white
+  ground has no silhouette without the hairline. It is hue-separated from `--warn`
+  (h70, orange) on purpose; keep that separation.
+  The **text-weight accent** is `--ember`, retinted by the reskin into the brand's
+  yellow family (dark mustard by day, bright signal yellow by night) — it is what
+  carries "brand yellow" wherever ink-weight text is needed: section eyebrows, the
+  seismic artwork, the clock's carrier light. **Never encode a service state with
+  it**, and never add a third accent — both are gated by `pnpm check:contrast` in
+  both themes.
+- **The site icon is the AA pin, and it is generated.** `src/app/icon.svg` is the
   source of truth; `pnpm icons` redraws `favicon.ico` (16/32/48) and `apple-icon.png`
-  from geometry duplicated in `scripts/render-icons.mjs` — change the SVG and you must
-  change the script, the way `seed.sql` and `fallback-data.ts` are paired. Two things
-  are deliberate. The plate is **ink in both themes** (a bone plate vanishes against a
-  light browser tab strip; only *which* ink follows the theme), and the **16px entry is
-  a separate, simpler cut** — the outer ring's 12 ticks get ~1.3px of ink each at that
-  size and turn to grey noise, so the small variant drops them. Judge any change with
+  from geometry duplicated in `scripts/render-icons.mjs`, and the same 32-unit
+  geometry is echoed at component scale in `src/components/brand-mark.tsx` — change
+  one and you must change the others, the way `seed.sql` and `fallback-data.ts` are
+  paired. Two things are deliberate. The plate is **ink in both themes** (a white
+  plate vanishes against a light browser tab strip; only *which* ink follows the
+  theme), and the **16px entry is a separate, simpler cut** — the "AA" monogram's
+  ~1.8-unit strokes get under a pixel of ink each at that size and turn to noise, so
+  the small variant drops the letters and grows the pin. Judge any change with
   `pnpm icons src/app <preview-dir>`, which writes nearest-neighbour blow-ups; a
   favicon inspected at 256px is not inspected.
 - Status colours are semantic tokens: `ok` / `warn` / `down` / `fixing`. Each has
@@ -318,7 +326,7 @@ a resident is never offered it.
 - `--radius` is `0.5rem` and `rounded-sm` takes it directly (it is 70 of the ~110
   `rounded-*` uses, so it sets the tone). This was `0.1875rem` with a note calling the
   tight corner load-bearing; the 2026-08-13 redesign raised it and the note did not
-  survive — what keeps this off generic-card-UI is the achromatic chrome, hairline
+  survive — what keeps this off generic-card-UI is the neutral chrome, hairline
   rules, mono readouts and condensed display face
   ([why](./docs/DECISIONS.md#3px-stamped-radius--8px)).
 - **Dark mode is real, mounted (`ThemeProvider`, `defaultTheme="system"`), and every

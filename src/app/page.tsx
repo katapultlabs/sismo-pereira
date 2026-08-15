@@ -8,6 +8,7 @@ import {
 } from "lucide-react";
 
 import { ActionRoutes } from "@/components/action-board";
+import { BrandMark } from "@/components/brand-mark";
 import { DONATE_OPERATOR } from "@/components/donate-banner";
 import { HeroSafety, HeroSafetyMobile } from "@/components/hero-safety";
 import { SeismicField } from "@/components/landing-art";
@@ -33,8 +34,8 @@ import { cn } from "@/lib/utils";
 
 /**
  * The rail plates — the site's routes, in the bulletin's numbering, closed
- * by the two action plates: Reportar in the alarm red, Donar as the inverted
- * ink slab every donate surface on the site shares. Rendered twice — as the
+ * by the two action plates: Reportar in the alarm red, Donar in the brand
+ * volt every donate CTA on the site shares. Rendered twice — as the
  * vertical navbar from `lg`, and as a 2-up grid under the hero below it.
  * Life safety no longer lives here: the 123 and closures cards sit pinned
  * to the hero itself, and `EmergencyPlates` carries them below `lg`.
@@ -86,8 +87,8 @@ function RailRoutes({ lang }: { lang: Lang }) {
   );
 }
 
-/** The two action plates — report in the alarm red, donate in the inverted
- *  ink of every donate surface on the site. The rail's closing pair. */
+/** The two action plates — report in the alarm red, donate in the brand
+ *  volt of every donate CTA on the site. The rail's closing pair. */
 function RailActions({ lang }: { lang: Lang }) {
   const t = getDictionary(lang);
 
@@ -112,8 +113,9 @@ function RailActions({ lang }: { lang: Lang }) {
       <Link
         href="/donar"
         /* `col-span-2` fills the row in the mobile 2-up grid; ignored in the
-           desktop flex rail. */
-        className="group col-span-2 flex items-center gap-3 rounded-sm bg-primary px-3.5 py-3 text-primary-foreground transition-opacity outline-none hover:opacity-90 focus-visible:ring-2 focus-visible:ring-ring"
+           desktop flex rail. Donate wears the brand volt — the one chrome
+           surface allowed a saturated fill (see globals.css). */
+        className="group col-span-2 flex items-center gap-3 rounded-sm border border-brand-contrast/25 bg-brand px-3.5 py-3 text-brand-contrast transition-opacity outline-none hover:opacity-90 focus-visible:ring-2 focus-visible:ring-ring"
       >
         <HeartHandshake className="size-4 shrink-0" aria-hidden />
         <span className="display-condensed flex-1 text-base leading-tight font-extrabold uppercase lg:text-sm">
@@ -239,10 +241,13 @@ export default async function HomePage() {
             href="/"
             className="px-1 pt-1 pb-1.5 outline-none focus-visible:ring-2 focus-visible:ring-ring"
           >
-            <span className="display-condensed block truncate text-xl leading-none uppercase">
-              <span className="font-extrabold">Sismo</span>
-              <span className="ml-1.5 font-normal text-muted-foreground">
-                Pereira
+            <span className="flex items-center gap-2">
+              <BrandMark className="h-6 w-6 shrink-0" />
+              <span className="display-condensed block truncate text-xl leading-none">
+                <span className="font-extrabold">AquíAyuda</span>
+                <span className="ml-1.5 font-normal text-muted-foreground">
+                  Pereira
+                </span>
               </span>
             </span>
             <span className="label-signage mt-1.5 block text-[0.5625rem] tracking-[0.16em] text-muted-foreground">
@@ -380,7 +385,7 @@ export default async function HomePage() {
               </p>
 
               <Button
-                className="label-signage mt-8 h-10 gap-2 rounded-sm bg-primary px-5 text-primary-foreground hover:bg-primary/90"
+                className="label-signage mt-8 h-10 gap-2 rounded-sm border border-brand-contrast/25 bg-brand px-5 text-brand-contrast hover:bg-brand/90"
                 render={<Link href="/donar" />}
               >
                 {t.donate.title}
@@ -590,7 +595,7 @@ export default async function HomePage() {
                 {t.donate.scope}
               </p>
               <Button
-                className="label-signage mt-8 h-11 gap-2 rounded-sm bg-primary px-6 text-primary-foreground hover:bg-primary/90"
+                className="label-signage mt-8 h-11 gap-2 rounded-sm border border-brand-contrast/25 bg-brand px-6 text-brand-contrast hover:bg-brand/90"
                 render={<Link href="/donar" />}
               >
                 {t.donate.cta}

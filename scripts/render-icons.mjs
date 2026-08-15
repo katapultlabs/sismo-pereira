@@ -1,38 +1,58 @@
 /*
- * Renders the Sismo Pereira epicentre sigil to PNG/ICO.
+ * Renders the AquíAyuda pin mark to PNG/ICO.
  *
  * ImageMagick here has no rsvg delegate and its internal SVG renderer drops
- * stroked circles entirely, so the raster fallbacks are drawn procedurally
+ * stroked paths entirely, so the raster fallbacks are drawn procedurally
  * instead. Geometry is kept in the same 32-unit space as `src/app/icon.svg`
- * so the two stay identical by construction.
+ * so the two stay identical by construction. (One knowing difference: the
+ * monogram's strokes are rasterised with round caps where the SVG uses butt
+ * caps — invisible at any size the favicon is served at.)
  */
 import { deflateSync } from "node:zlib";
 import { writeFileSync } from "node:fs";
 
-// ── Palette ────────────────────────────────────────────────────────────────
-const WARM = { plate: [0x1a, 0x12, 0x09], bone: [0xf6, 0xf2, 0xea], epi: [0xef, 0x3b, 0x32] };
-const COLD = { plate: [0x0d, 0x11, 0x17], bone: [0xf1, 0xf0, 0xed], epi: [0xf8, 0x51, 0x49] };
+// ── Palette — matches the vars in icon.svg ─────────────────────────────────
+// The plate is ink in both themes (see icon.svg for why), so raster outputs
+// need only the one palette: page ink, and the --brand volt.
+const PAL = { plate: [0x0f, 0x0f, 0x0f], pin: [0xfe, 0xf2, 0x04] };
 
 // ── Geometry, in the icon.svg 32-unit space ────────────────────────────────
 const C = 16;
-const PLATE_R = 3;      // --radius, tight on purpose
+const PLATE_R = 6; // icon-scale echo of --radius
 
 /*
- * Two cuts of the same mark. The full one matches `icon.svg`. At 16px a
- * 12-tick ring has ~1.3px of ink per tick and degrades to grey noise, and
- * the 6-unit square rounds off into a blob — so the small cut drops the
- * ticks, thickens the ripple to a clean 2px band, and squares up the
- * epicentre on the pixel grid. Same three elements, fewer of them.
+ * Two cuts of the same mark. The full one matches `icon.svg`: pin head + tail
+ * with the "AA" monogram knocked back to the plate. At 16px the monogram's
+ * ~1.8-unit strokes get under a pixel of ink each and turn to noise, so the
+ * small cut drops the letters and grows the pin to fill the plate.
  */
 const FULL = {
-  outer: { r: 12.2, w: 2.2, a: 0.42, dashes: 12 },
-  inner: { r: 7.4, w: 2.6, a: 0.88 },
-  epi: 3,
+  head: { cx: 16, cy: 13, r: 8.2 },
+  tail: [
+    [11, 17.9],
+    [21, 17.9],
+    [16, 27],
+  ],
+  // Two A's: legs are one stroked path apex-to-apex, the bar a second.
+  letters: {
+    cxs: [13.1, 18.9],
+    halfW: 2.1,
+    top: 9.6,
+    bottom: 16.4,
+    legW: 1.8,
+    barY: 14.2,
+    barHalf: 1.25,
+    barW: 1.5,
+  },
 };
 const SMALL = {
-  outer: null,
-  inner: { r: 10.5, w: 3.4, a: 1 },
-  epi: 4,
+  head: { cx: 16, cy: 12.6, r: 9.4 },
+  tail: [
+    [10.8, 18.4],
+    [21.2, 18.4],
+    [16, 29.2],
+  ],
+  letters: null,
 };
 const geomFor = (size) => (size <= 16 ? SMALL : FULL);
 
@@ -48,19 +68,39 @@ function plateCoverage(x, y, rounded) {
   return d <= 0 ? 1 : 0;
 }
 
-function ringAlpha(x, y, r, w, dashes) {
-  const d = Math.abs(Math.hypot(x - C, y - C) - r);
-  if (d > w / 2) return 0;
-  if (!dashes) return 1;
-  // Even angular ticks — the seismograph chart-paper ruling, wrapped.
-  let a = Math.atan2(y - C, x - C) / (2 * Math.PI);
-  if (a < 0) a += 1;
-  const t = (a * dashes) % 1;
-  return t < 0.5 ? 1 : 0;
+function inTriangle(x, y, [[ax, ay], [bx, by], [cx, cy]]) {
+  const s1 = (bx - ax) * (y - ay) - (by - ay) * (x - ax);
+  const s2 = (cx - bx) * (y - by) - (cy - by) * (x - bx);
+  const s3 = (ax - cx) * (y - cy) - (ay - cy) * (x - cx);
+  return (s1 >= 0 && s2 >= 0 && s3 >= 0) || (s1 <= 0 && s2 <= 0 && s3 <= 0);
 }
 
-function over(dst, src, a) {
-  for (let i = 0; i < 3; i++) dst[i] = src[i] * a + dst[i] * (1 - a);
+function inPin(x, y, g) {
+  const { cx, cy, r } = g.head;
+  if (Math.hypot(x - cx, y - cy) <= r) return true;
+  return inTriangle(x, y, g.tail);
+}
+
+/** Distance from (x,y) to the segment (x1,y1)-(x2,y2). */
+function segDist(x, y, x1, y1, x2, y2) {
+  const dx = x2 - x1;
+  const dy = y2 - y1;
+  const t = clamp01(((x - x1) * dx + (y - y1) * dy) / (dx * dx + dy * dy));
+  return Math.hypot(x - (x1 + t * dx), y - (y1 + t * dy));
+}
+
+/** Is (x,y) inside the knocked-out "AA" monogram's ink? */
+function inLetters(x, y, L) {
+  if (!L) return false;
+  for (const cx of L.cxs) {
+    // The two legs, apex at (cx, top).
+    if (segDist(x, y, cx - L.halfW, L.bottom, cx, L.top) <= L.legW / 2) return true;
+    if (segDist(x, y, cx, L.top, cx + L.halfW, L.bottom) <= L.legW / 2) return true;
+    // The crossbar.
+    if (segDist(x, y, cx - L.barHalf, L.barY, cx + L.barHalf, L.barY) <= L.barW / 2)
+      return true;
+  }
+  return false;
 }
 
 function render(size, pal, rounded, ss = 8) {
@@ -74,23 +114,22 @@ function render(size, pal, rounded, ss = 8) {
         for (let sx = 0; sx < ss; sx++) {
           const x = ((pxi + (sx + 0.5) / ss) / size) * 32;
           const y = ((py + (sy + 0.5) / ss) / size) * 32;
-          const inPlate = plateCoverage(x, y, rounded);
-          if (!inPlate) continue;
-          const c = [...pal.plate];
-          if (g.outer && ringAlpha(x, y, g.outer.r, g.outer.w, g.outer.dashes)) {
-            over(c, pal.bone, g.outer.a);
-          }
-          if (ringAlpha(x, y, g.inner.r, g.inner.w, 0)) over(c, pal.bone, g.inner.a);
-          if (Math.abs(x - C) <= g.epi && Math.abs(y - C) <= g.epi) {
-            c[0] = pal.epi[0]; c[1] = pal.epi[1]; c[2] = pal.epi[2];
-          }
-          acc[0] += c[0]; acc[1] += c[1]; acc[2] += c[2];
+          if (!plateCoverage(x, y, rounded)) continue;
+          // Paint order matches icon.svg: plate, pin, monogram knockout.
+          const c =
+            inPin(x, y, g) && !inLetters(x, y, g.letters) ? pal.pin : pal.plate;
+          acc[0] += c[0];
+          acc[1] += c[1];
+          acc[2] += c[2];
           accA += 1;
         }
       }
       const n = ss * ss;
       const o = (py * size + pxi) * 4;
-      if (accA === 0) { px[o] = px[o + 1] = px[o + 2] = px[o + 3] = 0; continue; }
+      if (accA === 0) {
+        px[o] = px[o + 1] = px[o + 2] = px[o + 3] = 0;
+        continue;
+      }
       px[o] = Math.round(acc[0] / accA);
       px[o + 1] = Math.round(acc[1] / accA);
       px[o + 2] = Math.round(acc[2] / accA);
@@ -127,7 +166,11 @@ function png(size, px) {
   const ihdr = Buffer.alloc(13);
   ihdr.writeUInt32BE(size, 0);
   ihdr.writeUInt32BE(size, 4);
-  ihdr[8] = 8; ihdr[9] = 6; ihdr[10] = 0; ihdr[11] = 0; ihdr[12] = 0;
+  ihdr[8] = 8;
+  ihdr[9] = 6;
+  ihdr[10] = 0;
+  ihdr[11] = 0;
+  ihdr[12] = 0;
   const raw = Buffer.alloc(size * (size * 4 + 1));
   for (let y = 0; y < size; y++) {
     raw[y * (size * 4 + 1)] = 0; // filter: none
@@ -144,14 +187,16 @@ function png(size, px) {
 /** ICO wrapping PNG payloads — supported by every browser that matters. */
 function ico(entries) {
   const dir = Buffer.alloc(6 + entries.length * 16);
-  dir.writeUInt16LE(0, 0); dir.writeUInt16LE(1, 2);
+  dir.writeUInt16LE(0, 0);
+  dir.writeUInt16LE(1, 2);
   dir.writeUInt16LE(entries.length, 4);
   let offset = dir.length;
   entries.forEach((e, i) => {
     const o = 6 + i * 16;
     dir[o] = e.size >= 256 ? 0 : e.size;
     dir[o + 1] = e.size >= 256 ? 0 : e.size;
-    dir[o + 2] = 0; dir[o + 3] = 0;
+    dir[o + 2] = 0;
+    dir[o + 3] = 0;
     dir.writeUInt16LE(1, o + 4);
     dir.writeUInt16LE(32, o + 6);
     dir.writeUInt32LE(e.data.length, o + 8);
@@ -165,9 +210,9 @@ const out = process.argv[2] ?? "src/app";
 const sizes = [16, 32, 48];
 writeFileSync(
   `${out}/favicon.ico`,
-  ico(sizes.map((s) => ({ size: s, data: png(s, render(s, WARM, true)) }))),
+  ico(sizes.map((s) => ({ size: s, data: png(s, render(s, PAL, true)) }))),
 );
-writeFileSync(`${out}/apple-icon.png`, png(180, render(180, WARM, false)));
+writeFileSync(`${out}/apple-icon.png`, png(180, render(180, PAL, false)));
 
 /*
  * Optional second argument: a directory for preview renders. The 16px and
@@ -176,11 +221,12 @@ writeFileSync(`${out}/apple-icon.png`, png(180, render(180, WARM, false)));
  */
 const pv = process.argv[3];
 if (pv) {
-  writeFileSync(`${pv}/pv-256-warm.png`, png(256, render(256, WARM, true)));
-  writeFileSync(`${pv}/pv-256-cold.png`, png(256, render(256, COLD, true)));
+  writeFileSync(`${pv}/pv-256.png`, png(256, render(256, PAL, true)));
   for (const s of [16, 32]) {
     // Nearest-neighbour blow-up so the actual tab-size pixels are visible.
-    const src = render(s, WARM, true), f = 8, big = Buffer.alloc(s * f * s * f * 4);
+    const src = render(s, PAL, true),
+      f = 8,
+      big = Buffer.alloc(s * f * s * f * 4);
     for (let y = 0; y < s * f; y++)
       for (let x = 0; x < s * f; x++) {
         const so = (Math.floor(y / f) * s + Math.floor(x / f)) * 4;

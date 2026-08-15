@@ -1,7 +1,10 @@
-# Sismo Pereira
+# AquíAyuda Pereira
 
 Crisis information platform built in response to the **M7.4 earthquake of
 10 August 2026**, whose epicentre was in Chocó, roughly 55 km west of Pereira.
+Launched as *Sismo Pereira*; rebranded **AquíAyuda** on 2026-08-15 to join a
+multi-city help network (`aquiayuda.co` — DNS cutover pending, the site still
+serves at `sismopereira.org`).
 
 The goal is narrow and specific: **close the information vacuum**. In the hours
 after a quake, the scarcest resource is not aid — it is trustworthy answers to

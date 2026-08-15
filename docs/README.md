@@ -1,7 +1,7 @@
 # Documentation
 
-Sismo Pereira — crisis information platform built after the M7.4 earthquake of
-10 August 2026.
+AquíAyuda Pereira (formerly Sismo Pereira) — crisis information platform built
+after the M7.4 earthquake of 10 August 2026.
 
 Start with the root [`README.md`](../README.md) for what the project is and how to
 run it. These documents go deeper, and each is written for a specific reader.

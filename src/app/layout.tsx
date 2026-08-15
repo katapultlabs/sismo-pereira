@@ -52,7 +52,7 @@ export async function generateMetadata(): Promise<Metadata> {
     metadataBase: new URL(
       process.env.NEXT_PUBLIC_SITE_URL ?? "https://sismopereira.org",
     ),
-    title: { default: t.meta.title, template: "%s · Sismo Pereira" },
+    title: { default: t.meta.title, template: "%s · AquíAyuda Pereira" },
     description: t.meta.description,
     robots: { index: true, follow: true },
     openGraph: {
@@ -67,8 +67,8 @@ export async function generateMetadata(): Promise<Metadata> {
 export const viewport: Viewport = {
   themeColor: [
     // Match the paper/ink substrates so the browser chrome joins the page.
-    { media: "(prefers-color-scheme: light)", color: "#f6f2ea" },
-    { media: "(prefers-color-scheme: dark)", color: "#0d1117" },
+    { media: "(prefers-color-scheme: light)", color: "#fafafa" },
+    { media: "(prefers-color-scheme: dark)", color: "#0b0b0b" },
   ],
 };
 

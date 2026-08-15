@@ -1,6 +1,7 @@
 import { ArrowUpRight, Code, Phone } from "lucide-react";
 import Link from "next/link";
 
+import { BrandMark } from "@/components/brand-mark";
 import { EMERGENCY_LINES } from "@/lib/fallback-data";
 import { getDictionary, type Lang } from "@/lib/i18n";
 
@@ -45,10 +46,11 @@ export function SiteFooter({ lang }: { lang: Lang }) {
         <div className="flex justify-center pt-1 pb-3">
           <Link
             href="/"
-            className="inline-flex items-baseline outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            className="inline-flex items-center gap-2 outline-none focus-visible:ring-2 focus-visible:ring-ring"
           >
-            <span className="display-condensed text-lg leading-none uppercase">
-              <span className="font-extrabold">Sismo</span>
+            <BrandMark className="h-[1.375rem] w-[1.375rem] shrink-0" />
+            <span className="display-condensed text-lg leading-none">
+              <span className="font-extrabold">AquíAyuda</span>
               <span className="ml-1.5 font-normal text-muted-foreground">
                 Pereira
               </span>

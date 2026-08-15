@@ -93,7 +93,7 @@ export function DonateBlock({
           size="lg"
           /* Full-bleed tap target on a phone; natural width once the plate is
              wide enough that a 900px-wide button just looks stretched. */
-          className="label-signage h-11 shrink-0 gap-2 rounded-sm bg-background px-6 text-foreground hover:bg-background/85 sm:self-start lg:self-auto"
+          className="label-signage h-11 shrink-0 gap-2 rounded-sm border border-brand-contrast/25 bg-brand px-6 text-brand-contrast hover:bg-brand/90 sm:self-start lg:self-auto"
           render={<Link href={DONATE_PATH} />}
         >
           {t.donate.cta}
@@ -135,7 +135,7 @@ export function DonateFooterLink({ lang }: { lang: Lang }) {
           {t.donate.learnMore}
         </span>
       </span>
-      <span className="label-signage inline-flex shrink-0 items-center gap-1.5 rounded-sm bg-foreground px-2.5 py-2 text-background">
+      <span className="label-signage inline-flex shrink-0 items-center gap-1.5 rounded-sm border border-brand-contrast/25 bg-brand px-2.5 py-2 text-brand-contrast">
         {t.donate.cta}
         <ArrowRight className="size-3" aria-hidden />
       </span>
@@ -197,7 +197,7 @@ export function DonateAction({
 
         <Button
           size="lg"
-          className="label-signage h-12 shrink-0 gap-2 rounded-sm bg-background px-7 text-base text-foreground hover:bg-background/85 sm:self-start lg:self-auto"
+          className="label-signage h-12 shrink-0 gap-2 rounded-sm border border-brand-contrast/25 bg-brand px-7 text-base text-brand-contrast hover:bg-brand/90 sm:self-start lg:self-auto"
           render={
             <a href={DONATE_URL} target="_blank" rel="noreferrer noopener" />
           }

@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Menu, Phone } from "lucide-react";
 
+import { BrandMark } from "@/components/brand-mark";
 import { LanguageToggle } from "@/components/language-toggle";
 import { Seismograph } from "@/components/seismograph";
 import { ThemeToggle } from "@/components/theme-toggle";
@@ -49,17 +50,13 @@ export function SiteHeader({ lang }: { lang: Lang }) {
          */}
         <Link
           href="/"
-          className="flex min-w-0 items-baseline gap-2 outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          className="flex min-w-0 items-center gap-2 outline-none focus-visible:ring-2 focus-visible:ring-ring"
         >
-          {/* Epicentre mark. The only non-status use of the alert hue, and it
-              is a shape rather than a signal, so it cannot be misread. Hidden
-              on phones, where the masthead is already tight. */}
-          <span
-            className="hidden size-2 shrink-0 translate-y-px bg-down sm:block"
-            aria-hidden
-          />
-          <span className="display-condensed truncate text-lg leading-none uppercase">
-            <span className="font-extrabold">Sismo</span>
+          {/* The AA pin — the brand's one mark. Hidden on phones, where the
+              masthead is already tight. */}
+          <BrandMark className="hidden h-[1.375rem] w-[1.375rem] shrink-0 sm:block" />
+          <span className="display-condensed truncate text-lg leading-none">
+            <span className="font-extrabold">AquíAyuda</span>
             <span className="ml-1.5 font-normal text-muted-foreground">
               Pereira
             </span>
@@ -130,7 +127,7 @@ export function SiteHeader({ lang }: { lang: Lang }) {
            */}
           <Button
             size="sm"
-            className="label-signage hidden rounded-sm sm:inline-flex"
+            className="label-signage hidden rounded-sm border border-brand-contrast/25 bg-brand text-brand-contrast hover:bg-brand/90 sm:inline-flex"
             render={<Link href="/donar" />}
           >
             {t.donate.cta}
@@ -160,8 +157,8 @@ export function SiteHeader({ lang }: { lang: Lang }) {
             />
             <SheetContent side="right" className="w-72">
               <SheetHeader>
-                <SheetTitle className="display-condensed text-base uppercase">
-                  Sismo Pereira
+                <SheetTitle className="display-condensed text-base">
+                  AquíAyuda Pereira
                 </SheetTitle>
               </SheetHeader>
               <nav className="flex flex-col px-4">
@@ -195,7 +192,7 @@ export function SiteHeader({ lang }: { lang: Lang }) {
                   </Link>
                 ))}
                 <Button
-                  className="label-signage mt-4 rounded-sm"
+                  className="label-signage mt-4 rounded-sm border border-brand-contrast/25 bg-brand text-brand-contrast hover:bg-brand/90"
                   render={<Link href="/donar" />}
                 >
                   {t.donate.cta}

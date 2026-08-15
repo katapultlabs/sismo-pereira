@@ -151,6 +151,10 @@ PAIRS.push(["ember", "background", "ember accent text on the page"]);
 PAIRS.push(["ember", "card", "ember accent text on a card"]);
 PAIRS.push(["ember-contrast", "ember", "text on the ember fill"]);
 
+// The brand volt yellow only ever appears as a fill with ink text on it —
+// volt text on a pale ground can never pass, which is what --ember is for.
+PAIRS.push(["brand-contrast", "brand", "text on the brand fill"]);
+
 // ── run ────────────────────────────────────────────────────────────────────
 
 const css = readFileSync(CSS, "utf8");

@@ -1,46 +1,54 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32" role="img" aria-label="Sismo Pereira">
+<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32" role="img" aria-label="AquíAyuda">
   <!--
-    The epicentre mark, promoted to a sigil.
-
-    It is the masthead's small red square (see `site-header.tsx`) with the
-    wavefront it implies drawn in: one solid ripple, one dashed ring echoing
-    the seismograph chart-paper ruling behind the hero (`--rule-tick`).
+    The AquíAyuda pin, on its plate.
 
     The plate is ink in both themes rather than matching the page substrate.
-    A bone plate is invisible against a light browser tab strip, and a mark
-    that disappears at 16px is not a mark. What does follow the theme is
-    *which* ink: warm by day, the cold instrument face by night, the same
-    distinction `globals.css` draws between "paper" and "noche".
+    A white plate is invisible against a light browser tab strip, and a mark
+    that disappears at 16px is not a mark. What follows the theme is *which*
+    ink: the page's light-theme ink by day, the true-black night ground after
+    dark — the same distinction `globals.css` draws between "papel" and
+    "noche".
 
-    Red stays small on purpose. A fully red tile would read as `down` — a
-    status, on a site where saturated colour means exactly that. Here it is
-    a shape, so it cannot be misread.
+    The pin is the brand volt (--brand, #fef204) with the "AA" monogram
+    knocked back to the plate — the brief's dark lockup. Volt is chrome, not
+    status: no service state is ever encoded in this yellow, so the mark
+    cannot be misread as a reading.
+
+    Geometry is duplicated by hand in `scripts/render-icons.mjs` (which draws
+    the raster favicons procedurally) and echoed at component scale in
+    `src/components/brand-mark.tsx`. Change one, change the others. The 16px
+    raster is a separate, simpler cut — at that size the monogram's ~1.8px
+    strokes turn to noise, so the small variant drops the letters and grows
+    the pin (see the script).
   -->
   <style>
     :root {
-      --plate: #1a1209; /* warm ink */
-      --bone: #f6f2ea;  /* warm bone stock */
-      --epi: #ef3b32;
+      --plate: #0f0f0f; /* page ink */
+      --pin: #fef204;   /* --brand volt */
     }
     @media (prefers-color-scheme: dark) {
       :root {
-        --plate: #0d1117; /* cold instrument face */
-        --bone: #f1f0ed;
-        --epi: #f85149;
+        --plate: #0b0b0b; /* night ground */
       }
     }
   </style>
 
-  <rect width="32" height="32" rx="3" fill="var(--plate)" />
+  <rect width="32" height="32" rx="6" fill="var(--plate)" />
 
-  <!-- Outer wavefront. `pathLength` normalises the circumference to 96 so the
-       4/4 dash divides into exactly 12 ticks at any radius. -->
-  <circle cx="16" cy="16" r="12.2" fill="none" stroke="var(--bone)"
-          stroke-width="2.2" opacity="0.42"
-          pathLength="96" stroke-dasharray="4 4" />
+  <!-- Pin silhouette: head + tail, a union of two shapes so the raster
+       renderer can test the same geometry. -->
+  <g fill="var(--pin)">
+    <circle cx="16" cy="13" r="8.2" />
+    <path d="M11 17.9 H21 L16 27 Z" />
+  </g>
 
-  <circle cx="16" cy="16" r="7.4" fill="none" stroke="var(--bone)"
-          stroke-width="2.6" opacity="0.88" />
-
-  <rect x="13" y="13" width="6" height="6" fill="var(--epi)" />
+  <!-- The monogram, knocked back to the plate. -->
+  <g stroke="var(--plate)" fill="none" stroke-width="1.8">
+    <path d="M11 16.4 L13.1 9.6 L15.2 16.4" />
+    <path d="M16.8 16.4 L18.9 9.6 L21 16.4" />
+  </g>
+  <g stroke="var(--plate)" fill="none" stroke-width="1.5">
+    <path d="M11.85 14.2 H14.35" />
+    <path d="M17.65 14.2 H20.15" />
+  </g>
 </svg>

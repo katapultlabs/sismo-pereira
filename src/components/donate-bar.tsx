@@ -35,7 +35,9 @@ export function DonateBar({ lang }: { lang: Lang }) {
     <aside
       aria-label={t.donate.eyebrow}
       className={cn(
-        "border-b border-foreground/25 bg-foreground text-background",
+        /* The brand volt band — the one saturated chrome surface, worn by the
+           standing appeal. Ink text only; see the --brand note in globals.css. */
+        "border-b border-brand-contrast/20 bg-brand text-brand-contrast",
         /* The landing's rail ends in a donate plate and its hero carries the
            donate CTA — a third appeal in the chrome would read as pressure. */
         pathname === "/" && "lg:hidden",
@@ -43,7 +45,7 @@ export function DonateBar({ lang }: { lang: Lang }) {
     >
       <Link
         href={DONATE_PATH}
-        className="group mx-auto flex max-w-6xl items-center gap-3 px-4 py-2 outline-none focus-visible:ring-2 focus-visible:ring-background sm:gap-4"
+        className="group mx-auto flex max-w-6xl items-center gap-3 px-4 py-2 outline-none focus-visible:ring-2 focus-visible:ring-brand-contrast sm:gap-4"
       >
         <HeartHandshake className="hidden size-4 shrink-0 sm:block" aria-hidden />
 
@@ -51,7 +53,7 @@ export function DonateBar({ lang }: { lang: Lang }) {
             is pushed off a 320px screen. */}
         <span className="min-w-0 flex-1">
           <span className="block truncate text-sm leading-tight font-semibold">
-            <span className="label-signage mr-2 hidden text-background/70 md:inline">
+            <span className="label-signage mr-2 hidden text-brand-contrast/70 md:inline">
               {t.donate.eyebrow}
             </span>
             {t.donate.barTitle}
